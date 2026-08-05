@@ -1,0 +1,70 @@
+schema_version: "candidate-1"
+status: proposal
+canonical: false
+do_not_use_for_build: true
+created: "2026-08-05"
+project_id: "001"
+contract:
+  uid: standard_templates_1_candidate
+  migration_scope: full_book
+  first_deep_slice: std_ch_lighting
+  deep_slice_is_not_full_acceptance: true
+  principle: "Every legacy element is accounted for; every normalized delta is authorized; every published topic conforms to a versioned archetype."
+  layers:
+    - { id: L0, name: legacy_snapshot, mutable: false, normative: false }
+    - { id: L1, name: lossless_import, mutable: false, normative: false }
+    - { id: L2, name: normalized_source, mutable: true, normative: true, change_gate: review }
+    - { id: L3, name: generated_views, mutable: false, normative: false, generated: true }
+  build_profiles:
+    legacy-fidelity:
+      input_layer: L1
+      purpose: prove_lossless_import
+      uses_legacy_layout_hints: true
+      acceptance: source_and_visual_parity
+    standard-normalized:
+      input_layer: L2
+      purpose: publish_unified_standard
+      uses_legacy_layout_hints: false
+      acceptance: template_conformance_and_authorized_delta_only
+  slot_states: [filled, not_applicable, intentionally_omitted, missing_review, blocked]
+  normative_levels: [must, should, may, informative, out_of_scope]
+  common_template:
+    uid: tpl_topic_core_v1
+    slots:
+      - { id: purpose, required: true, accepts: [prose, value_statement] }
+      - { id: scope, required: true, accepts: [prose, applicability_rule] }
+      - { id: terms, required_when: introduces_terms, accepts: [term_ref] }
+      - { id: norms, required_when: has_normative_guidance, accepts: [rule_ref] }
+      - { id: rationale, required_when: has_non_obvious_rule, accepts: [rationale] }
+      - { id: implementation, required_when: engineering_guidance, accepts: [prose, procedure, table, schematic] }
+      - { id: verification, required_when: engineering_guidance, accepts: [checklist, acceptance_test] }
+      - { id: limitations, required: true, accepts: [limitation, anti_pattern, out_of_scope] }
+      - { id: sources_and_changes, required: true, generated: true }
+  archetypes:
+    - { uid: tpl_front_matter_v1, inherits: tpl_topic_core_v1, slots: [audience, purpose, roles, terminology, how_to_use, version_status] }
+    - { uid: tpl_policy_v1, inherits: tpl_topic_core_v1, slots: [principle, applicability, rule, rationale, exceptions, control] }
+    - { uid: tpl_platform_architecture_v1, inherits: tpl_topic_core_v1, slots: [components, protocols, topology, constraints, compatibility, selection_rules, diagnostics] }
+    - uid: tpl_subsystem_v1
+      inherits: tpl_topic_core_v1
+      slots: [value, scope_and_terms, technologies, recommended_architecture, equipment_and_compatibility, design_and_selection, control_modes_scenarios, cabling_topology_schematics, installation, setup_and_commissioning, acceptance_tests, limitations_and_anti_patterns]
+    - { uid: tpl_room_pattern_v1, inherits: tpl_topic_core_v1, slots: [room_jobs, minimum_set, recommended_set, extended_set, dependencies, scenarios, acceptance_tests] }
+    - { uid: tpl_engineering_process_v1, inherits: tpl_topic_core_v1, slots: [inputs, roles, steps, outputs, gates, tools, definition_of_done] }
+    - { uid: tpl_commissioning_qa_v1, inherits: tpl_topic_core_v1, slots: [preconditions, checklist, test_procedure, expected_result, evidence, diagnosis, handoff] }
+  missing_policy:
+    release: { required_missing_review: block, required_blocked: block, optional_not_applicable: omit, optional_intentionally_omitted: omit }
+    internal_review: { required_missing_review: render_gap_marker, required_blocked: render_blocker }
+  refactoring_operations:
+    mechanical: [format_normalize, renumber]
+    editorial_review: [term_normalize, move, split, merge, deduplicate, type_separate, clarify]
+    human_decision: [resolve_conflict, deprecate, remove_content]
+    separate_content_change: [add_content]
+  guardrails:
+    - only_typed_rule_is_normative
+    - one_rule_one_canonical_definition
+    - one_term_one_glossary_definition
+    - product_fact_is_not_recommendation
+    - override_requires_overrides_uid_scope_rationale_and_decision
+    - numbering_is_generated_not_identity
+    - shared_data_is_referenced_not_copied
+    - every_normalized_delta_requires_operation_uid
+    - every_legacy_element_requires_target_or_explicit_disposition

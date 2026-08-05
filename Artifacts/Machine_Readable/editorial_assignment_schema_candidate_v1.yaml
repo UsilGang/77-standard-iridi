@@ -1,0 +1,135 @@
+schema_version: "candidate-1"
+status: proposal
+canonical: false
+do_not_use_for_execution: true
+created: "2026-08-05"
+project_id: "001"
+entity:
+  type: editorial_assignment
+  id_format: "EDT-YYYY-NNNN"
+  purpose: "Executable contract linking an incoming signal to reviewed changes and a release."
+required_fields:
+  - editorial_job_uid
+  - status
+  - created_at
+  - initiator
+  - source_refs
+  - reader_problem
+  - audiences
+  - disposition
+  - base_release
+  - targets
+  - operations
+  - content_plan
+  - visual_required
+  - expected_outputs
+  - acceptance_criteria
+  - reviewers
+  - change_class
+  - normative_impact
+  - compatibility_impact
+  - proposed_release_bump
+statuses:
+  - candidate
+  - draft
+  - needs_evidence
+  - review
+  - approved
+  - rejected
+  - out_of_scope
+  - no_change
+  - in_progress
+  - validation
+  - release_ready
+  - released
+  - archived
+dispositions:
+  - already_documented
+  - editorial_gap
+  - product_gap
+  - out_of_scope
+  - conflict
+  - needs_evidence
+  - noise
+content_roles:
+  - normative_rule
+  - product_fact
+  - rationale
+  - example
+  - procedure
+  - checklist
+  - warning
+  - comparison
+  - glossary_term
+visual_types:
+  - none
+  - flow_diagram
+  - sequence_diagram
+  - state_diagram
+  - technical_schematic
+  - decision_tree
+  - comparison_table
+  - compatibility_matrix
+  - annotated_photo
+  - screenshot_sequence
+  - component_diagram
+versioning_contract:
+  book_release:
+    scheme: semver
+    rule: "Every published content change increments at least PATCH."
+    patch: "Editorial/clarification change without a changed recommendation."
+    minor: "New compatible rule, topic, technology, or material capability expansion."
+    major: "Breaking recommendation/policy change or deprecation."
+  content_units:
+    scheme: monotonic_revision_plus_digest
+    applies_to: [chapter, section, topic, rule, fact, table, asset]
+    fields: [revision, content_digest, introduced_in, last_changed_in, pending_release, last_editorial_job]
+  draft_build:
+    scheme: "draft-YYYYMMDD.NNN"
+    rule: "Draft changes do not reuse a released book version as if published."
+  technical_versions:
+    fields: [schema_version, template_version, build_tool_version]
+    normative: false
+  independent_module_semver:
+    allowed_when: independently_published_and_supported
+    default_for_chapter: false
+trace_chain:
+  - source_ref
+  - editorial_job_uid
+  - changed_uids
+  - changeset_uid
+  - draft_build_id
+  - release_uid
+visual_guardrails:
+  - visual_required_has_explicit_rationale
+  - visual_refs_existing_rule_or_fact_uids
+  - visual_cannot_create_untyped_norm
+  - editable_source_is_preserved
+  - rendered_asset_has_alt_caption_source_and_acceptance
+example:
+  editorial_job_uid: EDT-2026-0042
+  status: review
+  created_at: "2026-08-05"
+  initiator: { type: integrator, ref: person_or_channel_ref }
+  source_refs: ["source:example"]
+  reader_problem: "Интегратор не понимает, как выбрать способ управления освещением."
+  audiences: [integrator, presales, training, agent]
+  disposition: editorial_gap
+  base_release: 1.2.0
+  targets:
+    - { uid: std_topic_lighting_control_methods, base_revision: 12 }
+  operations: [clarify, add_comparison_table]
+  content_plan:
+    - { target_slot: technologies, content_role: comparison, key_message: "Выбор зависит от типа нагрузки и требуемой функции." }
+  visual_required: true
+  visual_plan:
+    type: comparison_table
+    purpose: "Сопоставить способы управления и условия выбора."
+    referenced_uids: [std_topic_lighting_control_methods]
+  expected_outputs: [topic_revision, typed_table, changelog_entry]
+  acceptance_criteria: [all_required_facts_present, no_new_untyped_rule, table_matches_source]
+  reviewers: [editor, lighting_domain_expert]
+  change_class: E1
+  normative_impact: clarification
+  compatibility_impact: none
+  proposed_release_bump: patch

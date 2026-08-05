@@ -1,0 +1,24 @@
+id: 2026-07-08_standard-book-publishing-pipeline
+status: review
+created_at: 2026-07-08
+created_by: CORD intake
+
+source:
+  type: transcribe
+  ref: "C:/AI/transcribe/outbox/recordings/inbox/2026/07/2026-07-08_19-47-07_recording_f772d37b"
+  title: "Standard Book publishing pipeline idea"
+
+routing:
+  book_main_sections: ["process", "versioning"]
+  drive_books: ["Стандарт автоматизации iRidi"]
+  wiki_paths: []
+  remarks_sheet: ""
+
+priority: high
+tags:
+  - standard-book
+  - publishing
+  - versioning
+  - google-doc
+
+notes: "Approved R2 from CORD intake rail test. Google Doc remains current published/canonical carrier until migration decision."

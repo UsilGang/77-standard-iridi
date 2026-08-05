@@ -1,0 +1,25 @@
+id: 2026-07-09_bus77-device-api-explanation
+status: applied
+created_at: 2026-07-09
+created_by: Codex
+applied_at: 2026-07-09
+applied_by: Codex
+
+source:
+  type: protocol_review
+  ref: "[[01_Projects/008_Bus77_Protocol_Knowledge/Sources/Device_API_Source]]"
+  title: "Bus77 Device API explanation candidate"
+
+routing:
+  book_main_sections: ["4.5"]
+  drive_books: []
+  wiki_paths: []
+  remarks_sheet: ""
+
+priority: normal
+tags:
+  - bus77
+  - device-api
+  - standard-proposal
+
+notes: "Applied locally after explicit user command 2026-07-09. Raw Device API sources stay in project 008; this folder contains only the approved local explanation. External Google Doc/Wiki publish was not performed."

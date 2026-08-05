@@ -1,0 +1,174 @@
+schema_version: "candidate-1"
+status: proposal
+canonical: false
+do_not_use_for_build: true
+generated_at: "2026-08-05"
+project_id: "001"
+book:
+  uid: std_iridi
+  title: "Стандарт автоматизации iRidi"
+  source_of_snapshot:
+    system: google_docs
+    document_id: 19K5o8mgCbCWuKcxUCPe5L9QzyFHKdf0214ae0TFG67A
+    document_url: "https://docs.google.com/document/d/19K5o8mgCbCWuKcxUCPe5L9QzyFHKdf0214ae0TFG67A/edit"
+    verification: live_read_only_inventory
+  current_publication_role: published_canonical_carrier_until_cutover
+  target_role: generated_human_view
+  inventory_totals:
+    tabs: 18
+    paragraphs_approx: 7824
+    characters_approx: 553499
+    tables: 146
+    inline_images: 467
+    positioned_images: 4
+  sections:
+    - uid: std_ch_introduction
+      display_order: 1
+      display_number: "1"
+      title: "Введение"
+      source_tab_id: t.clfqvlj9rma4
+      archetype: front_matter
+      source_status: populated
+      inventory: { paragraphs: 305, characters: 16721, tables: 5, inline_images: 1, positioned_images: 0 }
+    - uid: std_ch_design_policy
+      display_order: 2
+      display_number: "2"
+      title: "Общие правила проектирования"
+      source_tab_id: t.fim8rw76bjpv
+      archetype: policy
+      source_status: empty_planned
+      inventory: { paragraphs: 0, characters: 0, tables: 0, inline_images: 0, positioned_images: 0 }
+    - uid: std_ch_requirements
+      display_order: 3
+      display_number: "3"
+      title: "ТЗ"
+      source_tab_id: t.4q2cxse6fhcw
+      archetype: requirements_process
+      source_status: empty_planned
+      inventory: { paragraphs: 0, characters: 0, tables: 0, inline_images: 0, positioned_images: 0 }
+    - uid: std_ch_architecture
+      display_order: 4
+      display_number: "4"
+      title: "Архитектура"
+      source_tab_id: t.0
+      archetype: platform_architecture
+      source_status: populated_large
+      inventory: { paragraphs: 1119, characters: 72276, tables: 22, inline_images: 63, positioned_images: 0 }
+    - uid: std_ch_lighting
+      display_order: 5
+      display_number: "5"
+      title: "Освещение"
+      source_tab_id: t.l7u1dg4ndfef
+      archetype: subsystem_extended
+      source_status: populated_largest
+      recommended_deep_slice: true
+      inventory: { paragraphs: 1876, characters: 144206, tables: 37, inline_images: 107, positioned_images: 0 }
+    - uid: std_ch_heating
+      display_order: 6
+      display_number: "6"
+      title: "Отопление"
+      source_tab_id: t.tgxl6rcikpt2
+      archetype: subsystem
+      source_status: populated
+      inventory: { paragraphs: 819, characters: 53419, tables: 18, inline_images: 61, positioned_images: 0 }
+    - uid: std_ch_air_conditioning
+      display_order: 7
+      display_number: "7"
+      title: "Кондиционирование"
+      source_tab_id: t.qifspe8pb3i0
+      archetype: subsystem
+      source_status: populated
+      inventory: { paragraphs: 521, characters: 38762, tables: 13, inline_images: 37, positioned_images: 2 }
+    - uid: std_ch_ventilation
+      display_order: 8
+      display_number: "8"
+      title: "Вентиляция"
+      source_tab_id: t.k80iafyzjhd3
+      archetype: subsystem
+      source_status: draft_or_incomplete_owner_assessment
+      recommended_deep_slice: false
+      inventory: { paragraphs: 367, characters: 32020, tables: 7, inline_images: 27, positioned_images: 0 }
+    - uid: std_ch_humidification
+      display_order: 9
+      display_number: "9"
+      title: "Увлажнение"
+      source_tab_id: t.z992i1g0wtrv
+      archetype: subsystem
+      source_status: populated
+      inventory: { paragraphs: 433, characters: 33916, tables: 9, inline_images: 35, positioned_images: 0 }
+    - uid: std_ch_curtains
+      display_order: 10
+      display_number: "10"
+      title: "Шторы"
+      source_tab_id: t.ooz8njfkjx9h
+      archetype: subsystem
+      source_status: populated
+      inventory: { paragraphs: 727, characters: 48949, tables: 14, inline_images: 45, positioned_images: 0 }
+    - uid: std_ch_leak_protection
+      display_order: 11
+      display_number: "11"
+      title: "Протечки"
+      source_tab_id: t.jetg6xr3bxa1
+      archetype: subsystem
+      source_status: populated
+      inventory: { paragraphs: 624, characters: 38389, tables: 11, inline_images: 34, positioned_images: 2 }
+    - uid: std_ch_wiring_devices_panels
+      display_order: 12
+      display_number: "12"
+      title: "Электроустановочные изделия и панели"
+      source_tab_id: t.ymy4yd2lholu
+      source_title_has_typo: true
+      archetype: ecosystem_subsystem
+      source_status: populated
+      inventory: { paragraphs: 492, characters: 46517, tables: 10, inline_images: 27, positioned_images: 0 }
+    - uid: std_ch_room_patterns
+      display_order: 13
+      display_number: "13"
+      title: "Типовое оснащение комнат"
+      source_tab_id: t.q2dlxvpcqpm7
+      archetype: room_patterns
+      source_status: empty_planned
+      inventory: { paragraphs: 0, characters: 0, tables: 0, inline_images: 0, positioned_images: 0 }
+    - uid: std_ch_engineering_process
+      display_order: 14
+      display_number: "14"
+      title: "Проектирование"
+      source_tab_id: t.iee0e8ct1zki
+      archetype: engineering_process
+      source_status: empty_planned
+      inventory: { paragraphs: 0, characters: 0, tables: 0, inline_images: 0, positioned_images: 0 }
+    - uid: std_ch_project_tool
+      display_order: 15
+      display_number: "15"
+      title: "Project Tool"
+      source_tab_id: t.2yocwl4iqziz
+      archetype: engineering_tool
+      source_status: empty_planned
+      inventory: { paragraphs: 0, characters: 0, tables: 0, inline_images: 0, positioned_images: 0 }
+    - uid: std_ch_cabinets
+      display_order: 16
+      display_number: "16"
+      title: "Щиты"
+      source_tab_id: t.xwf1t475h4jq
+      archetype: cabinet_design
+      source_status: empty_planned
+      inventory: { paragraphs: 0, characters: 0, tables: 0, inline_images: 0, positioned_images: 0 }
+    - uid: std_ch_commissioning
+      display_order: 17
+      display_number: "17"
+      title: "ПНР"
+      source_tab_id: t.h976coqgy9cz
+      archetype: commissioning_qa
+      source_status: misrouted_content_needs_review
+      finding: "Текущий текст начинается с 4.11 Диагностика шины и не образует раздел ПНР."
+      inventory: { paragraphs: 70, characters: 4100, tables: 0, inline_images: 0, positioned_images: 0 }
+  staging_tabs:
+    - uid: std_staging_buffer
+      display_order: 18
+      title: "Буфер"
+      source_tab_id: t.tp33ogu3p2lh
+      archetype: staging_only
+      source_status: mixed_drafts_and_sources
+      publish: false
+      auto_migrate: false
+      inventory: { paragraphs: 471, characters: 24224, tables: 0, inline_images: 30, positioned_images: 0 }

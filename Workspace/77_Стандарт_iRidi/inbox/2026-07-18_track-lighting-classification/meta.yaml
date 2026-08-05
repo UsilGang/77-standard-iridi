@@ -1,0 +1,24 @@
+id: 2026-07-18_track-lighting-classification
+status: review
+created_at: 2026-07-18
+created_by: CORD project 059 after owner approval DR3
+
+source:
+  type: transcribe
+  ref: "C:/AI/transcribe/outbox/recordings/inbox/2026/06/2026-06-17_16-10-50_recording_277ecf07"
+  title: "Трековые системы и совместимость светильников и драйверов"
+
+routing:
+  book_main_sections: ["освещение", "проектирование"]
+  drive_books: ["Система управления освещением"]
+  wiki_paths: []
+  remarks_sheet: ""
+
+priority: normal
+tags:
+  - трековое-освещение
+  - 24В
+  - совместимость
+  - проектирование
+
+notes: "Proposal only. Canon, Google Doc and Wiki remain unchanged until separate approval."

@@ -1,0 +1,22 @@
+# Скопируйте папку _template в inbox/YYYY-MM-DD_slug/ и заполните
+
+id: YYYY-MM-DD_slug
+status: pending          # pending | in_progress | review
+created_at: 2026-07-03
+created_by: ""             # кто положил в inbox
+
+source:
+  type: transcribe         # transcribe | meeting | expert_council | field | ticket | product_release | manual
+  ref: ""                  # путь, URL или id записи
+  title: ""                # человекочитаемое название источника
+
+routing:
+  book_main_sections: []   # напр. ["4.9", "16"]
+  drive_books: []          # напр. ["Система управления освещением"]
+  wiki_paths: []           # напр. ["Автоматизация/Bus77/.../Basics_bus77"]
+  remarks_sheet: ""        # лист в таблице замечаний, если релевантно
+
+priority: normal           # low | normal | high
+tags: []
+
+notes: ""                  # контекст для агента

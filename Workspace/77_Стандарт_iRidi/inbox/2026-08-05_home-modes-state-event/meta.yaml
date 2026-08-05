@@ -1,0 +1,28 @@
+id: 2026-08-05_home-modes-state-event
+status: review
+created_at: 2026-08-05
+created_by: CORD project agent after approved local route user_2026-08-03_razbiray_nachinaya_s_3
+
+source:
+  type: transcribe
+  ref: "C:/AI/transcribe/outbox/recordings/inbox/2026/06/2026-06-08_20-09-34_recording_30168e31"
+  title: "Режим дома как состояние и событие для правил"
+
+routing:
+  book_main_sections: ["4.6", "4.7"]
+  drive_books: ["Архитектура системы автоматизации Bus77"]
+  wiki_paths: []
+  remarks_sheet: ""
+
+change_class: add
+change_class_label: "E2 Дополнение; повысить до E3, если текущий подраздел построен вокруг определения режима как виджета"
+priority: normal
+tags:
+  - режимы-дома
+  - правила
+  - состояния
+  - события
+  - архитектура
+
+notes: "Proposal only. Source fragment confirmed by private source read. Canon, Google Doc, Wiki and remarks remain unchanged until separate approval."
+review_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Home_Modes_State_Event_Proposal_Review]]"

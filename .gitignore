@@ -1,0 +1,13 @@
+# Local and generated files
+.env
+.env.*
+!.env.example
+**/build/
+**/__pycache__/
+*.pyc
+*.tmp
+*.bak
+*.log
+Thumbs.db
+.DS_Store
+

@@ -1,0 +1,7 @@
+﻿artifact_id,artifact_kind,stage_id,status,current_path,version_label,source_ref,last_checked_at,next_action
+project_passport,required_artifact,project_passport,present,01_Projects/001_77_Standard_iRidi/Artifacts/Project_Passport.md,current,passport_gate,2026-07-18,keep source trace and activity fields current
+project_creation_brief,required_artifact,project_type_identity,present,01_Projects/001_77_Standard_iRidi/Artifacts/Project_Creation_Brief.md,current,project_type_gate,2026-07-20,created from key task log and existing MOC
+documentation_package,required_artifact,documentation_package,present,01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/README.md,current,documentation_gate,2026-07-20,index points to workspace proposals gates and versioning
+weekly_status,required_artifact,qa_gate,present_from_key_task_log,01_Projects/001_77_Standard_iRidi/Sources/Key_Task_Log_N31_kt_e61095d3fb09.md,current,qa_gate,2026-07-20,plan/fact source is present; external write-back remains guarded
+artifact_coverage,required_artifact,qa_gate,present,01_Projects/001_77_Standard_iRidi/QA/Project_Artifact_Coverage_Report.md,current,qa_gate,2026-07-20,local coverage report created
+key_task_log:kt_e61095d3fb09,source_log,weekly_status,present,01_Projects/001_77_Standard_iRidi/Sources/Key_Task_Log_N31_kt_e61095d3fb09.md,Неделя 22,key_task:kt_e61095d3fb09,2026-07-18,use as source for project rail and artifact review

@@ -1,0 +1,3 @@
+external_ref_id,system,ref_type,ref,source_path,role,last_checked_at
+kkz_sheet,google_sheets,key_task_log,https://docs.google.com/spreadsheets/d/1bTY3_fA5dAwqgZ9ImQ9gd26UZWOZVADwRAiGPa_JDOM/edit,01_Projects/001_77_Standard_iRidi/Sources/Key_Task_Log_N31_kt_e61095d3fb09.md,source_of_project_status,2026-07-20
+standard_book_google_doc,google_docs,standard_book,https://docs.google.com/document/d/19K5o8mgCbCWuKcxUCPe5L9QzyFHKdf0214ae0TFG67A/edit,01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/README.md,canonical_publication_target_requires_approve,2026-07-20

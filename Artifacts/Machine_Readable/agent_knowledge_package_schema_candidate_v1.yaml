@@ -1,0 +1,138 @@
+schema_version: "candidate-1"
+status: proposal
+canonical: false
+do_not_use_for_build: true
+generated_at: "2026-08-05"
+project_id: "001"
+human_projection: "01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1.md"
+
+separation_contract:
+  control_plane:
+    editable: true
+    published_to_consumers: false
+    includes: [inbox, sources, reviews, decisions, backlog, archive]
+  knowledge_source:
+    path: "Workspace/77_Стандарт_iRidi/standard-src"
+    editable: true
+    includes: [book, taxonomy, sections, entities, assets]
+  tooling:
+    path: "Workspace/77_Стандарт_iRidi/tooling"
+    editable: true
+    includes: [schemas, templates, theme, renderers, tests]
+  build:
+    path: "Workspace/77_Стандарт_iRidi/build"
+    canonical: false
+  releases:
+    path: "Workspace/77_Стандарт_iRidi/releases"
+    immutable: true
+    consumer_entrypoint: "<release>/agent/START_HERE.md"
+
+dimensions:
+  audiences:
+    description: "Human roles only"
+    allowed:
+      - novice_installer
+      - experienced_integrator
+      - integrator_project_manager
+      - designer
+      - installer_commissioning_service
+      - sales
+      - presales
+      - training
+      - product_development
+      - management_qa
+  jobs:
+    allowed: [learn, explain, discover, select, calculate, design, install, commission, troubleshoot, audit, train, update, monitor_change]
+  consumer_applications:
+    allowed: [reference_agent, sales_technical_qa, presales_auditor, training_agent, editorial_agent, gap_router, release_agent, project_tool_compiler]
+  coverage_statuses:
+    allowed: [documented, gap, out_of_scope, conflict, deprecated, needs_input]
+
+topic_card_required:
+  - uid
+  - title
+  - summary
+  - answers_questions
+  - audiences
+  - jobs
+  - domains
+  - lifecycle
+  - coverage_status
+  - release
+  - content_ref
+topic_card_optional:
+  - aliases
+  - entity_refs
+  - rule_refs
+  - asset_refs
+  - related_topic_refs
+  - prerequisites
+
+release_agent_package:
+  required_files:
+    - START_HERE.md
+    - package.yaml
+    - navigation.json
+    - topics.jsonl
+    - rules.jsonl
+    - entities.jsonl
+    - relations.jsonl
+    - aliases.json
+    - changes.jsonl
+  required_indexes:
+    - indexes/by_audience.json
+    - indexes/by_job.json
+    - indexes/by_domain.json
+    - indexes/by_lifecycle.json
+    - indexes/by_entity.json
+  generated_only: true
+  drafts_allowed: false
+  private_sources_allowed: false
+  unresolved_proposals_allowed: false
+
+query_contract:
+  inputs:
+    required: [text]
+    optional: [audience, job, domain, lifecycle, entity, release, output_profile]
+  retrieval_order:
+    - release_and_access_gate
+    - exact_uid_and_alias
+    - deterministic_facet_indexes
+    - lexical_ranking
+    - one_hop_relation_expansion
+    - optional_semantic_recall
+  semantic_recall_authoritative: false
+  outputs_required:
+    - answer_status
+    - release
+    - answer
+    - applicability
+    - citations
+    - normative_levels
+    - next_step
+
+audit_contract:
+  inputs_required: [project_package, audit_profile, release]
+  outputs_required:
+    - audit_status
+    - checked_inputs
+    - applicable_rule_uids
+    - violations
+    - missing_inputs
+    - citations
+  audit_statuses: [pass, fail, needs_input]
+
+access_profiles:
+  consumer_agent:
+    allow: [released_agent_package]
+    deny: [control_plane, drafts, raw_sources, buffer]
+  editorial_agent:
+    allow: [control_plane, knowledge_source, tooling]
+    canonical_publish: false
+  builder:
+    allow: [knowledge_source, tooling, build]
+    editorial_decision: false
+  independent_acceptance:
+    allow: [immutable_baseline, release_candidate, acceptance_contract]
+    may_change_thresholds: false
+
