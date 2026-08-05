@@ -1,5 +1,5 @@
 uid: edt_lighting_baseline_normalization_20260805
-status: in_progress
+status: review
 initiator: owner_approved_architecture
 reader_problem: "Раздел Освещение должен стать первым глубоким vertical slice и доказать достаточность структуры без автоматического создания новых норм."
 audiences: [integrator, designer, presales, sales, training]

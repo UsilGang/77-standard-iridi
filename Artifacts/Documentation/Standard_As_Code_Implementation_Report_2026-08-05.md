@@ -78,6 +78,6 @@ LibreOffice отсутствует, поэтому полный render-to-PNG и
 
 ## Что остается
 
-1. Экспертно разобрать 96 кандидатов: подтвердить scope, applicability, rationale, exceptions и authority; только после этого создавать typed rules.
+1. Экспертно разобрать 96 кандидатов через [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Lighting_Rule_Candidates_Expert_Review]]: подтвердить scope, applicability, rationale, exceptions и authority; только после этого создавать typed rules.
 2. Выполнить D8 отдельной задачей: full-book content, image, table, cross-reference and pixel/page comparison, включая четыре positioned objects и три image fallback.
 3. До D8 PASS не менять source of truth и не публиковать полный текст книги в открытый GitHub, Google Docs или Wiki.
