@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iridi.example/schema/standard.schema.json",
+  "title": "iRidi Standard as Code",
+  "oneOf": [
+    {"$ref": "#/$defs/book"},
+    {"$ref": "#/$defs/section"},
+    {"$ref": "#/$defs/topic"},
+    {"$ref": "#/$defs/rule"},
+    {"$ref": "#/$defs/entity"},
+    {"$ref": "#/$defs/asset"},
+    {"$ref": "#/$defs/changeset"},
+    {"$ref": "#/$defs/release"}
+  ],
+  "$defs": {
+    "uid": {"type": "string", "pattern": "^[a-z][a-z0-9_:-]{2,127}$"},
+    "refs": {"type": "array", "items": {"type": "string"}, "default": []},
+    "base": {
+      "type": "object",
+      "required": ["uid", "type", "status", "revision", "privacy"],
+      "properties": {
+        "uid": {"$ref": "#/$defs/uid"},
+        "type": {"type": "string"},
+        "status": {"enum": ["legacy_migrated", "draft", "review", "approved", "deprecated", "conflict"]},
+        "revision": {"type": "integer", "minimum": 1},
+        "digest": {"type": ["string", "null"]},
+        "privacy": {"enum": ["public", "internal", "confidential", "personal"]},
+        "source_refs": {"$ref": "#/$defs/refs"},
+        "change_refs": {"$ref": "#/$defs/refs"},
+        "introduced_in": {"type": ["string", "null"]},
+        "last_changed_in": {"type": ["string", "null"]},
+        "allowed_outputs": {"$ref": "#/$defs/refs"}
+      }
+    },
+    "book": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["title", "section_refs"], "properties": {"type": {"const": "book"}, "title": {"type": "string"}, "section_refs": {"$ref": "#/$defs/refs"}, "release": {"type": ["string", "null"]}}}
+      ]
+    },
+    "section": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["title", "display_order", "archetype", "topic_refs"], "properties": {"type": {"const": "section"}, "title": {"type": "string"}, "display_order": {"type": "integer", "minimum": 1}, "display_number": {"type": ["string", "null"]}, "archetype": {"type": "string"}, "topic_refs": {"$ref": "#/$defs/refs"}, "source_tab_id": {"type": ["string", "null"]}}}
+      ]
+    },
+    "topic": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["title", "parent_uid", "audiences", "jobs", "coverage_status", "content_ref"], "properties": {"type": {"const": "topic"}, "title": {"type": "string"}, "parent_uid": {"$ref": "#/$defs/uid"}, "summary": {"type": "string"}, "aliases": {"$ref": "#/$defs/refs"}, "audiences": {"$ref": "#/$defs/refs"}, "jobs": {"$ref": "#/$defs/refs"}, "domains": {"$ref": "#/$defs/refs"}, "lifecycle": {"$ref": "#/$defs/refs"}, "entity_refs": {"$ref": "#/$defs/refs"}, "rule_refs": {"$ref": "#/$defs/refs"}, "coverage_status": {"enum": ["documented", "gap", "out_of_scope", "conflict", "deprecated", "needs_input"]}, "content_ref": {"type": "string"}}}
+      ]
+    },
+    "rule": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {"type": "object", "required": ["parent_uid", "claim_type", "normative_level", "statement", "applicability"], "properties": {"type": {"const": "rule"}, "parent_uid": {"$ref": "#/$defs/uid"}, "claim_type": {"enum": ["fact", "recommendation", "requirement", "prohibition", "limitation"]}, "normative_level": {"enum": ["informative", "may", "should", "must", "must_not"]}, "statement": {"type": "string", "minLength": 1}, "rationale": {"type": "string"}, "applicability": {"type": "object"}, "exceptions": {"type": "array"}, "decision_ref": {"type": ["string", "null"]}}}
+      ]
+    },
+    "entity": {
+      "allOf": [{"$ref": "#/$defs/base"}, {"type": "object", "required": ["entity_type", "title"], "properties": {"type": {"const": "entity"}, "entity_type": {"enum": ["product", "capability", "protocol", "role", "room", "technology"]}, "title": {"type": "string"}, "aliases": {"$ref": "#/$defs/refs"}, "facts": {"type": "array"}}}]
+    },
+    "asset": {
+      "allOf": [{"$ref": "#/$defs/base"}, {"type": "object", "required": ["asset_type", "path", "checksum"], "properties": {"type": {"const": "asset"}, "asset_type": {"enum": ["image", "schematic", "table", "diagram", "ui_capture", "data"]}, "path": {"type": "string"}, "checksum": {"type": "string"}, "caption": {"type": ["string", "null"]}, "alt": {"type": ["string", "null"]}}}]
+    },
+    "changeset": {
+      "allOf": [{"$ref": "#/$defs/base"}, {"type": "object", "required": ["editorial_job_uid", "changed_uids", "semantic_diff"], "properties": {"type": {"const": "changeset"}, "editorial_job_uid": {"$ref": "#/$defs/uid"}, "changed_uids": {"$ref": "#/$defs/refs"}, "semantic_diff": {"type": "array"}, "version_impact": {"enum": ["none", "patch", "minor", "major"]}}}]
+    },
+    "release": {
+      "allOf": [{"$ref": "#/$defs/base"}, {"type": "object", "required": ["version", "included_changesets", "manifest_digest"], "properties": {"type": {"const": "release"}, "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}, "included_changesets": {"$ref": "#/$defs/refs"}, "manifest_digest": {"type": "string"}, "published_at": {"type": ["string", "null"]}}}]
+    }
+  }
+}
+

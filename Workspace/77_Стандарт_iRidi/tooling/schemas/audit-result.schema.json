@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iridi.example/schema/audit-result.schema.json",
+  "title": "Presales/project audit result",
+  "type": "object",
+  "required": ["audit_status", "release", "checked_inputs", "applicable_rule_uids", "violations", "missing_inputs", "citations"],
+  "properties": {
+    "audit_status": {"enum": ["pass", "fail", "needs_input"]},
+    "release": {"type": "string"},
+    "checked_inputs": {"type": "object"},
+    "applicable_rule_uids": {"type": "array", "items": {"type": "string"}},
+    "violations": {"type": "array", "items": {"type": "object"}},
+    "missing_inputs": {"type": "array", "items": {"type": "string"}},
+    "citations": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}
+

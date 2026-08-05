@@ -1,0 +1,6 @@
+interface:
+  display_name: "Оператор книги стандартов"
+  short_description: "Импорт, проверка, сборка и поиск по стандарту"
+  default_prompt: "Use $standard-book-operator to validate and build the iRidi standard book."
+policy:
+  allow_implicit_invocation: true

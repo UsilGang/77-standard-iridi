@@ -24,19 +24,23 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/README]
 | Quality gates | active | [[01_Projects/001_77_Standard_iRidi/Artifacts/Quality_Gates]] |
 | Versioning rules | active | [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/VERSIONING]] |
 | Current book audit | draft_for_review | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current_Book_Structure_Audit_2026-08-05]] |
-| Standard as Code architecture | proposal | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]] |
+| Standard as Code architecture | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]] |
 | Machine-readable manifest bridge | proposal | [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/Standard_Book_Manifest_MOC]] |
 | Reconstruction parity acceptance | active_requirement | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Reconstruction_Parity_Acceptance_v1]] |
-| Content refactoring and templates | proposal | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]] |
-| Editorial assignment and versioning | proposal | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Editorial_Assignment_And_Versioning_Model_v1]] |
-| Audiences and agent knowledge access | proposal | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]] |
+| Content refactoring and templates | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]] |
+| Editorial assignment and versioning | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Editorial_Assignment_And_Versioning_Model_v1]] |
+| Audiences and agent knowledge access | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]] |
 
 ## Open Gates
 
 - [[01_Projects/001_77_Standard_iRidi/Reviews/2026-07-15_Transcribe_Backlog_Route_Review]] - решить, какие Transcribe-сигналы можно превратить в proposal стандарта.
 - [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-07-08_standard-book-publishing-pipeline/proposal]] - выбрать переходную модель публикации.
 - [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-07-18_track-lighting-classification/proposal]] - проверить классификацию трековых систем.
-- [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Standard_As_Code_Architecture_Review]] - утвердить или скорректировать D1-D7,D9-D11; D8 уже задан владельцем.
+
+## Approved implementation
+
+- [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-05_Standard_As_Code_Architecture_D1_D11]] - D1-D7,D9-D11 approved; D8 remains a deferred independent gate.
+- [[01_Projects/001_77_Standard_iRidi/Archive/Backlog/Done/DO-001-STD-AS-CODE-001_Implement_Approved_Architecture]] - completed implementation Do.
 
 ## Deferred verification Do
 

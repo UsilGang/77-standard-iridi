@@ -1,15 +1,16 @@
 ---
 type: standard_content_refactoring_model
-status: proposal
+status: approved_design
 project: 77 Standard iRidi
 project_id: "001"
-version: "candidate-1"
+version: "approved-1"
 created: 2026-08-05
 privacy: internal
 origin: agent_synthesis
 confidence: high
 verification: architecture_analysis_against_live_book_audit
-allowed_use: draft
+allowed_use: implementation_contract
+decision_ref: "[[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-05_Standard_As_Code_Architecture_D1_D11]]"
 source_refs:
   - "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current_Book_Structure_Audit_2026-08-05]]"
   - "user refactoring clarification in Codex task 2026-08-05"
@@ -17,7 +18,7 @@ source_refs:
 
 # Модель содержательного рефакторинга и шаблонов стандарта
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Reconstruction_Parity_Acceptance_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current_Book_Structure_Audit_2026-08-05]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/Standard_Book_Manifest_MOC]] и [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Standard_As_Code_Architecture_Review]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Reconstruction_Parity_Acceptance_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current_Book_Structure_Audit_2026-08-05]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/Standard_Book_Manifest_MOC]] и [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-05_Standard_As_Code_Architecture_Review]].
 
 ## 1. Главное решение
 

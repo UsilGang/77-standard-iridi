@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iridi.example/schema/editorial-job.schema.json",
+  "title": "Editorial assignment",
+  "type": "object",
+  "required": ["uid", "status", "reader_problem", "audiences", "source_refs", "target_uids", "content_plan", "outputs", "acceptance", "base_release", "version_impact"],
+  "properties": {
+    "uid": {"type": "string", "pattern": "^edt_[a-z0-9_:-]+$"},
+    "status": {"enum": ["draft", "review", "approved", "in_progress", "release_ready", "released", "rejected"]},
+    "initiator": {"type": "string"},
+    "reader_problem": {"type": "string", "minLength": 1},
+    "audiences": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "source_refs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "target_uids": {"type": "array", "items": {"type": "string"}},
+    "coverage_disposition": {"enum": ["documented_change", "gap", "out_of_scope", "product_gap", "conflict", "needs_input"]},
+    "content_plan": {"type": "array", "items": {"type": "object", "required": ["operation", "target"], "properties": {"operation": {"enum": ["add", "clarify", "split", "merge", "dedupe", "deprecate", "visualize", "no_change"]}, "target": {"type": "string"}, "brief": {"type": "string"}}}},
+    "visual_plan": {"type": "array", "items": {"type": "object"}},
+    "outputs": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "acceptance": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "base_release": {"type": "string"},
+    "version_impact": {"enum": ["none", "patch", "minor", "major"]},
+    "decision_ref": {"type": ["string", "null"]},
+    "changeset_uid": {"type": ["string", "null"]},
+    "release_uid": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://iridi.example/schema/query-answer.schema.json",
+  "title": "Standard query answer",
+  "type": "object",
+  "required": ["answer_status", "release", "answer", "applicability", "citations", "normative_levels", "next_step"],
+  "properties": {
+    "answer_status": {"enum": ["documented", "gap", "out_of_scope", "conflict", "deprecated", "needs_input"]},
+    "release": {"type": "string"},
+    "answer": {"type": "string"},
+    "applicability": {"type": "array", "items": {"type": "string"}},
+    "citations": {"type": "array", "items": {"type": "object", "required": ["uid", "content_ref"], "properties": {"uid": {"type": "string"}, "content_ref": {"type": "string"}, "title": {"type": "string"}}}},
+    "normative_levels": {"type": "array", "items": {"type": "string"}},
+    "next_step": {"type": ["string", "null"]}
+  },
+  "additionalProperties": false
+}
+

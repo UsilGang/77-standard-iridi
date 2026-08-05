@@ -1,0 +1,30 @@
+uid: edt_lighting_dali_clarification_20260805
+status: draft
+initiator: integrator_feedback
+reader_problem: "Интегратор не понимает, когда выбирать DALI и какие ограничения проверять."
+audiences: [integrator, designer, presales, sales, training]
+source_refs:
+  - "market_signal:example"
+  - "baseline:baseline_19K5o8mg_288e8eead70d07c1"
+target_uids: [std_ch_lighting, std_topic_533___dali_1_30f37b6868]
+coverage_disposition: needs_input
+content_plan:
+  - operation: clarify
+    target: std_topic_533___dali_1_30f37b6868
+    brief: "Отделить объяснение технологии от утвержденных правил выбора."
+  - operation: visualize
+    target: std_topic_533___dali_1_30f37b6868
+    brief: "Нарисовать проверяемую схему выбора без добавления новой нормы."
+visual_plan:
+  - type: decision_flow
+    source_required: true
+outputs: [standard-normalized, agent_knowledge, training_delta]
+acceptance:
+  - "Каждое нормативное утверждение имеет source_ref и decision_ref."
+  - "Измененные UID и semantic diff перечислены в changeset."
+  - "Ответ агента цитирует release и UID."
+base_release: 0.0.0
+version_impact: minor
+decision_ref: null
+changeset_uid: null
+release_uid: null

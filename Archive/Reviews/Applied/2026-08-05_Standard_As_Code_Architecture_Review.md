@@ -1,6 +1,6 @@
 ---
 type: architecture_review
-status: review
+status: approved
 project: 77 Standard iRidi
 project_id: "001"
 created: 2026-08-05
@@ -12,13 +12,17 @@ source_refs:
   - "[[00_Inbox/Raw_Collector/Archive/2026/07/20260708_transcribe_recording_2026-06-30_15-04-23_reco_c98ab5251a]]"
   - "[[00_Inbox/Raw_Collector/Archive/2026/07/20260711_transcribe_recording_2026-07-10_14-01-47_reco_46f55ec34a]]"
 proposal_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]]"
-action_id: TBD
+action_id: operate_standard_book
 tool_plan: local_file_tools_plus_read_only_google_docs_inventory
-tool_gap: standard_as_code_pipeline_not_registered
+tool_gap: standard_as_code_pipeline_to_be_implemented_and_registered_by_approved_do
 approval_class: human_decision
-blocker: needs_human_decision
+blocker: null
 canonical_change: false
 external_write: false
+approved_at: 2026-08-05
+approval_ref: "user: аппрув на все; D8 сейчас не выполняем; остальное реализовать"
+approved_decisions: [D1, D2, D3, D4, D5, D6, D7, D9, D10, D11]
+deferred_execution: [D8]
 ---
 
 # Review: архитектура Standard as Code
@@ -123,3 +127,11 @@ external_write: false
 6. generated agent package и фасетные индексы для раздела 5 «Освещение»;
 7. dual-profile source/build для раздела 5 «Освещение»;
 8. lighting parity/refactoring/access report и full-book migration plan, без изменения Google Doc.
+
+## Resolution
+
+Пользователь утвердил D1–D7 и D9–D11 и поручил перейти к реализации. D8 не входит в текущий Do: независимая приемка остается обязательным последующим gate и запускается только после появления полного baseline и deterministic build candidate.
+
+Решение: [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-05_Standard_As_Code_Architecture_D1_D11]].
+
+Исполнение: [[01_Projects/001_77_Standard_iRidi/Archive/Backlog/Done/DO-001-STD-AS-CODE-001_Implement_Approved_Architecture]].

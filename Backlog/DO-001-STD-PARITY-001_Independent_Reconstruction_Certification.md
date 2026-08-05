@@ -8,23 +8,21 @@ created: 2026-08-05
 privacy: internal
 source_ref: "user acceptance clarification in Codex task 2026-08-05"
 action_id: TBD
+baseline_uid: baseline_19K5o8mg_288e8eead70d07c1
+release_candidate_uid: std_release_010_fe753b2355
 requirement_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Reconstruction_Parity_Acceptance_v1]]"
 refactoring_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]]"
 blocked_by:
-  - approved_standard_as_code_architecture
-  - approved_editorial_assignment_and_versioning_contract
-  - immutable_full_book_baseline
-  - migrated_full_content_tree
   - approved_full_transformation_manifest
-  - deterministic_full_book_build_candidate
+  - independent_visual_certifier_environment
 trigger: "Activate after exact baseline_uid and full_book_release_candidate_uid are both fixed and every blocked_by item is resolved."
-tool_gap: standard_reconstruction_certifier_not_implemented_or_registered
+tool_gap: "LibreOffice/page raster and independent full-book comparison route are not available; do not self-certify with the implementation CLI"
 approval: owner_has_approved_the_acceptance_principle_but_not_cutover_or_external_publish
 ---
 
 # DO-001-STD-PARITY-001: независимая сертификация реконструкции книги
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Reconstruction_Parity_Acceptance_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Standard_As_Code_Architecture_Review]], [[03_Resources/CORD_Methodology/Do_Execution_And_Tools]], [[03_Resources/Tool_Registry/Tool_Registry_MOC]] и [[03_Resources/Action_Registry/Action_Registry_MOC]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Reconstruction_Parity_Acceptance_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-05_Standard_As_Code_Architecture_Review]], [[03_Resources/CORD_Methodology/Do_Execution_And_Tools]], [[03_Resources/Tool_Registry/Tool_Registry_MOC]] и [[03_Resources/Action_Registry/Action_Registry_MOC]].
 
 ## Goal
 

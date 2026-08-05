@@ -2,6 +2,8 @@
 .env
 .env.*
 !.env.example
+.venv/
+**/.venv/
 **/build/
 **/__pycache__/
 *.pyc
@@ -10,4 +12,3 @@
 *.log
 Thumbs.db
 .DS_Store
-

@@ -1,0 +1,34 @@
+schema_version: "1.0"
+theme_version: "1.0.0"
+status: approved
+page:
+  size: A4
+  margin_mm: {top: 18, right: 18, bottom: 20, left: 20}
+typography:
+  body: {family: Arial, size_pt: 10.5, line_height: 1.15, color: "#202124"}
+  h1: {family: Arial, size_pt: 22, weight: 700, color: "#153A5B", space_before_pt: 18, space_after_pt: 8}
+  h2: {family: Arial, size_pt: 17, weight: 700, color: "#153A5B", space_before_pt: 14, space_after_pt: 6}
+  h3: {family: Arial, size_pt: 13, weight: 700, color: "#244F70", space_before_pt: 10, space_after_pt: 4}
+  caption: {family: Arial, size_pt: 8.5, color: "#5F6368"}
+colors:
+  primary: "#153A5B"
+  secondary: "#2F6F9F"
+  accent: "#F5A623"
+  border: "#DADCE0"
+  warning: "#B3261E"
+  background: "#FFFFFF"
+tables:
+  header_fill: "#E8F0F7"
+  border_color: "#B8C4CE"
+  cell_padding_mm: 1.5
+assets:
+  max_width_mm: 170
+  caption_prefix: "Рисунок"
+profiles:
+  legacy-fidelity:
+    preserve_source_order: true
+    normalize_headings: false
+  standard-normalized:
+    preserve_source_order: false
+    normalize_headings: true
+

@@ -1,0 +1,36 @@
+uid: edt_lighting_baseline_normalization_20260805
+status: in_progress
+initiator: owner_approved_architecture
+reader_problem: "Раздел Освещение должен стать первым глубоким vertical slice и доказать достаточность структуры без автоматического создания новых норм."
+audiences: [integrator, designer, presales, sales, training]
+source_refs:
+  - "decision:2026-08-05_Standard_As_Code_Architecture_D1_D11"
+  - "baseline:baseline_19K5o8mg_288e8eead70d07c1"
+target_uids: [std_ch_lighting]
+coverage_disposition: needs_input
+content_plan:
+  - operation: split
+    target: std_ch_lighting
+    brief: "Механически разложить legacy content по стабильным topic UID без смысловой правки."
+  - operation: visualize
+    target: std_ch_lighting
+    brief: "Сохранить 107 изображений и подготовить визуальный план для последующей редакционной проверки."
+  - operation: clarify
+    target: std_ch_lighting
+    brief: "После экспертного review типизировать facts, requirements, recommendations, limitations и prohibitions."
+visual_plan:
+  - type: source_asset_preservation
+    expected_assets: 107
+  - type: normalized_template_mapping
+    template_uid: std_tpl_subsystem_v1
+outputs: [legacy-fidelity, standard-normalized, agent_knowledge, internal_review]
+acceptance:
+  - "64 topic UID валидны, уникальны и сохраняют source refs."
+  - "37 таблиц и 107 изображений входят в lossless source layer."
+  - "Ни одно legacy утверждение не получает нормативный уровень без expert decision."
+  - "Transformation manifest перечисляет выполненные операции и незакрытые semantic gates."
+base_release: 0.0.0
+version_impact: none
+decision_ref: "decision:2026-08-05_Standard_As_Code_Architecture_D1_D11"
+changeset_uid: null
+release_uid: null

@@ -5,8 +5,8 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 last_activity_at: 2026-08-05
-last_activity_kind: audience_and_agent_access_model_proposed
-last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]]"
+last_activity_kind: standard_as_code_toolchain_implemented
+last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Implementation_Report_2026-08-05]]"
 stage: active
 privacy: internal
 source_ref: "CORD backfill 2026-07-10"
@@ -25,9 +25,9 @@ project_route: "existing_project"
 ## Activity
 
 - Last activity: `2026-08-05`.
-- Kind: `audience_and_agent_access_model_proposed`.
-- Ref: [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]].
+- Kind: `standard_as_code_toolchain_implemented`.
+- Ref: [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Implementation_Report_2026-08-05]].
 
 ## Следующее действие
 
-Принять решение по D1-D7,D9-D11 в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Standard_As_Code_Architecture_Review]]. D10 задает EDT/version trace, D11 — аудитории и released agent package; owner requirement D8 уже действует, cutover запрещен до PASS G1–G8.
+Выполнить [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]] независимо от implementation agent. Параллельно экспертно разобрать 96 lighting rule candidates; cutover запрещен до D8 PASS.

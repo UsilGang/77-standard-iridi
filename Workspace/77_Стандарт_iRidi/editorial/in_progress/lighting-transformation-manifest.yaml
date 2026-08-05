@@ -1,0 +1,24 @@
+uid: trn_lighting_baseline_20260805
+status: structural_pass_semantic_review_required
+source_section_uid: std_ch_lighting
+baseline_uid: baseline_19K5o8mg_288e8eead70d07c1
+source_inventory:
+  characters: 125598
+  paragraphs: 1592
+  tables: 37
+  inline_images: 107
+  positioned_images: 0
+normalized_inventory:
+  topics: 64
+  typed_rules: 0
+  reviewed_entities: 0
+  lexical_rule_candidates: 96
+operations:
+  - {uid: trn_lighting_capture, operation: preserve, status: pass, evidence: baseline-manifest.json}
+  - {uid: trn_lighting_split_topics, operation: split, status: pass, evidence: std_ch_lighting/section.yaml}
+  - {uid: trn_lighting_assets, operation: rebase_assets, status: pass, evidence: assets/manifest.yaml}
+  - {uid: trn_lighting_tables, operation: canonicalize_tables, status: pass, evidence: std_ch_lighting/blocks.jsonl}
+  - {uid: trn_lighting_type_rules, operation: type_normative_claims, status: 96_candidates_need_expert_review, evidence: editorial/private-candidates/lighting-rule-candidates.yaml}
+  - {uid: trn_lighting_type_entities, operation: type_entities_and_facts, status: needs_expert_review, evidence: edt_lighting_baseline_normalization_20260805}
+unexplained_semantic_deltas: not_certified_d8
+d8_status: deferred

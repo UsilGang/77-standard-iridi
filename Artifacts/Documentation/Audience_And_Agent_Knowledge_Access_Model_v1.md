@@ -1,15 +1,16 @@
 ---
 type: audience_and_agent_access_model
-status: proposal
+status: approved_design
 project: 77 Standard iRidi
 project_id: "001"
-version: "candidate-1"
+version: "approved-1"
 created: 2026-08-05
 privacy: internal
 origin: mixed
 confidence: high
 verification: full_source_read_plus_architecture_review
-allowed_use: draft
+allowed_use: implementation_contract
+decision_ref: "[[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-05_Standard_As_Code_Architecture_D1_D11]]"
 source_refs:
   - "[[00_Inbox/Raw_Collector/Archive/2026/07/20260708_transcribe_recording_2026-06-30_15-04-23_reco_c98ab5251a]]"
   - "[[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/meeting-summary]]"
@@ -18,7 +19,7 @@ source_refs:
 
 # Потребители стандарта и доступ агентов к знаниям
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/Standard_Book_Manifest_MOC]] и [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Standard_As_Code_Architecture_Review]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/Standard_Book_Manifest_MOC]] и [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-05_Standard_As_Code_Architecture_Review]].
 
 ## 1. Что подтвердил первичный источник
 
@@ -242,4 +243,3 @@ MCP в дальнейшем вызывает тот же query layer. CLI, MCP �
 3. Проверить четыре сценария: справочный ответ, продажное объяснение, пресейл-аудит, training delta.
 4. Проверить отрицательные сценарии: неизвестный вопрос, осознанный `out_of_scope`, конфликт и недостаточные данные.
 5. Только после этого решать, нужен ли embeddings-индекс и MCP; базовый package должен работать локально без них.
-

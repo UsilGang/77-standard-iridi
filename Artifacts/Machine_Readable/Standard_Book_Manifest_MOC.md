@@ -1,6 +1,6 @@
 ---
 type: machine_readable_bridge
-status: proposal
+status: implemented
 project: 77 Standard iRidi
 project_id: "001"
 created: 2026-08-05
@@ -8,9 +8,9 @@ privacy: internal
 source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current_Book_Structure_Audit_2026-08-05]]"
 ---
 
-# Machine-readable bridge: Standard book architecture candidates
+# Machine-readable bridge: Standard book
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current_Book_Structure_Audit_2026-08-05]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]] и [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-05_Standard_As_Code_Architecture_Review]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current_Book_Structure_Audit_2026-08-05]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]] и [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-05_Standard_As_Code_Architecture_Review]].
 
 ## Artifact
 
@@ -24,12 +24,18 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current
 
 ## Status and allowed use
 
-- `proposal`, не канон;
+- архитектурные contracts утверждены и реализованы; Google Doc пока остается действующим каноном;
 - собран по live read-only inventory Google Doc 2026-08-05;
 - разрешен для architecture review и планирования migration pilot;
 - запрещен как production build input до approve и schema validation;
 - не содержит текста книги или raw confidential sources.
 - template candidate не разрешает автоматически исправлять legacy content.
+
+## Реализация
+
+Исполняемый CLI, schemas, theme tokens, templates and examples находятся в project workspace и описаны в [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Implementation_Report_2026-08-05]]. Полный source tree, baseline, images, builds, agent package and release candidate остаются локальными private outputs до publication approve.
+
+Оператор: `$standard-book-operator`; action route: `operate_standard_book`; decision: [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-05_Standard_As_Code_Architecture_D1_D11]].
 
 ## Human projection
 

@@ -22,3 +22,11 @@ source_ref: "[[07_Source_Registry/Source_Registry]]"
 ## Зачем она отдельным workspace
 
 Это рабочая копия/источник стандарта с собственной структурой, versioning and source artifacts. CORD хранит ее внутри проекта как вложенный workspace, чтобы не смешивать legacy workflow `inbox/archive/sources` со standard CORD scaffold.
+
+## Standard as Code
+
+- `standard-src/` — редактируемое ядро знаний; полный импорт локален и не публикуется;
+- `tooling/` — schemas, tokens, templates, tests и единый `standard_book.py`;
+- `editorial/` — трассируемые редакционные задания и transformation manifests;
+- `build/` и `releases/` — generated private outputs;
+- оператор проекта — `$standard-book-operator`.

@@ -1,0 +1,9 @@
+project_uid: example_lighting_project
+requirements:
+  - "Управление яркостью светильников DALI"
+components:
+  - kind: lighting_controller
+    model: needs_input
+  - kind: dali_power_supply
+    model: needs_input
+assumptions: []
