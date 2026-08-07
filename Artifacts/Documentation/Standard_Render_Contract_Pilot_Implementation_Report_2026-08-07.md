@@ -6,14 +6,14 @@ project: 77 Standard iRidi
 project_id: "001"
 privacy: internal
 action_id: operate_standard_book
-source_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
-contract_uid: std_render_contract_v1_candidate
+source_ref: "[[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
+contract_uid: std_render_contract_v1
 feedback_ref: "user browser comments 2026-08-07: heading markers, readable margins, LED table geometry, and book navigation"
 ---
 
 # Отчет: пилот контракта генерации книги
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_v1.yaml]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
 
 ## Результат
 
@@ -26,9 +26,9 @@ feedback_ref: "user browser comments 2026-08-07: heading markers, readable margi
 | Tool/action | `standard_book.py build`, action `operate_standard_book` |
 | Код | `Workspace/77_Стандарт_iRidi/tooling/standard_book.py` |
 | Новая команда | `build ... --section std_ch_lighting` |
-| Контракт | `Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml` |
+| Контракт | `Artifacts/Machine_Readable/standard_render_contract_v1.yaml` |
 | Контракт таблиц | `Workspace/77_Стандарт_iRidi/tooling/table_layout_contract.yaml` |
-| Review | `Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review.md` |
+| Review | `Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review.md` |
 | Private build root | `Workspace/77_Стандарт_iRidi/build/contract-pilot/` |
 
 ## Проверки
@@ -62,8 +62,8 @@ feedback_ref: "user browser comments 2026-08-07: heading markers, readable margi
 
 ## Оставшиеся ограничения и gates
 
-- `std_render_contract_v1_candidate` остается proposal до ответа владельца;
-- содержательный рефакторинг «Освещения» не начат и требует утвержденного RC1;
+- `std_render_contract_v1` утвержден владельцем 2026-08-07 и является каноническим render contract;
+- содержательный рефакторинг «Освещения» не начат и требует отдельного утверждения content template contract и редакционного задания;
 - 96 lighting rule candidates не утверждены;
 - LibreOffice отсутствует, поэтому DOCX прошел структурную, но не постраничную PNG-проверку;
 - D8, cutover и внешняя публикация не выполнены и не разрешены этим Do.

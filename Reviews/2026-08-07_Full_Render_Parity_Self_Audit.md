@@ -14,7 +14,7 @@ manual_gate: D8_independent_certification_remains_deferred
 
 # Полный самостоятельный аудит соответствия книги
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/render_parity_audit_contract_v1]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/render_parity_audit_contract_v1]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
 
 ## Итог
 

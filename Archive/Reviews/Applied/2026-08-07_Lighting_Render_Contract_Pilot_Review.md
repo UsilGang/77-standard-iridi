@@ -1,19 +1,22 @@
 ---
 type: standard_contract_review
-status: review
+status: applied
 created: 2026-08-07
 project: 77 Standard iRidi
 project_id: "001"
 privacy: internal
 review_uid: std_review_render_contract_pilot_20260807
-contract_uid: std_render_contract_v1_candidate
+contract_uid: std_render_contract_v1
 pilot_section_uid: std_ch_lighting
 source_ref: "user: pilot on one large section, full-book preview in parallel, approve contract before scaling"
-machine_contract_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml]]"
+machine_contract_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_v1.yaml]]"
 template_contract_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml]]"
-decision_required: approve_or_revise
+decision_required: resolved_approve
 action_id: operate_standard_book
-blocker: needs_human_decision
+blocker: null
+approved_at: 2026-08-07
+approval_ref: "user: в целом мне нравится апрув"
+decision_ref: "[[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]]"
 feedback_refs:
   - "user browser comment 2026-08-07: deep Markdown headings rendered literally"
   - "user browser comment 2026-08-07: content column had no readable side margins"
@@ -22,7 +25,7 @@ feedback_refs:
 
 # Согласование контракта книги: пилот «Освещение»
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Render_Contract_Pilot_Implementation_Report_2026-08-07]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_v1.yaml]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Render_Contract_Pilot_Implementation_Report_2026-08-07]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]], [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
 
 ## Что открыть и в каком порядке
 
@@ -37,7 +40,7 @@ feedback_refs:
 
 ## Что именно предлагается утвердить
 
-Одно решение утверждает контракт `std_render_contract_v1_candidate`:
+Одно решение утверждает контракт `std_render_contract_v1`:
 
 - источником книги является адресуемая цепочка `book -> section -> topic -> content`, а не вручную редактируемый итоговый DOCX;
 - «Освещение» является первым глубоким разделом для согласования, но обязательный масштаб — вся книга;

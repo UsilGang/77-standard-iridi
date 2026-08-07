@@ -1,17 +1,20 @@
-schema_version: "candidate-1"
-status: approved_snapshot
-canonical: false
-do_not_use_for_release: true
+schema_version: "1.0"
+status: active
+canonical: true
+release_eligible: false
 created: "2026-08-07"
 approved_at: "2026-08-07"
-approval_ref: "user: в целом мне нравится апрув"
-active_contract_ref: "Artifacts/Machine_Readable/standard_render_contract_v1.yaml"
 project_id: "001"
+approval:
+  decision_ref: "Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval.md"
+  approval_ref: "user: в целом мне нравится апрув"
+  approved_from: "Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml"
 contract:
-  uid: std_render_contract_v1_candidate
+  uid: std_render_contract_v1
   title: "Standard book rendering and pilot scaling contract"
   source_model_ref: "Workspace/77_Стандарт_iRidi/standard-src/book.yaml"
   template_contract_ref: "Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml"
+  template_contract_status: proposal_not_approved_by_rc1
   implementation_ref: "Workspace/77_Стандарт_iRidi/tooling/standard_book.py"
   table_layout_contract_ref: "Workspace/77_Стандарт_iRidi/tooling/table_layout_contract.yaml"
   migration_scope: full_book
@@ -86,12 +89,14 @@ contract:
       - full_book_as_required_scope
     does_not_approve:
       - semantic_correctness_of_all_legacy_content
+      - content_template_candidate
       - lighting_rule_candidates
       - full_book_reconstruction_certification_d8
       - cutover
       - external_publication
   gates_after_approval:
-    - refactor_lighting_content_to_approved_template
-    - regenerate_lighting_and_full_book
+    - approve_or_revise_content_template_before_semantic_refactor
+    - create_editorial_assignment_for_lighting
+    - regenerate_lighting_and_full_book_after_authorized_changes
     - review_explained_deltas
     - run_independent_d8_before_cutover
