@@ -8,6 +8,7 @@ privacy: internal
 action_id: operate_standard_book
 source_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
 contract_uid: std_render_contract_v1_candidate
+feedback_ref: "user browser comments 2026-08-07: heading markers and missing readable margins"
 ---
 
 # Отчет: пилот контракта генерации книги
@@ -32,18 +33,25 @@ contract_uid: std_render_contract_v1_candidate
 ## Проверки
 
 - source validation: PASS, 17 разделов, 276 тем, 0 approved typed rules;
-- unit tests: PASS, 7 tests;
+- unit tests: PASS, 9 tests;
 - Lighting HTML: 64 topic headings, 37 таблиц, 107 изображений, 0 missing image links;
 - full-book HTML: 276 topic headings, 150 таблиц, 437 изображений, 0 missing image links;
 - Lighting DOCX: 37 таблиц, 107 inline shapes, ZIP integrity PASS;
 - full-book DOCX: ZIP integrity PASS;
 - landing page `START_HERE.html` проверена headless Chrome;
+- exact browser regression: `5.3.2.1.2. Принцип фазового диммирования` — tag `H3`, literal `####` absent;
+- HTML layout at 1280 px: centered 1040 px paper, 120 px outer margins plus 80 px inner padding;
 - scoped CORD rail: project type valid, artifact coverage has no missing rows, dashboard audit has 0 findings;
 - generated book, images and QA screenshots остаются под `**/build/` и не попадают в Git.
 
 ## Исправление, найденное визуальным пилотом
 
-Первый HTML-render дублировал заголовок темы: один раз из реестра и второй раз из legacy content. Генератор исправлен так, чтобы совпадающий первый заголовок не повторялся. Разрозненные legacy list paragraphs теперь собираются в один список без потери inline images. Оба случая закреплены тестами.
+- Первый HTML-render дублировал заголовок темы. Совпадающий первый заголовок теперь не повторяется.
+- Разрозненные legacy list paragraphs собираются в один список без потери inline images.
+- По browser feedback заголовки `####`–`######` внутри темы нормализуются в `Heading 3` в HTML и DOCX; literal Markdown markers исчезли.
+- По browser feedback HTML получил ограниченную читаемую колонку и адаптивные боковые поля.
+
+Все четыре случая закреплены детерминированными тестами и проверены повторной сборкой раздела и всей книги.
 
 ## Оставшиеся ограничения и gates
 

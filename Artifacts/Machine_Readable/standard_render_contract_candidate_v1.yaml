@@ -35,8 +35,18 @@ contract:
     section: heading_level_1
     topic: heading_level_2
     source_subheading: heading_level_3
+    legacy_heading_depth_1_to_6_inside_topic: normalize_to_heading_level_3
+    literal_markdown_heading_markers_in_view: forbidden
     repeated_source_heading_matching_topic_title: suppress_in_generated_view
     consecutive_source_list_items: group_as_one_list
+  html_layout:
+    document_max_width_px: 1040
+    body_padding_desktop: "48px clamp(28px,6vw,80px) 96px"
+    body_padding_mobile: "28px 22px 64px"
+    body_font_px: 16
+    line_height: 1.55
+    page_background: "#F1F4F6"
+    content_background: "#FFFFFF"
   tables:
     preserve_source_order: true
     preserve_rows_and_columns: true

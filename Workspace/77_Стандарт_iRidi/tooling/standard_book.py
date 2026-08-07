@@ -739,6 +739,36 @@ def markdown_is_separator(cells: list[str]) -> bool:
     return bool(cells) and all(re.fullmatch(r":?-{3,}:?", cell.strip()) for cell in cells)
 
 
+def markdown_heading(line: str) -> tuple[int, str] | None:
+    match = re.fullmatch(r"(#{1,6})\s+(.+?)\s*", line.strip())
+    if not match:
+        return None
+    return len(match.group(1)), match.group(2)
+
+
+def rendered_heading_level(markdown_level: int, normalized: bool) -> int:
+    """Normalize all headings inside an addressable topic to one subheading level."""
+    if normalized:
+        return 3
+    return 2 if markdown_level <= 2 else 3
+
+
+HTML_CSS = (
+    "html{background:#F1F4F6}"
+    "body{font-family:Arial,sans-serif;width:100%;max-width:1040px;margin:0 auto;"
+    "padding:48px clamp(28px,6vw,80px) 96px;box-sizing:border-box;font-size:16px;"
+    "line-height:1.55;color:#202124;background:#FFF;overflow-wrap:anywhere}"
+    "h1,h2,h3{color:#153A5B;line-height:1.25}"
+    "h1{margin:0 0 1.5rem}h2{margin:2.25rem 0 .9rem}h3{margin:1.75rem 0 .7rem}"
+    "p{margin:.7rem 0 1rem}ul{margin:.6rem 0 1.2rem;padding-left:1.75rem}li{margin:.25rem 0}"
+    "img{display:block;max-width:100%;height:auto;margin:1rem auto}figure{margin:1.25rem 0}"
+    "table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.95rem}"
+    "td,th{border:1px solid #B8C4CE;padding:8px;vertical-align:top}th{background:#EAF1F6}"
+    ".missing-asset{color:#9B1C1C}"
+    "@media(max-width:640px){body{padding:28px 22px 64px;font-size:15px}h1{font-size:1.75rem}h2{font-size:1.4rem}}"
+)
+
+
 def markdown_cell_html(cell: str, source_path: Path) -> str:
     parts: list[str] = []
     cursor = 0
@@ -766,8 +796,8 @@ def markdown_html(path: Path, skip_initial_heading: str | None = None) -> list[s
             continue
         if not checked_initial_heading:
             checked_initial_heading = True
-            heading_text = re.sub(r"^#+\s*", "", stripped).strip()
-            if skip_initial_heading and stripped.startswith("#") and heading_text == skip_initial_heading:
+            heading = markdown_heading(stripped)
+            if skip_initial_heading and heading and heading[1] == skip_initial_heading:
                 index += 1
                 continue
         if stripped.startswith("| "):
@@ -786,12 +816,9 @@ def markdown_html(path: Path, skip_initial_heading: str | None = None) -> list[s
         image_match = re.search(r"!\[([^]]*)\]\(([^)]+)\)", stripped)
         if image_match:
             out.append(f"<p>{markdown_cell_html(stripped, path)}</p>")
-        elif stripped.startswith("### "):
-            out.append(f"<h3>{html.escape(stripped[4:])}</h3>")
-        elif stripped.startswith("## "):
-            out.append(f"<h2>{html.escape(stripped[3:])}</h2>")
-        elif stripped.startswith("# "):
-            out.append(f"<h2>{html.escape(stripped[2:])}</h2>")
+        elif heading := markdown_heading(stripped):
+            level = rendered_heading_level(heading[0], normalized=skip_initial_heading is not None)
+            out.append(f"<h{level}>{html.escape(heading[1])}</h{level}>")
         elif stripped.startswith("- "):
             items: list[str] = []
             while index < len(lines):
@@ -830,8 +857,7 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
             for topic in ordered_section_topics(section, topics_by_uid):
                 body.append(f"<h2>{html.escape(topic['title'])}</h2>")
                 body.extend(markdown_html(source_dir / topic["content_ref"], skip_initial_heading=str(topic["title"])))
-    css = "body{font-family:Arial,sans-serif;max-width:1100px;margin:2rem auto;line-height:1.35;color:#202124}h1,h2,h3{color:#153A5B}img{max-width:100%;height:auto}figure{margin:1rem 0}table{width:100%;border-collapse:collapse;margin:1rem 0}td,th{border:1px solid #B8C4CE;padding:6px;vertical-align:top}th{background:#EAF1F6}.missing-asset{color:#9B1C1C}"
-    atomic_write_text(output, "<!doctype html><html lang='ru'><meta charset='utf-8'><style>" + css + "</style><body>" + "\n".join(body) + "</body></html>\n")
+    atomic_write_text(output, "<!doctype html><html lang='ru'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>" + HTML_CSS + "</style><body>" + "\n".join(body) + "</body></html>\n")
 
 
 def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list[str] | None = None) -> None:
@@ -872,15 +898,19 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                 doc.add_heading(normalized_topic_title, 2)
             lines = path.read_text(encoding="utf-8").splitlines()
             index = 0
+            checked_initial_heading = False
             while index < len(lines):
                 line = lines[index]
                 stripped = line.strip()
                 if not stripped:
                     index += 1
                     continue
-                if normalized_topic_title and index == 0 and re.sub(r"^#+\s*", "", stripped).strip() == normalized_topic_title:
-                    index += 1
-                    continue
+                if not checked_initial_heading:
+                    checked_initial_heading = True
+                    heading = markdown_heading(stripped)
+                    if normalized_topic_title and heading and heading[1] == normalized_topic_title:
+                        index += 1
+                        continue
                 if stripped.startswith("| "):
                     rows: list[list[str]] = []
                     while index < len(lines) and lines[index].strip().startswith("|"):
@@ -923,12 +953,9 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                 image_matches = list(re.finditer(r"!\[([^]]*)\]\(([^)]+)\)", stripped))
                 if image_matches:
                     plain = re.sub(r"!\[[^]]*\]\([^)]+\)", "", stripped).strip()
-                    if plain.startswith("### "):
-                        doc.add_heading(plain[4:], 3)
-                    elif plain.startswith("## "):
-                        doc.add_heading(plain[3:], 2)
-                    elif plain.startswith("# "):
-                        doc.add_heading(plain[2:], 2)
+                    heading = markdown_heading(plain)
+                    if heading:
+                        doc.add_heading(heading[1], rendered_heading_level(heading[0], normalized=bool(normalized_topic_title)))
                     elif plain.startswith("- "):
                         doc.add_paragraph(plain[2:], style="List Bullet")
                     elif plain:
@@ -942,12 +969,8 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                                 doc.add_paragraph(f"[Изображение: {image_path.name}]")
                         else:
                             doc.add_paragraph(image_match.group(0))
-                elif stripped.startswith("### "):
-                    doc.add_heading(stripped[4:], 3)
-                elif stripped.startswith("## "):
-                    doc.add_heading(stripped[3:], 2)
-                elif stripped.startswith("# "):
-                    doc.add_heading(stripped[2:], 2)
+                elif heading := markdown_heading(stripped):
+                    doc.add_heading(heading[1], rendered_heading_level(heading[0], normalized=bool(normalized_topic_title)))
                 elif stripped.startswith("- "):
                     doc.add_paragraph(stripped[2:], style="List Bullet")
                 elif stripped.startswith("| "):

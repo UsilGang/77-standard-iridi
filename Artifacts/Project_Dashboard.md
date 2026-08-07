@@ -48,6 +48,7 @@ privacy: internal
 - Owner: Василий.
 - Reviewer: Василий.
 - Пилот RC1 собран: 1 раздел, 64 темы, 37 таблиц и 107 изображений; полное превью включает 17 разделов и 276 тем.
+- Browser feedback RC1 применен: deep Markdown headings нормализованы в `Heading 3`, HTML получил читаемую колонку и адаптивные боковые поля.
 
 ## Assumptions
 

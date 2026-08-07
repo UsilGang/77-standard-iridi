@@ -5,7 +5,7 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 last_activity_at: 2026-08-07
-last_activity_kind: lighting_render_contract_pilot_prepared
+last_activity_kind: render_contract_feedback_applied
 last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
 stage: active
 privacy: internal
@@ -25,7 +25,7 @@ project_route: "existing_project"
 ## Activity
 
 - Last activity: `2026-08-07`.
-- Kind: `lighting_render_contract_pilot_prepared`.
+- Kind: `render_contract_feedback_applied`.
 - Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]].
 
 ## Следующее действие

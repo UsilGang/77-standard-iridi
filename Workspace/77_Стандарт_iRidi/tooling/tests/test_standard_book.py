@@ -83,6 +83,23 @@ class StandardBookTests(unittest.TestCase):
             rendered = standard_book.markdown_html(path)
             self.assertIn("<img src='assets/image.png' alt='scheme'>", rendered[0])
 
+    def test_deep_markdown_headings_are_normalized_as_topic_subheadings(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "topic.md"
+            path.write_text(
+                "# 5.3.2 Topic\n\n##### 5.3.2.1.1. General\n\n#### 5.3.2.1.2. Phase dimming\n",
+                encoding="utf-8",
+            )
+            rendered = standard_book.markdown_html(path, skip_initial_heading="5.3.2 Topic")
+            self.assertEqual(
+                rendered,
+                ["<h3>5.3.2.1.1. General</h3>", "<h3>5.3.2.1.2. Phase dimming</h3>"],
+            )
+
+    def test_html_contract_has_readable_page_margins(self) -> None:
+        self.assertIn("max-width:1040px", standard_book.HTML_CSS)
+        self.assertIn("padding:48px clamp(28px,6vw,80px) 96px", standard_book.HTML_CSS)
+
 
 if __name__ == "__main__":
     unittest.main()
