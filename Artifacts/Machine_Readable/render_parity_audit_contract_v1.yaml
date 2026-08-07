@@ -1,0 +1,79 @@
+schema_version: "1.0"
+uid: std_render_parity_audit_contract_v1
+type: render_parity_audit_contract
+status: active
+canonical: true
+effective_from: 2026-08-07
+source_ref: "user instruction 2026-08-07: independently audit the complete generated book, fix deterministic discrepancies, and leave only owner decisions"
+scope:
+  source: immutable_google_baseline
+  canonical_content: standard_src
+  views:
+    - standard_normalized_html
+    - standard_normalized_docx
+  excludes:
+    - substantive_rewriting_of_standard
+    - independent_D8_certification
+severity_model:
+  - id: critical
+    priority: P0
+    meaning: "Loss, corruption, duplication, wrong order, broken addressing, or a rendering error that changes technical meaning."
+    default_action: fix_and_rebuild
+    owner_review_required: false
+  - id: material
+    priority: P1
+    meaning: "Content is present but structure, table semantics, image placement, navigation, or readability can cause misunderstanding or prevent practical use."
+    default_action: fix_and_rebuild_when_source_evidence_is_unambiguous
+    owner_review_required: false
+  - id: cosmetic
+    priority: P2
+    meaning: "Typography, spacing, color, or legacy appearance differs without changing meaning or usability."
+    default_action: batch_for_owner_only_when_a_choice_changes_the_approved_render_contract
+    owner_review_required: true
+checks:
+  - id: source_text_and_order
+    severity: critical
+    evidence: baseline_blocks_vs_standard_src_vs_rendered_views
+  - id: topic_and_heading_addressing
+    severity: critical
+    evidence: semantic_uids_html_anchors_docx_bookmarks
+  - id: table_count_rows_columns_and_headers
+    severity: critical
+    evidence: baseline_table_stream_and_table_layout_contract
+  - id: asset_count_digest_and_loadability
+    severity: critical
+    evidence: baseline_asset_manifest_html_images_docx_drawings
+  - id: internal_navigation_integrity
+    severity: material
+    evidence: html_href_targets_and_docx_hyperlink_bookmarks
+  - id: heading_hierarchy
+    severity: material
+    evidence: html_h1_h2_h3_and_docx_heading_styles
+  - id: table_and_image_readability
+    severity: material
+    evidence: browser_geometry_at_desktop_tablet_and_mobile_widths
+  - id: overflow_and_page_margins
+    severity: material
+    evidence: browser_scroll_geometry_and_docx_section_geometry
+  - id: floating_asset_placement
+    severity: material
+    evidence: positioned_source_assets
+    unresolved_policy: owner_or_independent_visual_review
+  - id: typography_color_and_microspacing
+    severity: cosmetic
+    evidence: normalized_render_contract
+auto_fix_policy:
+  allowed_when:
+    - source_evidence_is_exact
+    - change_is_render_only
+    - no_new_standard_rule_is_created
+  forbidden_when:
+    - technical_meaning_is_ambiguous
+    - source_and_normalized_contract_conflict_without_owner_decision
+    - change_would_self_certify_D8
+acceptance:
+  critical_open: 0
+  material_open_without_explicit_owner_gate: 0
+  broken_internal_targets: 0
+  missing_assets: 0
+  source_reconciliation: exact

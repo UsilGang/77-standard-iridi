@@ -21,7 +21,7 @@ source_count: 2
 source_types: ["key_task_log"]
 source_date_min: ""
 source_date_max: ""
-review_ids: ["2026-07-15_Transcribe_Backlog_Route_Review", "2026-08-07_Lighting_Render_Contract_Pilot_Review", "2026-08-07_Full_Book_Migration_And_Agent_Access_Audit", "2026-08-05_Lighting_Rule_Candidates_Expert_Review"]
+review_ids: ["2026-07-15_Transcribe_Backlog_Route_Review", "2026-08-07_Lighting_Render_Contract_Pilot_Review", "2026-08-07_Full_Book_Migration_And_Agent_Access_Audit", "2026-08-07_Full_Render_Parity_Self_Audit", "2026-08-05_Lighting_Rule_Candidates_Expert_Review"]
 decision_ids: ["2026-08-05_Standard_As_Code_Architecture_D1_D11"]
 open_question_ids: ["std_render_contract_v1_candidate"]
 backlog_ids: ["DO-001-KKZ-SWEEP-001", "DO-001-STD-PARITY-001"]
@@ -29,7 +29,7 @@ downstream_project_ids: []
 upstream_project_ids: []
 property_profile: generic_project
 last_sync_at: 2026-08-07
-last_sync_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]"
+last_sync_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]]"
 privacy: internal
 ---
 
@@ -53,6 +53,8 @@ privacy: internal
 - Table feedback RC1 применен: таблица видов LED-лент восстановлена как пять строк данных без ложной шапки, с двумя фиксированными колонками `60/40`; правило заголовков и геометрии теперь машиночитаемо и одинаково для HTML/DOCX.
 - Повторная full-book сверка PASS: 18 вкладок, 6 758 блоков, 276 topic content, 146 таблиц и 471 source asset совпадают с baseline.
 - Agent package: 261 самостоятельный узел, 4 947 фрагментов, 267 связей, 441 изображение; Buffer не включен.
+- Полный render parity self-audit применяет три класса finding. После автоматических исправлений: 5 924/5 924 content lines, 146/146 tables, 441/441 published images, 0 broken links/anchors, 0 browser overflow на 1600/1024/640 px.
+- Нормализованные HTML/DOCX получили оглавление, переходы между темами и восстановление source inline formatting; ложная шапка таблицы ONOKOM устранена системным правилом.
 
 ## Assumptions
 
@@ -66,7 +68,7 @@ privacy: internal
 
 ## Next Do
 
-- Владельцу пройти одну точку решения: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]], используя evidence из [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]. После approve — рефакторинг «Освещения» по утвержденному шаблону; D8 не закрывать без независимой проверки.
+- Владельцу принять нормализованный визуальный принцип по [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]] и закрыть RC1 в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]. После approve — рефакторинг «Освещения»; D8 не закрывать без проверки четырех floating images и постраничного DOCX.
 
 ## Review Queue
 

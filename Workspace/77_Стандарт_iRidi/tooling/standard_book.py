@@ -194,6 +194,13 @@ def markdown_plain_text(content: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
 
 
+def parity_plain_text(content: str) -> str:
+    """Normalize punctuation and markup for loss detection across render formats."""
+    value = html.unescape(content).replace("\v", " ").replace("\f", " ").replace("_", " ")
+    value = re.sub(r"[^\w%©°²]+", " ", value, flags=re.UNICODE)
+    return re.sub(r"\s+", " ", value).strip().casefold()
+
+
 def derived_summary(title: str, content: str, *, limit: int = 280) -> str:
     body = markdown_plain_text(markdown_without_initial_heading(content))
     if not body:
@@ -1099,7 +1106,51 @@ def infer_table_header_rows(rows: list[list[str]]) -> int:
         return 0
     if any(not table_cell_plain_text(cell) for cell in first):
         return 0
-    return 1
+    header_terms = {
+        "базовое сечение",
+        "возможная интеграция",
+        "где применять",
+        "код продукта",
+        "контролируемый параметр",
+        "критерий",
+        "линейка lite",
+        "линейка pro",
+        "максимальный пусковой (ударный) ток",
+        "максимальный ток",
+        "марка кабеля",
+        "модель",
+        "назначение",
+        "номинальный ток",
+        "общий свет",
+        "определение",
+        "особенности",
+        "параметр",
+        "подустройство",
+        "поддерживаемые ассистенты",
+        "преимущества",
+        "привод / блок управления",
+        "применение",
+        "производитель",
+        "пусковой (ударный) ток",
+        "рекомендуемое значение",
+        "рекомендуемый кабель",
+        "светильник",
+        "серия берлин",
+        "сцена",
+        "сценарий",
+        "схема",
+        "температура света",
+        "термин",
+        "тип датчика",
+        "тип светильника",
+        "тип устройства",
+        "функционал",
+        "функция",
+        "шторы",
+        "№",
+    }
+    normalized_first = {re.sub(r"\s+", " ", table_cell_plain_text(cell)).strip().casefold() for cell in first}
+    return 1 if normalized_first & header_terms else 0
 
 
 def infer_column_width_percent(rows: list[list[str]]) -> list[float]:
@@ -1200,9 +1251,22 @@ def rendered_heading_level(markdown_level: int, normalized: bool) -> int:
 
 HTML_CSS = (
     "html{background:#F1F4F6}"
-    "body{font-family:Arial,sans-serif;width:100%;max-width:1040px;margin:0 auto;"
-    "padding:48px clamp(28px,6vw,80px) 96px;box-sizing:border-box;font-size:16px;"
-    "line-height:1.55;color:#202124;background:#FFF;overflow-wrap:anywhere}"
+    "body{font-family:Arial,sans-serif;margin:0;font-size:16px;line-height:1.55;color:#202124;overflow-wrap:anywhere}"
+    ".book-shell{display:grid;grid-template-columns:minmax(260px,320px) minmax(0,1040px);gap:28px;"
+    "max-width:1420px;margin:0 auto;padding:24px;box-sizing:border-box;align-items:start}"
+    ".book-content{min-width:0;padding:48px clamp(28px,6vw,80px) 96px;box-sizing:border-box;background:#FFF;"
+    "box-shadow:0 2px 14px rgba(21,58,91,.08)}"
+    ".toc-panel{position:sticky;top:24px;max-height:calc(100vh - 48px);overflow:auto;background:#FFF;"
+    "border:1px solid #D5DEE5;border-radius:10px;padding:20px;box-sizing:border-box}"
+    ".toc-panel h2{margin:0 0 .75rem;font-size:1.25rem}.toc-panel ol{list-style:none;margin:.35rem 0;padding-left:1.2rem}"
+    ".toc-panel li{margin:.35rem 0}.toc-panel details>ol{margin-top:.55rem}.toc-panel summary{cursor:pointer;font-weight:700;color:#153A5B}"
+    ".toc-panel a{color:#244E70;text-decoration:none}.toc-panel a:hover,.toc-panel a:focus{text-decoration:underline}"
+    ".toc-section-start{display:block;margin:.45rem 0 .65rem;font-size:.9rem}.toc-fragments{font-size:.88rem;color:#4B5563}"
+    ".topic-navigation{display:flex;gap:.75rem;justify-content:space-between;align-items:center;flex-wrap:wrap;"
+    "margin:2rem 0 .5rem;padding:.55rem .75rem;border-top:1px solid #D5DEE5;border-bottom:1px solid #D5DEE5;font-size:.9rem}"
+    ".topic-navigation a,.back-to-toc{color:#244E70;text-decoration:none}.topic-navigation a:hover,.back-to-toc:hover{text-decoration:underline}"
+    ".back-to-toc{position:fixed;right:24px;bottom:24px;background:#153A5B;color:#FFF;padding:.65rem .9rem;border-radius:999px;"
+    "box-shadow:0 2px 10px rgba(0,0,0,.2);z-index:5}.back-to-toc:hover{color:#FFF}"
     "h1,h2,h3{color:#153A5B;line-height:1.25}"
     "h1{margin:0 0 1.5rem}h2{margin:2.25rem 0 .9rem}h3{margin:1.75rem 0 .7rem}"
     "p{margin:.7rem 0 1rem}ul{margin:.6rem 0 1.2rem;padding-left:1.75rem}li{margin:.25rem 0}"
@@ -1212,8 +1276,42 @@ HTML_CSS = (
     "td.table-cell-image{font-size:.85rem;color:#4B5563}td.table-cell-image img{width:auto;max-width:100%;max-height:320px;object-fit:contain}"
     ".missing-asset{color:#9B1C1C}.gap-note,.unplaced-assets{border-left:4px solid #C98200;background:#FFF8E6;padding:10px 14px;margin:1rem 0}"
     ".machine-anchor{scroll-margin-top:24px}"
-    "@media(max-width:640px){body{padding:28px 22px 64px;font-size:15px}h1{font-size:1.75rem}h2{font-size:1.4rem}}"
+    "@media(max-width:1000px){.book-shell{display:block;padding:0}.toc-panel{position:relative;top:auto;max-height:none;margin:16px;}.book-content{box-shadow:none}}"
+    "@media(max-width:640px){body{font-size:15px}.book-content{padding:28px 22px 64px}h1{font-size:1.75rem}h2{font-size:1.4rem}.back-to-toc{right:14px;bottom:14px}}"
 )
+
+
+def fragment_anchor_uid(topic_uid: str, title: str, occurrence: int = 1) -> str:
+    """Return a deterministic, HTML-safe anchor for a heading inside a topic."""
+    prefix = f"std_fragment_{topic_uid.removeprefix('std_topic_')}"
+    base = f"{prefix}_{hashlib.sha1(title.encode('utf-8')).hexdigest()[:10]}"
+    return base if occurrence == 1 else f"{base}_{occurrence}"
+
+
+def markdown_navigation_headings(path: Path, topic_uid: str, skip_initial_heading: str | None = None) -> list[dict[str, str]]:
+    """Extract addressable subheadings using the same rules as the renderer."""
+    result: list[dict[str, str]] = []
+    checked_initial_heading = False
+    occurrences: dict[str, int] = defaultdict(int)
+    for line in logical_markdown_lines(path.read_text(encoding="utf-8")):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        heading = markdown_heading(stripped)
+        if not checked_initial_heading:
+            checked_initial_heading = True
+            if skip_initial_heading and heading and heading[1] == skip_initial_heading:
+                continue
+        if not heading or re.search(r"!\[([^]]*)\]\(([^)]+)\)", heading[1]):
+            continue
+        occurrences[heading[1]] += 1
+        result.append(
+            {
+                "uid": fragment_anchor_uid(topic_uid, heading[1], occurrences[heading[1]]),
+                "title": heading[1],
+            }
+        )
+    return result
 
 
 def markdown_cell_html(cell: str, source_path: Path) -> str:
@@ -1231,18 +1329,125 @@ def markdown_cell_html(cell: str, source_path: Path) -> str:
     return "".join(parts)
 
 
+def paragraph_style_hint(block: dict[str, Any]) -> dict[str, Any] | None:
+    if block.get("type") != "paragraph":
+        return None
+    segments: list[dict[str, Any]] = []
+    for run in block.get("runs") or []:
+        text = str(run.get("text") or "").rstrip("\n").replace("\v", " ").replace("\f", " ")
+        if not text:
+            continue
+        style = run.get("style") or {}
+        segments.append(
+            {
+                "text": text,
+                "bold": bool(style.get("bold")),
+                "italic": bool(style.get("italic")),
+                "underline": bool(style.get("underline")),
+                "link": str((style.get("link") or {}).get("url") or ""),
+            }
+        )
+    if not segments:
+        return None
+    text = "".join(str(segment.get("text") or "") for segment in segments).strip()
+    return {"text": text, "segments": segments}
+
+
+def section_topic_style_hints(source_dir: Path, section: dict[str, Any]) -> dict[str, dict[str, list[dict[str, Any]]]]:
+    blocks_path = source_dir / "sections" / str(section["uid"]) / "blocks.jsonl"
+    if not blocks_path.is_file():
+        return {}
+    blocks = [json.loads(line) for line in blocks_path.read_text(encoding="utf-8").split("\n") if line.strip()]
+    groups: list[list[dict[str, Any]]] = []
+    current: list[dict[str, Any]] = []
+    for block in blocks:
+        boundary = (
+            block.get("type") == "paragraph"
+            and block.get("style") in {"HEADING_1", "HEADING_2"}
+            and str(block.get("text") or "").strip()
+        )
+        if boundary and current:
+            groups.append(current)
+            current = []
+        current.append(block)
+    if current:
+        groups.append(current)
+    groups = [group for group in groups if any(block.get("type") in {"paragraph", "table"} for block in group)]
+    refs = list(section.get("topic_refs") or [])
+    if len(groups) != len(refs):
+        return {}
+    result: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    for topic_uid, group in zip(refs, groups):
+        by_text: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for block in group:
+            hint = paragraph_style_hint(block)
+            if hint:
+                by_text[parity_plain_text(hint["text"])].append(hint)
+        result[str(topic_uid)] = dict(by_text)
+    return result
+
+
+def take_style_hint(style_hints: dict[str, list[dict[str, Any]]] | None, text: str) -> dict[str, Any] | None:
+    if not style_hints:
+        return None
+    key = parity_plain_text(markdown_plain_text(text))
+    candidates = style_hints.get(key) or []
+    return candidates.pop(0) if candidates else None
+
+
+def styled_html(text: str, hint: dict[str, Any] | None) -> str:
+    if not hint or parity_plain_text(hint.get("text") or "") != parity_plain_text(markdown_plain_text(text)):
+        return html.escape(text)
+    parts: list[str] = []
+    for segment in hint.get("segments") or []:
+        value = html.escape(str(segment.get("text") or ""))
+        if segment.get("bold"):
+            value = f"<strong>{value}</strong>"
+        if segment.get("italic"):
+            value = f"<em>{value}</em>"
+        if segment.get("underline"):
+            value = f"<u>{value}</u>"
+        link = str(segment.get("link") or "")
+        if link.startswith(("http://", "https://", "mailto:")):
+            value = f"<a href='{html.escape(link, quote=True)}'>{value}</a>"
+        parts.append(value)
+    return "".join(parts) or html.escape(text)
+
+
+def styled_image_paragraph_html(text: str, source_path: Path, hint: dict[str, Any] | None) -> str:
+    parts: list[str] = []
+    cursor = 0
+    image_pattern = re.compile(r"!\[([^]]*)\]\(([^)]+)\)")
+    for match in image_pattern.finditer(text):
+        plain = text[cursor:match.start()].strip()
+        if plain:
+            parts.append(styled_html(plain, hint if parity_plain_text(plain) == parity_plain_text((hint or {}).get("text") or "") else None))
+        image_path = (source_path.parent / match.group(2)).resolve()
+        if image_path.is_file():
+            parts.append(f"<img src='assets/{html.escape(image_path.name)}' alt='{html.escape(match.group(1))}'>")
+        else:
+            parts.append(html.escape(match.group(0)))
+        cursor = match.end()
+    plain = text[cursor:].strip()
+    if plain:
+        parts.append(styled_html(plain, hint if parity_plain_text(plain) == parity_plain_text((hint or {}).get("text") or "") else None))
+    return "".join(parts)
+
+
 def markdown_html(
     path: Path,
     skip_initial_heading: str | None = None,
     table_layouts: dict[int, dict[str, Any]] | None = None,
     suppress_initial_heading: bool = False,
     fragment_uid_prefix: str | None = None,
+    style_hints: dict[str, list[dict[str, Any]]] | None = None,
 ) -> list[str]:
     lines = logical_markdown_lines(path.read_text(encoding="utf-8"))
     out: list[str] = []
     index = 0
     table_index = 0
     checked_initial_heading = False
+    heading_occurrences: dict[str, int] = defaultdict(int)
     while index < len(lines):
         stripped = lines[index].strip()
         if not stripped:
@@ -1254,6 +1459,7 @@ def markdown_html(
             if suppress_initial_heading and heading:
                 stripped = heading[1]
             elif skip_initial_heading and heading and heading[1] == skip_initial_heading:
+                take_style_hint(style_hints, heading[1])
                 index += 1
                 continue
         if stripped.startswith("| "):
@@ -1289,20 +1495,25 @@ def markdown_html(
         if heading and re.search(r"!\[([^]]*)\]\(([^)]+)\)", heading[1]):
             out.append(f"<div class='heading-asset'>{markdown_cell_html(heading[1], path)}</div>")
         elif re.search(r"!\[([^]]*)\]\(([^)]+)\)", stripped):
-            out.append(f"<p>{markdown_cell_html(stripped, path)}</p>")
+            out.append(f"<p>{styled_image_paragraph_html(stripped, path, take_style_hint(style_hints, stripped))}</p>")
         elif heading:
             level = rendered_heading_level(heading[0], normalized=skip_initial_heading is not None)
             fragment_attr = ""
             if fragment_uid_prefix:
-                fragment_uid = f"{fragment_uid_prefix}_{hashlib.sha1(heading[1].encode('utf-8')).hexdigest()[:10]}"
+                heading_occurrences[heading[1]] += 1
+                topic_uid = fragment_uid_prefix.removeprefix("std_fragment_")
+                fragment_uid = fragment_anchor_uid(f"std_topic_{topic_uid}", heading[1], heading_occurrences[heading[1]])
                 fragment_attr = f" id='{html.escape(fragment_uid)}' data-fragment-uid='{html.escape(fragment_uid)}'"
+            take_style_hint(style_hints, heading[1])
             out.append(f"<h{level}{fragment_attr}>{html.escape(heading[1])}</h{level}>")
         elif stripped.startswith("- "):
             items: list[str] = []
             while index < len(lines):
                 candidate = lines[index].strip()
                 if candidate.startswith("- "):
-                    items.append(candidate[2:])
+                    item_text = candidate[2:]
+                    hint = take_style_hint(style_hints, item_text)
+                    items.append(markdown_cell_html(item_text, path) if "![" in item_text else styled_html(item_text, hint))
                     index += 1
                     continue
                 if not candidate:
@@ -1313,10 +1524,10 @@ def markdown_html(
                         index = probe
                         continue
                 break
-            out.append("<ul>" + "".join(f"<li>{markdown_cell_html(item, path)}</li>" for item in items) + "</ul>")
+            out.append("<ul>" + "".join(f"<li>{item}</li>" for item in items) + "</ul>")
             continue
         else:
-            out.append(f"<p>{html.escape(stripped)}</p>")
+            out.append(f"<p>{styled_html(stripped, take_style_hint(style_hints, stripped))}</p>")
         index += 1
     return out
 
@@ -1336,20 +1547,193 @@ def positioned_assets_by_tab(source_dir: Path) -> dict[str, list[dict[str, Any]]
     return dict(result)
 
 
+def navigation_outline(
+    source_dir: Path,
+    book: dict[str, Any],
+    sections: list[dict[str, Any]],
+    topics: list[dict[str, Any]],
+    profile: str,
+    section_uids: list[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Build the shared navigation model used by HTML and DOCX."""
+    section_by_uid = {row["uid"]: row for row in sections}
+    topics_by_uid = {row["uid"]: row for row in topics}
+    outline: list[dict[str, Any]] = []
+    for ref in selected_section_refs(book, sections, section_uids):
+        section = section_by_uid[ref]
+        section_row: dict[str, Any] = {
+            "uid": str(section.get("semantic_uid") or section["uid"]),
+            "title": f"{section.get('display_number') or ''} {section['title']}".strip(),
+            "topics": [],
+        }
+        if profile == "standard-normalized":
+            for topic in ordered_section_topics(section, topics_by_uid):
+                node_kind = str(topic.get("node_kind") or "content")
+                if node_kind in {"artifact", "attachment"} or topic.get("publish") is False:
+                    continue
+                topic_uid = topic_public_uid(topic)
+                content_path = source_dir / str(topic["content_ref"])
+                section_row["topics"].append(
+                    {
+                        "uid": topic_uid,
+                        "title": str(topic["title"]),
+                        "fragments": markdown_navigation_headings(content_path, topic_uid, str(topic["title"])),
+                    }
+                )
+        outline.append(section_row)
+    return outline
+
+
+def html_toc(outline: list[dict[str, Any]], book_uid: str, book_title: str) -> str:
+    expanded = " open" if len(outline) == 1 else ""
+    parts = [
+        "<aside id='std_toc' class='toc-panel machine-anchor'>",
+        "<nav aria-label='Оглавление книги'>",
+        "<h2>Оглавление</h2>",
+        f"<a class='toc-section-start' href='#{html.escape(book_uid)}'>{html.escape(book_title)}</a>",
+        "<ol class='toc-sections'>",
+    ]
+    for section in outline:
+        parts.append(f"<li><details{expanded}><summary>{html.escape(section['title'])}</summary>")
+        parts.append(f"<a class='toc-section-start' href='#{html.escape(section['uid'])}'>К началу раздела</a>")
+        if section["topics"]:
+            parts.append("<ol class='toc-topics'>")
+            for topic in section["topics"]:
+                parts.append(f"<li><a href='#{html.escape(topic['uid'])}'>{html.escape(topic['title'])}</a>")
+                if topic["fragments"]:
+                    parts.append("<ol class='toc-fragments'>")
+                    parts.extend(
+                        f"<li><a href='#{html.escape(fragment['uid'])}'>{html.escape(fragment['title'])}</a></li>"
+                        for fragment in topic["fragments"]
+                    )
+                    parts.append("</ol>")
+                parts.append("</li>")
+            parts.append("</ol>")
+        parts.append("</details></li>")
+    parts.extend(["</ol>", "</nav>", "</aside>"])
+    return "\n".join(parts)
+
+
+def topic_navigation_lookup(outline: list[dict[str, Any]]) -> dict[str, dict[str, dict[str, str] | None]]:
+    topics = [topic for section in outline for topic in section["topics"]]
+    result: dict[str, dict[str, dict[str, str] | None]] = {}
+    for index, topic in enumerate(topics):
+        result[topic["uid"]] = {
+            "previous": topics[index - 1] if index else None,
+            "next": topics[index + 1] if index + 1 < len(topics) else None,
+        }
+    return result
+
+
+def html_topic_navigation(topic_uid: str, lookup: dict[str, dict[str, dict[str, str] | None]]) -> str:
+    neighbors = lookup.get(topic_uid, {})
+    previous = neighbors.get("previous")
+    following = neighbors.get("next")
+    previous_html = (
+        f"<a rel='prev' href='#{html.escape(previous['uid'])}'>← {html.escape(previous['title'])}</a>"
+        if previous
+        else "<span></span>"
+    )
+    next_html = (
+        f"<a rel='next' href='#{html.escape(following['uid'])}'>{html.escape(following['title'])} →</a>"
+        if following
+        else "<span></span>"
+    )
+    return f"<nav class='topic-navigation' aria-label='Навигация по темам'>{previous_html}<a href='#std_toc'>Оглавление</a>{next_html}</nav>"
+
+
+def docx_bookmark_name(uid: str) -> str:
+    bookmark_name = re.sub(r"[^A-Za-z0-9_]", "_", uid)
+    if not bookmark_name or not bookmark_name[0].isalpha():
+        bookmark_name = "uid_" + bookmark_name
+    if len(bookmark_name) > 40:
+        bookmark_name = f"{bookmark_name[:27]}_{hashlib.sha1(uid.encode('utf-8')).hexdigest()[:12]}"
+    return bookmark_name
+
+
 def add_docx_bookmark(paragraph: Any, uid: str, bookmark_id: int) -> None:
     from docx.oxml import OxmlElement
     from docx.oxml.ns import qn
 
-    bookmark_name = re.sub(r"[^A-Za-z0-9_]", "_", uid)
-    if not bookmark_name or not bookmark_name[0].isalpha():
-        bookmark_name = "uid_" + bookmark_name
+    bookmark_name = docx_bookmark_name(uid)
     start = OxmlElement("w:bookmarkStart")
     start.set(qn("w:id"), str(bookmark_id))
-    start.set(qn("w:name"), bookmark_name[:120])
+    start.set(qn("w:name"), bookmark_name)
     end = OxmlElement("w:bookmarkEnd")
     end.set(qn("w:id"), str(bookmark_id))
     paragraph._p.insert(0, start)
     paragraph._p.append(end)
+
+
+def add_docx_internal_link(paragraph: Any, text: str, target_uid: str) -> None:
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+
+    hyperlink = OxmlElement("w:hyperlink")
+    hyperlink.set(qn("w:anchor"), docx_bookmark_name(target_uid))
+    run = OxmlElement("w:r")
+    properties = OxmlElement("w:rPr")
+    color = OxmlElement("w:color")
+    color.set(qn("w:val"), "0563C1")
+    underline = OxmlElement("w:u")
+    underline.set(qn("w:val"), "single")
+    properties.extend([color, underline])
+    run.append(properties)
+    label = OxmlElement("w:t")
+    label.text = text
+    run.append(label)
+    hyperlink.append(run)
+    paragraph._p.append(hyperlink)
+
+
+def add_docx_external_link(paragraph: Any, text: str, url: str, segment: dict[str, Any]) -> None:
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+    from docx.opc.constants import RELATIONSHIP_TYPE
+
+    relationship_id = paragraph.part.relate_to(url, RELATIONSHIP_TYPE.HYPERLINK, is_external=True)
+    hyperlink = OxmlElement("w:hyperlink")
+    hyperlink.set(qn("r:id"), relationship_id)
+    run = OxmlElement("w:r")
+    properties = OxmlElement("w:rPr")
+    if segment.get("bold"):
+        properties.append(OxmlElement("w:b"))
+    if segment.get("italic"):
+        properties.append(OxmlElement("w:i"))
+    underline = OxmlElement("w:u")
+    underline.set(qn("w:val"), "single")
+    properties.append(underline)
+    color = OxmlElement("w:color")
+    color.set(qn("w:val"), "0563C1")
+    properties.append(color)
+    run.append(properties)
+    label = OxmlElement("w:t")
+    label.text = text
+    run.append(label)
+    hyperlink.append(run)
+    paragraph._p.append(hyperlink)
+
+
+def add_docx_styled_text(paragraph: Any, text: str, hint: dict[str, Any] | None) -> None:
+    if not hint or parity_plain_text(hint.get("text") or "") != parity_plain_text(markdown_plain_text(text)):
+        paragraph.add_run(text)
+        return
+    for segment in hint.get("segments") or []:
+        segment_text = str(segment.get("text") or "")
+        link = str(segment.get("link") or "")
+        if link.startswith(("http://", "https://", "mailto:")):
+            add_docx_external_link(paragraph, segment_text, link, segment)
+            continue
+        run = paragraph.add_run(segment_text)
+        run.bold = bool(segment.get("bold"))
+        run.italic = bool(segment.get("italic"))
+        run.underline = bool(segment.get("underline"))
+
+
+def add_docx_styled_paragraph(doc: Any, text: str, hint: dict[str, Any] | None, style: str | None = None) -> Any:
+    paragraph = doc.add_paragraph(style=style)
+    add_docx_styled_text(paragraph, text, hint)
+    return paragraph
 
 
 def add_docx_picture_resilient(owner: Any, image_path: Path, width: Any) -> None:
@@ -1380,9 +1764,12 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
     table_layout_contract = load_table_layout_contract()
     positioned_assets = positioned_assets_by_tab(source_dir)
     book_uid = str(book.get("semantic_uid") or book.get("uid") or "std_iridi")
+    outline = navigation_outline(source_dir, book, sections, topics, profile, section_uids)
+    topic_navigation = topic_navigation_lookup(outline)
     body: list[str] = [f"<h1 id='{html.escape(book_uid)}' class='machine-anchor' data-book-uid='{html.escape(book_uid)}'>{html.escape(book['title'])}</h1>"]
     for ref in selected_section_refs(book, sections, section_uids):
         section = section_by_uid[ref]
+        topic_style_hints = section_topic_style_hints(source_dir, section)
         section_uid = str(section.get("semantic_uid") or section["uid"])
         body.append(
             f"<h1 id='{html.escape(section_uid)}' class='machine-anchor' data-section-uid='{html.escape(section_uid)}'>"
@@ -1397,6 +1784,7 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
                     continue
                 public_uid = topic_public_uid(topic)
                 if node_kind != "attachment":
+                    body.append(html_topic_navigation(public_uid, topic_navigation))
                     body.append(
                         f"<h2 id='{html.escape(public_uid)}' class='machine-anchor topic-{html.escape(node_kind)}' "
                         f"data-topic-uid='{html.escape(public_uid)}' data-legacy-uid='{html.escape(str(topic['uid']))}' "
@@ -1409,6 +1797,7 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
                         table_layouts=table_layout_contract.get(str(topic["content_ref"])),
                         suppress_initial_heading=node_kind == "attachment",
                         fragment_uid_prefix=f"std_fragment_{public_uid.removeprefix('std_topic_')}",
+                        style_hints=topic_style_hints.get(str(topic["uid"])),
                     )
                 )
                 if node_kind == "gap":
@@ -1424,7 +1813,18 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
                         f"<img src='assets/{html.escape(path.name)}' alt='{html.escape(str(asset.get('object_id')))}'>"
                         f"<figcaption>{html.escape(str(asset.get('object_id')))} — исходное плавающее изображение, место требует проверки.</figcaption></figure>"
                     )
-    atomic_write_text(output, "<!doctype html><html lang='ru'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>" + HTML_CSS + "</style><body>" + "\n".join(body) + "</body></html>\n")
+    page = (
+        "<!doctype html><html lang='ru'><head><meta charset='utf-8'>"
+        "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+        f"<title>{html.escape(str(book['title']))}</title><style>{HTML_CSS}</style></head><body>"
+        "<div class='book-shell'>"
+        + html_toc(outline, book_uid, str(book["title"]))
+        + "<main class='book-content'>"
+        + "\n".join(body)
+        + "</main></div><a class='back-to-toc' href='#std_toc' aria-label='Вернуться к оглавлению'>Оглавление ↑</a>"
+        "</body></html>\n"
+    )
+    atomic_write_text(output, page)
 
 
 def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list[str] | None = None) -> None:
@@ -1447,21 +1847,44 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
     normal.font.size = Pt(10.5)
     bookmark_counter = 1
     title_paragraph = doc.add_heading(book["title"], 0)
-    add_docx_bookmark(title_paragraph, str(book.get("semantic_uid") or book.get("uid") or "std_iridi"), bookmark_counter)
+    book_uid = str(book.get("semantic_uid") or book.get("uid") or "std_iridi")
+    add_docx_bookmark(title_paragraph, book_uid, bookmark_counter)
     bookmark_counter += 1
     if profile == "standard-normalized":
         doc.add_paragraph("Нормализованное представление: единая структура разделов и адресуемых тем.")
     section_by_uid = {row["uid"]: row for row in sections}
     topics_by_uid = {row["uid"]: row for row in topics}
+    outline = navigation_outline(source_dir, book, sections, topics, profile, section_uids)
+    topic_navigation = topic_navigation_lookup(outline)
+    toc_heading = doc.add_heading("Оглавление", 1)
+    add_docx_bookmark(toc_heading, "std_toc", bookmark_counter)
+    bookmark_counter += 1
+    book_link = doc.add_paragraph()
+    add_docx_internal_link(book_link, str(book["title"]), book_uid)
+    for section_row in outline:
+        section_link = doc.add_paragraph()
+        add_docx_internal_link(section_link, section_row["title"], section_row["uid"])
+        for topic_row in section_row["topics"]:
+            topic_link = doc.add_paragraph()
+            topic_link.paragraph_format.left_indent = Mm(6)
+            add_docx_internal_link(topic_link, topic_row["title"], topic_row["uid"])
+            for fragment in topic_row["fragments"]:
+                fragment_link = doc.add_paragraph()
+                fragment_link.paragraph_format.left_indent = Mm(12)
+                add_docx_internal_link(fragment_link, fragment["title"], fragment["uid"])
+    doc.add_page_break()
     table_layout_contract = load_table_layout_contract()
     positioned_assets = positioned_assets_by_tab(source_dir)
     for section_index, ref in enumerate(selected_section_refs(book, sections, section_uids)):
         section = section_by_uid[ref]
+        topic_style_hints = section_topic_style_hints(source_dir, section)
         if profile == "standard-normalized" and section_index:
             doc.add_page_break()
         section_heading = doc.add_heading(f"{section.get('display_number') or ''} {section['title']}".strip(), 1)
         add_docx_bookmark(section_heading, str(section.get("semantic_uid") or section["uid"]), bookmark_counter)
         bookmark_counter += 1
+        section_backlink = doc.add_paragraph()
+        add_docx_internal_link(section_backlink, "↑ Оглавление", "std_toc")
         entries: list[tuple[Path, str | None, dict[int, dict[str, Any]] | None, dict[str, Any] | None]]
         if profile == "legacy-fidelity":
             entries = [(source_dir / "sections" / ref / "legacy.md", None, None, None)]
@@ -1480,7 +1903,17 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
             normalized_entry = profile == "standard-normalized"
             node_kind = str((topic_meta or {}).get("node_kind") or "content")
             public_uid = topic_public_uid(topic_meta) if topic_meta else None
+            style_hints = topic_style_hints.get(str((topic_meta or {}).get("uid") or ""))
             if normalized_topic_title:
+                neighbors = topic_navigation.get(public_uid or "", {})
+                navigation_paragraph = doc.add_paragraph()
+                if previous := neighbors.get("previous"):
+                    add_docx_internal_link(navigation_paragraph, f"← {previous['title']}", previous["uid"])
+                    navigation_paragraph.add_run("   |   ")
+                add_docx_internal_link(navigation_paragraph, "Оглавление", "std_toc")
+                if following := neighbors.get("next"):
+                    navigation_paragraph.add_run("   |   ")
+                    add_docx_internal_link(navigation_paragraph, f"{following['title']} →", following["uid"])
                 paragraph = doc.add_heading(normalized_topic_title, 2)
                 if public_uid:
                     add_docx_bookmark(paragraph, public_uid, bookmark_counter)
@@ -1489,6 +1922,7 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
             index = 0
             table_index = 0
             checked_initial_heading = False
+            heading_occurrences: dict[str, int] = defaultdict(int)
             while index < len(lines):
                 line = lines[index]
                 stripped = line.strip()
@@ -1501,6 +1935,7 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                     if node_kind == "attachment" and heading:
                         stripped = heading[1]
                     elif normalized_topic_title and heading and heading[1] == normalized_topic_title:
+                        take_style_hint(style_hints, heading[1])
                         index += 1
                         continue
                 if stripped.startswith("| "):
@@ -1552,18 +1987,24 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                 renderable_line = source_heading[1] if source_heading else stripped
                 image_matches = list(re.finditer(r"!\[([^]]*)\]\(([^)]+)\)", renderable_line))
                 if image_matches:
+                    hint = take_style_hint(style_hints, renderable_line)
                     plain = re.sub(r"!\[[^]]*\]\([^)]+\)", "", renderable_line).strip()
                     if source_heading and plain:
-                        paragraph = doc.add_heading(plain, rendered_heading_level(source_heading[0], normalized=normalized_entry))
-                        if public_uid:
-                            fragment_uid = f"std_fragment_{public_uid.removeprefix('std_topic_')}_{hashlib.sha1(plain.encode('utf-8')).hexdigest()[:10]}"
-                            add_docx_bookmark(paragraph, fragment_uid, bookmark_counter)
-                            bookmark_counter += 1
-                    elif plain.startswith("- "):
-                        doc.add_paragraph(plain[2:], style="List Bullet")
-                    elif plain:
-                        doc.add_paragraph(plain)
+                        doc.add_heading(plain, rendered_heading_level(source_heading[0], normalized=normalized_entry))
+
+                    def add_plain_piece(value: str) -> None:
+                        value = value.strip()
+                        if not value or source_heading:
+                            return
+                        piece_hint = hint if parity_plain_text(value.lstrip("- ")) == parity_plain_text((hint or {}).get("text") or "") else None
+                        if value.startswith("- "):
+                            add_docx_styled_paragraph(doc, value[2:], piece_hint, style="List Bullet")
+                        else:
+                            add_docx_styled_paragraph(doc, value, piece_hint)
+
+                    cursor = 0
                     for image_match in image_matches:
+                        add_plain_piece(renderable_line[cursor:image_match.start()])
                         image_path = (path.parent / image_match.group(2)).resolve()
                         if image_path.is_file():
                             try:
@@ -1572,18 +2013,22 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                                 doc.add_paragraph(f"[Изображение: {image_path.name}]")
                         else:
                             doc.add_paragraph(image_match.group(0))
+                        cursor = image_match.end()
+                    add_plain_piece(renderable_line[cursor:])
                 elif heading := markdown_heading(stripped):
+                    take_style_hint(style_hints, heading[1])
                     paragraph = doc.add_heading(heading[1], rendered_heading_level(heading[0], normalized=normalized_entry))
                     if public_uid:
-                        fragment_uid = f"std_fragment_{public_uid.removeprefix('std_topic_')}_{hashlib.sha1(heading[1].encode('utf-8')).hexdigest()[:10]}"
+                        heading_occurrences[heading[1]] += 1
+                        fragment_uid = fragment_anchor_uid(public_uid, heading[1], heading_occurrences[heading[1]])
                         add_docx_bookmark(paragraph, fragment_uid, bookmark_counter)
                         bookmark_counter += 1
                 elif stripped.startswith("- "):
-                    doc.add_paragraph(stripped[2:], style="List Bullet")
+                    add_docx_styled_paragraph(doc, stripped[2:], take_style_hint(style_hints, stripped[2:]), style="List Bullet")
                 elif stripped.startswith("| "):
                     doc.add_paragraph(stripped)
                 else:
-                    doc.add_paragraph(stripped)
+                    add_docx_styled_paragraph(doc, stripped, take_style_hint(style_hints, stripped))
                 index += 1
             if node_kind == "gap":
                 doc.add_paragraph("Раздел присутствует в исходной книге, но пока не наполнен.")
@@ -2389,11 +2834,45 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
             src for src in re.findall(r"<img[^>]+src=['\"]([^'\"]+)", html_text)
             if not (html_path.parent / src).is_file()
         ]
+        html_ids = set(re.findall(r"\bid=['\"]([^'\"]+)", html_text))
+        internal_link_targets = re.findall(r"\bhref=['\"]#([^'\"]+)", html_text)
+        missing_internal_targets = sorted(set(internal_link_targets) - html_ids)
+        html_toc_count = len(re.findall(r"\bid=['\"]std_toc['\"]", html_text))
+        topic_navigation_count = len(re.findall(r"class=['\"][^'\"]*\btopic-navigation\b", html_text))
+        main_match = re.search(r"<main\b[^>]*>(.*?)</main>", html_text, flags=re.S | re.I)
+        main_html = main_match.group(1) if main_match else ""
+        main_without_navigation = re.sub(r"<nav\b[^>]*>.*?</nav>", " ", main_html, flags=re.S | re.I)
+        block_separated_html = re.sub(
+            r"</(?:p|li|td|th|h[1-6]|tr|table|figure|figcaption|aside)>",
+            " ",
+            main_without_navigation,
+            flags=re.I,
+        )
+        rendered_plain_text = parity_plain_text(re.sub(r"<[^>]+>", "", block_separated_html))
+        checked_content_lines = 0
+        missing_content_lines: list[dict[str, str]] = []
+        for topic in topics:
+            if topic.get("node_kind") == "artifact" or topic.get("publish") is False:
+                continue
+            content_path = source_dir / str(topic.get("content_ref") or "")
+            if not content_path.is_file():
+                continue
+            for line in logical_markdown_lines(content_path.read_text(encoding="utf-8")):
+                plain_line = parity_plain_text(markdown_plain_text(line).lstrip("- ").strip())
+                if not plain_line or re.fullmatch(r"[-\s]+", plain_line):
+                    continue
+                checked_content_lines += 1
+                if plain_line not in rendered_plain_text:
+                    missing_content_lines.append({"topic_uid": topic_public_uid(topic), "text": plain_line[:240]})
         check(
             "normalized_html_structure",
             bool(html_text)
             and topic_anchor_count == len(expected_published)
             and html_table_count == baseline_tables
+            and html_toc_count == 1
+            and topic_navigation_count == len(expected_published)
+            and not missing_internal_targets
+            and not missing_content_lines
             and "#### " not in html_text
             and not contains_private_use(html_text)
             and not missing_html_assets,
@@ -2401,7 +2880,48 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
             expected_topic_anchors=len(expected_published),
             tables=html_table_count,
             images=html_image_count,
+            toc=html_toc_count,
+            topic_navigation=topic_navigation_count,
+            internal_links=len(internal_link_targets),
+            missing_internal_targets=missing_internal_targets,
+            checked_content_lines=checked_content_lines,
+            missing_content_lines=missing_content_lines[:100],
             missing_assets=missing_html_assets,
+        )
+        expected_formatting = {"bold": 0, "italic": 0, "underline": 0, "external_links": 0}
+        for section in sections:
+            blocks_path = source_dir / "sections" / str(section["uid"]) / "blocks.jsonl"
+            if not blocks_path.is_file():
+                continue
+            for raw_line in blocks_path.read_text(encoding="utf-8").split("\n"):
+                if not raw_line.strip():
+                    continue
+                block = json.loads(raw_line)
+                if (
+                    block.get("type") != "paragraph"
+                    or str(block.get("style") or "").startswith("HEADING_")
+                ):
+                    continue
+                for run in block.get("runs") or []:
+                    if not str(run.get("text") or "").strip():
+                        continue
+                    style = run.get("style") or {}
+                    expected_formatting["bold"] += int(bool(style.get("bold")))
+                    expected_formatting["italic"] += int(bool(style.get("italic")))
+                    expected_formatting["underline"] += int(bool(style.get("underline")))
+                    expected_formatting["external_links"] += int(bool((style.get("link") or {}).get("url")))
+        rendered_formatting = {
+            "bold": len(re.findall(r"<strong\b", main_html)),
+            "italic": len(re.findall(r"<em\b", main_html)),
+            "underline": len(re.findall(r"<u\b", main_html)),
+            "external_links": len(re.findall(r"<a\b[^>]*href=['\"](?!#)", main_html)),
+        }
+        check(
+            "normalized_html_inline_formatting",
+            all(rendered_formatting[key] >= value for key, value in expected_formatting.items()),
+            expected_source_segments=expected_formatting,
+            rendered_tags=rendered_formatting,
+            note="Headings are governed by structural rules; generated warnings may add formatting tags.",
         )
 
     if docx_path:
@@ -2410,6 +2930,8 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
         docx_bookmarks = 0
         docx_raw_hash_markers = 0
         docx_private_use = 0
+        docx_internal_links = 0
+        docx_missing_internal_targets: list[str] = []
         docx_error = None
         try:
             with zipfile.ZipFile(docx_path) as archive:
@@ -2418,6 +2940,17 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
                 docx_tables = sum(1 for _ in document_xml.iter(word_ns + "tbl"))
                 docx_images = sum(1 for _ in document_xml.iter(word_ns + "drawing"))
                 docx_bookmarks = sum(1 for _ in document_xml.iter(word_ns + "bookmarkStart"))
+                bookmark_names = {
+                    str(node.get(word_ns + "name") or "")
+                    for node in document_xml.iter(word_ns + "bookmarkStart")
+                }
+                hyperlink_targets = [
+                    str(node.get(word_ns + "anchor") or "")
+                    for node in document_xml.iter(word_ns + "hyperlink")
+                    if node.get(word_ns + "anchor")
+                ]
+                docx_internal_links = len(hyperlink_targets)
+                docx_missing_internal_targets = sorted(set(hyperlink_targets) - bookmark_names)
                 text_nodes = [str(node.text or "") for node in document_xml.iter(word_ns + "t")]
                 docx_raw_hash_markers = sum("#### " in value for value in text_nodes)
                 docx_private_use = sum(contains_private_use(value) for value in text_nodes)
@@ -2437,12 +2970,16 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
             and docx_bookmarks >= len(sections) + len(
                 [row for row in topics if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False]
             )
+            and docx_internal_links > 0
+            and not docx_missing_internal_targets
             and docx_raw_hash_markers == 0
             and docx_private_use == 0,
             tables=docx_tables,
             images=docx_images,
             expected_images=expected_docx_images,
             bookmarks=docx_bookmarks,
+            internal_links=docx_internal_links,
+            missing_internal_targets=docx_missing_internal_targets,
             raw_hash_markers=docx_raw_hash_markers,
             private_use_text_nodes=docx_private_use,
             error=docx_error,
@@ -2478,6 +3015,29 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
         )
 
     passed = all(row["status"] == "pass" for row in checks)
+    severity_by_check = {
+        "baseline_identity": "critical",
+        "source_tabs_equal_google_baseline": "critical",
+        "block_streams_rederived_exactly": "critical",
+        "legacy_markdown_rederived_exactly": "critical",
+        "topic_split_and_content_rederived_exactly": "critical",
+        "table_inventory_preserved": "critical",
+        "asset_inventory_and_digests": "critical",
+        "semantic_addressing": "critical",
+        "normalized_html_structure": "critical",
+        "normalized_html_inline_formatting": "material",
+        "normalized_docx_structure": "critical",
+        "agent_package_integrity": "critical",
+    }
+    findings = [
+        {
+            "severity": severity_by_check.get(row["name"], "material"),
+            "check_id": row["name"],
+            "details": {key: value for key, value in row.items() if key not in {"name", "status"}},
+        }
+        for row in checks
+        if row["status"] != "pass"
+    ]
     report = {
         "schema_version": "1.0",
         "audit_type": "deterministic_migration_and_agent_access",
@@ -2486,6 +3046,12 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
         "d8_independent_certification": "deferred_not_self_certified",
         "baseline_uid": manifest.get("baseline_uid"),
         "source_revision_id": manifest.get("revision_id"),
+        "severity_model": ["critical", "material", "cosmetic"],
+        "findings_summary": {
+            severity: sum(1 for finding in findings if finding["severity"] == severity)
+            for severity in ("critical", "material", "cosmetic")
+        },
+        "findings": findings,
         "checks": checks,
     }
     if args.output:

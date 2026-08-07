@@ -38,5 +38,7 @@ source_ref: "[[01_Projects/000_CORD_System/Archive/Reviews/Applied/2026-07-08_Pr
 - `attachment` не отвечает как самостоятельное знание, `artifact` не публикуется, `gap` не превращается в выдуманную норму.
 - Buffer, private baseline и drafts не включаются в agent package.
 - `audit-migration` подтверждает exact source tabs, blocks, topic content, tables, asset digests, HTML/DOCX и package integrity.
+- HTML и DOCX содержат автоматически собранное оглавление; каждая внутренняя ссылка обязана разрешаться в существующий semantic anchor/bookmark, что проверяет `audit-migration`.
+- `audit-migration` проверяет присутствие каждой содержательной строки source в HTML и восстановление source inline formatting; `render_browser_audit.js` проверяет heading hierarchy, картинки и overflow на desktop/tablet/mobile.
 - Отрицательный агентский тест обязан вернуть `gap` без citations, а не подобрать случайную тему по общему слову.
 - Эта техническая проверка не заменяет независимый D8 и не дает разрешение на cutover или публикацию.

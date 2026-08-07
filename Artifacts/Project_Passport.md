@@ -5,8 +5,8 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 last_activity_at: 2026-08-07
-last_activity_kind: full_migration_and_agent_access_audit_completed
-last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]"
+last_activity_kind: full_render_parity_self_audit_completed
+last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]]"
 stage: active
 privacy: internal
 source_ref: "CORD backfill 2026-07-10"
@@ -25,9 +25,9 @@ project_route: "existing_project"
 ## Activity
 
 - Last activity: `2026-08-07`.
-- Kind: `full_migration_and_agent_access_audit_completed`.
-- Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]].
+- Kind: `full_render_parity_self_audit_completed`.
+- Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]].
 
 ## Следующее действие
 
-Владельцу просмотреть одну точку решения в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]] с обновленными evidence из [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]. После approve — содержательный рефакторинг «Освещения»; D8 остается отдельным cutover gate.
+Владельцу принять нормализованный визуальный принцип по [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]] и [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]. После approve — содержательный рефакторинг «Освещения»; floating images и постраничный DOCX остаются отдельным D8 gate.

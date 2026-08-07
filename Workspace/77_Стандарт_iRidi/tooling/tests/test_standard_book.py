@@ -101,6 +101,35 @@ class StandardBookTests(unittest.TestCase):
             rendered = standard_book.markdown_html(path)
             self.assertIn("<img src='assets/image.png' alt='scheme'>", rendered[0])
 
+    def test_source_inline_formatting_is_restored_in_normalized_html(self) -> None:
+        hint = {
+            "text": "Read the standard",
+            "segments": [
+                {"text": "Read ", "bold": True, "italic": False, "underline": False, "link": ""},
+                {
+                    "text": "the standard",
+                    "bold": False,
+                    "italic": True,
+                    "underline": True,
+                    "link": "https://example.com/standard",
+                },
+            ],
+        }
+        rendered = standard_book.styled_html("Read the standard", hint)
+        self.assertIn("<strong>Read </strong>", rendered)
+        self.assertIn("<a href='https://example.com/standard'><u><em>the standard</em></u></a>", rendered)
+
+    def test_image_and_styled_caption_keep_source_order(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            folder = Path(raw)
+            (folder / "image.png").write_bytes(b"image")
+            hint = {
+                "text": "Controls",
+                "segments": [{"text": "Controls", "bold": True, "italic": False, "underline": False, "link": ""}],
+            }
+            rendered = standard_book.styled_image_paragraph_html("![device](image.png) Controls", folder / "topic.md", hint)
+            self.assertLess(rendered.index("<img"), rendered.index("<strong>Controls</strong>"))
+
     def test_deep_markdown_headings_are_normalized_as_topic_subheadings(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             path = Path(raw) / "topic.md"
@@ -115,8 +144,58 @@ class StandardBookTests(unittest.TestCase):
             )
 
     def test_html_contract_has_readable_page_margins(self) -> None:
-        self.assertIn("max-width:1040px", standard_book.HTML_CSS)
+        self.assertIn("minmax(0,1040px)", standard_book.HTML_CSS)
+        self.assertIn(".toc-panel{position:sticky", standard_book.HTML_CSS)
         self.assertIn("padding:48px clamp(28px,6vw,80px) 96px", standard_book.HTML_CSS)
+
+    def test_duplicate_subheadings_get_unique_deterministic_navigation_anchors(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "topic.md"
+            path.write_text("# Topic\n\n### Repeat\n\nFirst\n\n### Repeat\n\nSecond\n", encoding="utf-8")
+            outline = standard_book.markdown_navigation_headings(path, "std_topic_example", "Topic")
+            self.assertEqual(len(outline), 2)
+            self.assertNotEqual(outline[0]["uid"], outline[1]["uid"])
+            rendered = "".join(
+                standard_book.markdown_html(
+                    path,
+                    skip_initial_heading="Topic",
+                    fragment_uid_prefix="std_fragment_example",
+                )
+            )
+            self.assertIn(f"id='{outline[0]['uid']}'", rendered)
+            self.assertIn(f"id='{outline[1]['uid']}'", rendered)
+
+    def test_html_toc_links_sections_topics_and_fragments(self) -> None:
+        outline = [
+            {
+                "uid": "std_ch_lighting",
+                "title": "5. Освещение",
+                "topics": [
+                    {
+                        "uid": "std_topic_dimming",
+                        "title": "Диммирование",
+                        "fragments": [{"uid": "std_fragment_phase", "title": "Фазовое диммирование"}],
+                    }
+                ],
+            }
+        ]
+        rendered = standard_book.html_toc(outline, "std_book", "Стандарт")
+        self.assertIn("id='std_toc'", rendered)
+        self.assertIn("href='#std_ch_lighting'", rendered)
+        self.assertIn("href='#std_topic_dimming'", rendered)
+        self.assertIn("href='#std_fragment_phase'", rendered)
+
+    def test_docx_internal_link_targets_compact_bookmark(self) -> None:
+        from docx import Document
+        from docx.oxml.ns import qn
+
+        paragraph = Document().add_paragraph()
+        target = "std_topic_" + "very_long_semantic_identifier_" * 3
+        standard_book.add_docx_internal_link(paragraph, "Открыть", target)
+        links = paragraph._p.findall(qn("w:hyperlink"))
+        self.assertEqual(len(links), 1)
+        self.assertEqual(links[0].get(qn("w:anchor")), standard_book.docx_bookmark_name(target))
+        self.assertLessEqual(len(standard_book.docx_bookmark_name(target)), 40)
 
     def test_headerless_image_table_contract_restores_effective_columns(self) -> None:
         rows = [
@@ -130,6 +209,21 @@ class StandardBookTests(unittest.TestCase):
         self.assertEqual(header_rows, 0)
         self.assertEqual([len(row) for row in normalized], [2, 2])
         self.assertEqual(widths, [60.0, 40.0])
+
+    def test_short_data_row_is_not_invented_as_table_header(self) -> None:
+        rows = [
+            ["GR-1-MB-B Gree", "DK-5-MB-B DAIKIN", "HS-5-MB-B Hisense"],
+            ["GR-3-MB-B Gree", "AUX-1-MB-B AUX", "HS-6-MB-B Hisense"],
+        ]
+        normalized, header_rows, widths = standard_book.analyze_table_rows(rows)
+        self.assertEqual(normalized, rows)
+        self.assertEqual(header_rows, 0)
+        self.assertEqual(len(widths), 3)
+
+    def test_known_column_labels_are_rendered_as_table_header(self) -> None:
+        rows = [["Модель", "Номинальный ток", "Особенности"], ["LDM-306P", "10 А", "Описание"]]
+        _, header_rows, _ = standard_book.analyze_table_rows(rows)
+        self.assertEqual(header_rows, 1)
 
     def test_normalized_html_renders_headerless_table_with_colgroup(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
