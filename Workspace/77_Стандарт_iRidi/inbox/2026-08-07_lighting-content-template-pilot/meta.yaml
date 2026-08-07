@@ -1,0 +1,25 @@
+id: 2026-08-07_lighting-content-template-pilot
+status: review
+created_at: 2026-08-07
+created_by: codex
+editorial_job_uid: EDT-2026-0001
+
+source:
+  type: manual
+  ref: "user: давай, давай after RC1 approval"
+  title: "Запуск содержательного рефакторинга раздела Освещение"
+
+routing:
+  book_main_sections: ["5"]
+  drive_books: ["Система управления освещением"]
+  wiki_paths: []
+  remarks_sheet: ""
+
+priority: high
+change_class: E3
+normative_impact: none_until_separate_decision
+compatibility_impact: none_until_separate_decision
+proposed_release_bump: pending_first_release_decision
+tags: [standard-as-code, lighting, content-template, editorial-assignment]
+
+notes: "Пакет разрешает локальный трассируемый рефакторинг после approve, но не утверждает нормы, D8, cutover или публикацию."

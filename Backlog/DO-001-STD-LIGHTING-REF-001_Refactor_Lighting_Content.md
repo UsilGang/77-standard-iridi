@@ -17,7 +17,7 @@ approval: render_contract_only
 
 # DO-001-STD-LIGHTING-REF-001: содержательный рефакторинг «Освещения»
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_v1.yaml]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Editorial_Assignment_And_Versioning_Model_v1]] и [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]].
+Связано с [контрактом RC1](../Artifacts/Machine_Readable/standard_render_contract_v1.yaml), [candidate-контрактом CT1](../Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml), [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Editorial_Assignment_And_Versioning_Model_v1]] и [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]].
 
 ## Цель
 

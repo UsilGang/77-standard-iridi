@@ -5,8 +5,8 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 last_activity_at: 2026-08-07
-last_activity_kind: render_contract_rc1_approved
-last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]]"
+last_activity_kind: content_template_and_lighting_edt_review_prepared
+last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]]"
 stage: active
 privacy: internal
 source_ref: "CORD backfill 2026-07-10"
@@ -25,9 +25,9 @@ project_route: "existing_project"
 ## Activity
 
 - Last activity: `2026-08-07`.
-- Kind: `render_contract_rc1_approved`.
-- Ref: [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]].
+- Kind: `content_template_and_lighting_edt_review_prepared`.
+- Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]].
 
 ## Следующее действие
 
-Согласовать content template contract и первое редакционное задание для [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]]. После этого выполнить трассируемый рефакторинг «Освещения» и пересобрать раздел вместе со всей книгой. Floating images и постраничный DOCX остаются отдельным D8 gate.
+Принять или скорректировать CT1 и EDT1 в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]]. После approve выполнить трассируемый рефакторинг всего раздела «Освещение» и пересобрать его вместе со всей книгой. Floating images и постраничный DOCX остаются отдельным D8 gate.

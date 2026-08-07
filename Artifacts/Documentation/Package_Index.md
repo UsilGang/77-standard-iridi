@@ -28,6 +28,7 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/README]
 | Machine-readable manifest bridge | proposal | [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/Standard_Book_Manifest_MOC]] |
 | Reconstruction parity acceptance | active_requirement | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Reconstruction_Parity_Acceptance_v1]] |
 | Content refactoring and templates | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]] |
+| Content template CT1 + Lighting EDT1 | needs_human_decision | [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]] |
 | Editorial assignment and versioning | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Editorial_Assignment_And_Versioning_Model_v1]] |
 | Audiences and agent knowledge access | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]] |
 | Rendering and scaling contract | approved | [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]] |

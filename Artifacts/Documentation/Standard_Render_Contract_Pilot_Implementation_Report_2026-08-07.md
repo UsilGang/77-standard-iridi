@@ -13,7 +13,7 @@ feedback_ref: "user browser comments 2026-08-07: heading markers, readable margi
 
 # Отчет: пилот контракта генерации книги
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_v1.yaml]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Render_Parity_Self_Audit]], [контрактом RC1](../Machine_Readable/standard_render_contract_v1.yaml) и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
 
 ## Результат
 

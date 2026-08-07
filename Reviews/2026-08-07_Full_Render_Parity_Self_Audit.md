@@ -14,7 +14,7 @@ manual_gate: D8_independent_certification_remains_deferred
 
 # Полный самостоятельный аудит соответствия книги
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/render_parity_audit_contract_v1]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
+Связано с [контрактом render parity](../Artifacts/Machine_Readable/render_parity_audit_contract_v1.yaml), [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]], [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
 
 ## Итог
 
@@ -28,7 +28,7 @@ manual_gate: D8_independent_certification_remains_deferred
 | `material / P1` | Знание есть, но структура, таблица, картинка, навигация или читаемость могут привести к ошибке использования | исправить по точному source evidence; неоднозначное оставить владельцу |
 | `cosmetic / P2` | Отличается шрифт, цвет или микрополе без влияния на смысл и использование | принимать единым контрактом; не копировать ручные неровности автоматически |
 
-Машиночитаемый первоисточник этой таблицы: [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/render_parity_audit_contract_v1]].
+Машиночитаемый первоисточник этой таблицы: [render_parity_audit_contract_v1.yaml](../Artifacts/Machine_Readable/render_parity_audit_contract_v1.yaml).
 
 ## Что найдено и исправлено
 

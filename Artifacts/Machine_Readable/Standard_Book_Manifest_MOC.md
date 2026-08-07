@@ -16,7 +16,7 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current
 
 [standard_book_manifest_candidate_v1.yaml](standard_book_manifest_candidate_v1.yaml) — draft machine-readable inventory of the 17 chapters and Buffer, including stable candidate UIDs, Google tab IDs, archetypes, source status and object counts.
 
-[standard_template_contract_candidate_v1.yaml](standard_template_contract_candidate_v1.yaml) — draft executable contract for legacy/normalized layers, build profiles, shared slots, archetypes, missing policies and refactoring guardrails.
+[standard_template_contract_candidate_v1.yaml](standard_template_contract_candidate_v1.yaml) — CT1 review candidate: отдельные contracts для сборки целого раздела и для адресуемой темы, lighting slot map, missing policies и refactoring guardrails.
 
 [editorial_assignment_schema_candidate_v1.yaml](editorial_assignment_schema_candidate_v1.yaml) — draft contract for EDT intake, content/visual plan, outputs, acceptance, trace chain and book/unit/build versioning.
 
@@ -29,7 +29,7 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current
 - разрешен для architecture review и планирования migration pilot;
 - запрещен как production build input до approve и schema validation;
 - не содержит текста книги или raw confidential sources.
-- template candidate не разрешает автоматически исправлять legacy content.
+- template candidate передан на CT1 review и не разрешает автоматически исправлять legacy content до approve.
 
 ## Реализация
 

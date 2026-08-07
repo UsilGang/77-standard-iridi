@@ -1,0 +1,144 @@
+schema_version: "1.0"
+editorial_job_uid: EDT-2026-0001
+status: review
+created_at: "2026-08-07"
+initiator:
+  type: owner
+  ref: Василий
+source_refs:
+  - "decision:2026-08-07_Standard_Render_Contract_RC1_Approval"
+  - "baseline:baseline_19K5o8mg_288e8eead70d07c1#section=std_ch_lighting"
+  - "user: давай, давай after RC1 approval"
+reader_problem: "Раздел Освещение содержит много знания, но его историческая структура не отделяет назначение, технологии, рекомендации, монтаж, проверку и ограничения; человеку и агенту трудно быстро понять статус утверждения конкретного ответа."
+audiences: [integrator, designer, presales, sales, commissioning, training, agent]
+disposition: editorial_gap
+base_release: "0.0.0"
+template_candidate_uid: standard_templates_1_candidate
+section_template_uid: tpl_subsystem_section_v1
+targets:
+  - uid: std_ch_lighting
+    base_revision: 2
+    include_descendants: true
+    expected_source_topics: 64
+operations:
+  authorized_after_approval:
+    - format_normalize
+    - renumber
+    - move
+    - split
+    - merge
+    - deduplicate
+    - type_separate
+    - clarify
+  separate_human_decision_required:
+    - resolve_conflict
+    - deprecate
+    - remove_content
+    - add_content
+    - approve_typed_rule
+content_plan:
+  - target_slot: value
+    source_groups: ["5.1"]
+    content_role: value_statement
+    key_message: "Зачем автоматизировать освещение и какую ценность получает заказчик."
+  - target_slot: scope_and_terms
+    source_groups: ["5.2", "5.6"]
+    content_role: glossary_and_scope
+    key_message: "Что входит в подсистему и как однозначно называются виды и функции освещения."
+  - target_slot: technologies
+    source_groups: ["5.3", "5.4", "5.6"]
+    content_role: comparison
+    key_message: "Какие способы управления и источники света существуют, без превращения описания в неутвержденную рекомендацию."
+  - target_slot: recommended_architecture
+    source_groups: ["5.5"]
+    content_role: rationale
+    key_message: "Как связаны входы, логика, исполнительные устройства и световые нагрузки."
+  - target_slot: equipment_and_compatibility
+    source_groups: ["5.4", "5.8", "5.9"]
+    content_role: product_fact
+    key_message: "Какие классы оборудования участвуют и какие compatibility facts требуют проверки."
+  - target_slot: design_and_selection
+    source_groups: ["5.3", "5.4", "5.12"]
+    content_role: decision_support
+    key_message: "По каким критериям выбирать технологию, источник и способ управления."
+  - target_slot: control_modes_scenarios
+    source_groups: ["5.2", "5.7", "5.9"]
+    content_role: example_and_procedure
+    key_message: "Какие режимы и сценарии доступны и что запускает их работу."
+  - target_slot: cabling_topology_schematics
+    source_groups: ["5.10", "5.11"]
+    content_role: engineering_guidance
+    key_message: "Как связаны кабели, питание, управляющие линии и типовые схемы."
+  - target_slot: installation
+    source_groups: ["5.9", "5.10", "5.11"]
+    content_role: procedure
+    key_message: "Какие монтажные действия и условия явно подтверждены источником."
+  - target_slot: setup_and_commissioning
+    source_groups: []
+    content_role: procedure
+    key_message: "Не заполнять догадкой: показать missing_review и сформировать отдельный source request."
+  - target_slot: acceptance_tests
+    source_groups: []
+    content_role: checklist
+    key_message: "Не заполнять догадкой: показать missing_review и сформировать отдельный source request."
+  - target_slot: limitations_and_anti_patterns
+    source_groups: ["5.12"]
+    content_role: warning
+    key_message: "Собрать только подтвержденные ограничения; спорные нормы вынести на отдельное expert review."
+  - target_slot: examples_and_room_patterns
+    source_groups: ["5.13", "5.14"]
+    content_role: example
+    key_message: "Сохранить примеры отдельно от обязательного стандарта и связать с соответствующими правилами."
+legacy_quality_findings:
+  - uid: std_topic_lighting_metody_upravleniya_osvescheniem
+    finding: intro_only
+    current_text: "Давайте рассмотрим различные типы освещения."
+    required_disposition: merge_as_container_intro_or_replace_from_approved_sources
+  - uid: std_topic_lighting_primer_realizatsii
+    finding: placeholder_text
+    current_text: "тут накидываем проектов на Bus77"
+    required_disposition: missing_review_and_exclude_from_release_until_approved_example_exists
+  - scope: lighting_structural_nodes
+    finding: "9 container topics and 1 attachment are intentionally non-standalone."
+    required_disposition: assign_container_or_attachment_archetype_and_never_return_as_agent_answer
+visual_required: true
+visual_plan:
+  type: mixed_existing_assets_and_structural_map
+  purpose: "Сохранить 107 source assets, привязать каждый к смысловому слоту и отделить объясняющую иллюстрацию от нормативной схемы."
+  referenced_uids: [std_ch_lighting]
+  editable_source_required_for_new_visuals: true
+  forbidden_inferences:
+    - "Не добавлять обязательное соединение или размер без typed rule/fact UID."
+    - "Не заменять source image новым смыслом без отдельного visual brief."
+  expected_outputs:
+    - asset_to_slot_map
+    - missing_or_duplicate_visual_findings
+    - separate_visual_briefs_for_new_or_rebuilt_diagrams
+expected_outputs:
+  - section_slot_map
+  - topic_archetype_map_for_64_topics
+  - normalized_topic_content
+  - typed_fact_rule_rationale_separation_proposals
+  - transformation_manifest
+  - lighting_and_full_book_draft_builds
+  - explained_delta_report
+  - agent_query_smoke_report
+  - unresolved_semantic_decision_packet
+acceptance_criteria:
+  - "Все 64 topic UID имеют target slot, topic archetype и explicit disposition."
+  - "Все 14 групп 5.1-5.14 представлены в section slot map."
+  - "Каждая исходная содержательная строка, таблица и опубликованное изображение имеет source locator и target/disposition."
+  - "Каждое отличие normalized source имеет operation UID; unexplained semantic delta равен нулю."
+  - "Ни один из 96 lexical rule candidates не получает normative level без отдельного экспертного решения."
+  - "Missing setup/commissioning и acceptance knowledge видимы как gaps, а не заполняются моделью."
+  - "Девять structural containers и один attachment не выдаются агентом как самостоятельное знание; две недозаполненные content topics получают явное disposition."
+  - "Сборки раздела и всей книги создаются одним renderer и проходят действующие validate/audit tests."
+  - "Агентские запросы по назначению, выбору технологии, оборудованию, кабелям, сценариям, монтажу и ограничениям возвращают UID; отсутствие нормы возвращает gap."
+reviewers: [owner, editor, lighting_domain_expert]
+change_class: E3
+normative_impact: none_until_separate_decision
+compatibility_impact: none_until_separate_decision
+proposed_release_bump: pending_first_release_decision
+external_write: false
+publication_allowed: false
+d8_status: deferred

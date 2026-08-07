@@ -1,0 +1,24 @@
+schema_version: "1.0"
+editorial_job_uid: EDT-2026-0001
+privacy: internal
+sources:
+  - ref: "decision:2026-08-07_Standard_Render_Contract_RC1_Approval"
+    origin: human
+    authority: owner
+    verification: approved_decision
+    allowed_use: implementation_contract
+  - ref: "baseline:baseline_19K5o8mg_288e8eead70d07c1#section=std_ch_lighting"
+    origin: external_system
+    authority: legacy_book
+    verification: immutable_local_capture
+    allowed_use: private_source_evidence
+  - ref: "Workspace/77_Стандарт_iRidi/standard-src/sections/std_ch_lighting/section.yaml"
+    origin: machine
+    authority: lossless_import
+    verification: validated_source_tree
+    allowed_use: internal_review
+  - ref: "user: давай, давай after RC1 approval"
+    origin: human
+    authority: owner
+    verification: explicit_continue_instruction
+    allowed_use: prepare_review_package

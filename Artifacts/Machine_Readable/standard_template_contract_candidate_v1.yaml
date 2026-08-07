@@ -1,15 +1,17 @@
-schema_version: "candidate-1"
-status: proposal
+schema_version: "candidate-2"
+status: review
 canonical: false
 do_not_use_for_build: true
 created: "2026-08-05"
+updated: "2026-08-07"
 project_id: "001"
+review_ref: "Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review.md"
 contract:
   uid: standard_templates_1_candidate
   migration_scope: full_book
   first_deep_slice: std_ch_lighting
   deep_slice_is_not_full_acceptance: true
-  principle: "Every legacy element is accounted for; every normalized delta is authorized; every published topic conforms to a versioned archetype."
+  principle: "Every legacy element is accounted for; every normalized delta is authorized; section assembly and topic content use separate versioned templates."
   layers:
     - { id: L0, name: legacy_snapshot, mutable: false, normative: false }
     - { id: L1, name: lossless_import, mutable: false, normative: false }
@@ -26,10 +28,37 @@ contract:
       purpose: publish_unified_standard
       uses_legacy_layout_hints: false
       acceptance: template_conformance_and_authorized_delta_only
+  template_levels:
+    - id: section_assembly
+      purpose: "Defines the ordered knowledge modules of a whole book section."
+      cannot_be_applied_to: topic
+    - id: topic_content
+      purpose: "Defines the semantic contract of one addressable topic."
+      cannot_be_applied_to: section
   slot_states: [filled, not_applicable, intentionally_omitted, missing_review, blocked]
   normative_levels: [must, should, may, informative, out_of_scope]
-  common_template:
+  section_templates:
+    - uid: tpl_subsystem_section_v1
+      applies_to: section
+      archetype: subsystem
+      ordered_slots:
+        - { id: value, required: true }
+        - { id: scope_and_terms, required: true }
+        - { id: technologies, required: true }
+        - { id: recommended_architecture, required: true }
+        - { id: equipment_and_compatibility, required: true }
+        - { id: design_and_selection, required: true }
+        - { id: control_modes_scenarios, required: true }
+        - { id: cabling_topology_schematics, required: true }
+        - { id: installation, required_when: contains_installation_guidance }
+        - { id: setup_and_commissioning, required: true }
+        - { id: acceptance_tests, required: true }
+        - { id: limitations_and_anti_patterns, required: true }
+        - { id: examples_and_room_patterns, required_when: has_examples }
+        - { id: sources_and_changes, required: true, generated: true }
+  common_topic_template:
     uid: tpl_topic_core_v1
+    applies_to: topic
     slots:
       - { id: purpose, required: true, accepts: [prose, value_statement] }
       - { id: scope, required: true, accepts: [prose, applicability_rule] }
@@ -38,18 +67,50 @@ contract:
       - { id: rationale, required_when: has_non_obvious_rule, accepts: [rationale] }
       - { id: implementation, required_when: engineering_guidance, accepts: [prose, procedure, table, schematic] }
       - { id: verification, required_when: engineering_guidance, accepts: [checklist, acceptance_test] }
-      - { id: limitations, required: true, accepts: [limitation, anti_pattern, out_of_scope] }
+      - { id: limitations, required_when: engineering_guidance, accepts: [limitation, anti_pattern, out_of_scope] }
       - { id: sources_and_changes, required: true, generated: true }
-  archetypes:
-    - { uid: tpl_front_matter_v1, inherits: tpl_topic_core_v1, slots: [audience, purpose, roles, terminology, how_to_use, version_status] }
-    - { uid: tpl_policy_v1, inherits: tpl_topic_core_v1, slots: [principle, applicability, rule, rationale, exceptions, control] }
-    - { uid: tpl_platform_architecture_v1, inherits: tpl_topic_core_v1, slots: [components, protocols, topology, constraints, compatibility, selection_rules, diagnostics] }
-    - uid: tpl_subsystem_v1
-      inherits: tpl_topic_core_v1
-      slots: [value, scope_and_terms, technologies, recommended_architecture, equipment_and_compatibility, design_and_selection, control_modes_scenarios, cabling_topology_schematics, installation, setup_and_commissioning, acceptance_tests, limitations_and_anti_patterns]
-    - { uid: tpl_room_pattern_v1, inherits: tpl_topic_core_v1, slots: [room_jobs, minimum_set, recommended_set, extended_set, dependencies, scenarios, acceptance_tests] }
-    - { uid: tpl_engineering_process_v1, inherits: tpl_topic_core_v1, slots: [inputs, roles, steps, outputs, gates, tools, definition_of_done] }
-    - { uid: tpl_commissioning_qa_v1, inherits: tpl_topic_core_v1, slots: [preconditions, checklist, test_procedure, expected_result, evidence, diagnosis, handoff] }
+  topic_archetypes:
+    - { uid: tpl_topic_container_v1, applies_to: topic, inherits: tpl_topic_core_v1, purpose: navigation_and_grouping, standalone_answer: false }
+    - { uid: tpl_concept_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [definition, value, applicability, examples] }
+    - { uid: tpl_technology_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [principle, capabilities, compatibility, selection_rules, limitations] }
+    - { uid: tpl_equipment_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [role, interfaces, compatibility, selection, installation, diagnostics] }
+    - { uid: tpl_engineering_guidance_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [inputs, decision, implementation, verification, limitations] }
+    - { uid: tpl_procedure_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [preconditions, steps, expected_result, evidence, diagnosis] }
+    - { uid: tpl_comparison_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [alternatives, criteria, matrix, selection_rule, limitations] }
+    - { uid: tpl_room_pattern_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [room_jobs, minimum_set, recommended_set, extended_set, dependencies, scenarios, acceptance_tests] }
+    - { uid: tpl_case_study_v1, applies_to: topic, inherits: tpl_topic_core_v1, slots: [context, constraints, solution, rationale, result, lessons] }
+    - { uid: tpl_attachment_v1, applies_to: topic, inherits: tpl_topic_core_v1, purpose: source_attachment, standalone_answer: false, published_as_topic: false }
+  lighting_pilot:
+    section_uid: std_ch_lighting
+    section_template_uid: tpl_subsystem_section_v1
+    source_topic_count: 64
+    source_group_count: 14
+    initial_slot_mapping:
+      - { source_group: "5.1", target_slots: [value] }
+      - { source_group: "5.2", target_slots: [scope_and_terms, control_modes_scenarios] }
+      - { source_group: "5.3", target_slots: [technologies, design_and_selection] }
+      - { source_group: "5.4", target_slots: [technologies, equipment_and_compatibility, design_and_selection] }
+      - { source_group: "5.5", target_slots: [recommended_architecture] }
+      - { source_group: "5.6", target_slots: [scope_and_terms, technologies] }
+      - { source_group: "5.7", target_slots: [control_modes_scenarios] }
+      - { source_group: "5.8", target_slots: [equipment_and_compatibility] }
+      - { source_group: "5.9", target_slots: [equipment_and_compatibility, control_modes_scenarios, installation] }
+      - { source_group: "5.10", target_slots: [cabling_topology_schematics, installation] }
+      - { source_group: "5.11", target_slots: [cabling_topology_schematics, installation] }
+      - { source_group: "5.12", target_slots: [design_and_selection, limitations_and_anti_patterns] }
+      - { source_group: "5.13", target_slots: [examples_and_room_patterns] }
+      - { source_group: "5.14", target_slots: [examples_and_room_patterns] }
+    required_gaps_visible_in_review:
+      - setup_and_commissioning
+      - acceptance_tests
+      - consolidated_limitations_and_anti_patterns
+    legacy_quality_findings:
+      intentional_structural_containers: 9
+      source_attachments_not_standalone_knowledge: 1
+      underfilled_content_topics_requiring_disposition:
+        - std_topic_lighting_metody_upravleniya_osvescheniem
+        - std_topic_lighting_primer_realizatsii
+    mapping_is_not_content_approval: true
   missing_policy:
     release: { required_missing_review: block, required_blocked: block, optional_not_applicable: omit, optional_intentionally_omitted: omit }
     internal_review: { required_missing_review: render_gap_marker, required_blocked: render_blocker }
@@ -59,6 +120,8 @@ contract:
     human_decision: [resolve_conflict, deprecate, remove_content]
     separate_content_change: [add_content]
   guardrails:
+    - section_template_must_not_be_applied_to_each_topic
+    - topic_template_must_not_define_section_order
     - only_typed_rule_is_normative
     - one_rule_one_canonical_definition
     - one_term_one_glossary_definition
@@ -68,3 +131,16 @@ contract:
     - shared_data_is_referenced_not_copied
     - every_normalized_delta_requires_operation_uid
     - every_legacy_element_requires_target_or_explicit_disposition
+  approval_effect:
+    approves:
+      - two_level_template_model
+      - tpl_subsystem_section_v1
+      - topic_archetype_catalog_v1
+      - explicit_missing_slot_policy
+      - lighting_initial_slot_mapping
+    does_not_approve:
+      - any_lighting_rule_candidate
+      - silent_content_rewrite
+      - new_product_fact
+      - removal_or_deprecation
+      - release_cutover_or_publication

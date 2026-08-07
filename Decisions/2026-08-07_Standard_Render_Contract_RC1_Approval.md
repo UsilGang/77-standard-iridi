@@ -9,12 +9,12 @@ origin: human
 source_ref: "[[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
 approval_ref: "user: в целом мне нравится апрув"
 contract_uid: std_render_contract_v1
-canonical_contract_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_v1.yaml]]"
+canonical_contract_ref: "Artifacts/Machine_Readable/standard_render_contract_v1.yaml"
 ---
 
 # Решение: утвердить контракт генерации RC1
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_v1.yaml]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Lighting_Render_Contract_Pilot_Review]], [контрактом RC1](../Artifacts/Machine_Readable/standard_render_contract_v1.yaml) и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]].
 
 ## Принято
 
