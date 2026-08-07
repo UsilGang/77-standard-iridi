@@ -1,0 +1,39 @@
+schema_version: "1.0"
+status: active
+canonical: true
+release_eligible: false
+created: "2026-08-07"
+approved_at: "2026-08-07"
+project_id: "001"
+approval:
+  decision_ref: "Decisions/2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval.md"
+  approval_ref: "user: Давай"
+  approved_snapshot_ref: "Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml"
+contract:
+  uid: standard_templates_1
+  principle: "Section assembly and addressable topic content use separate versioned templates; missing required knowledge stays visible."
+  section_template:
+    uid: tpl_subsystem_section_v1
+    version: "1.0.0"
+    executable_ref: "Workspace/77_Стандарт_iRidi/tooling/templates/subsystem.yaml"
+  topic_archetypes:
+    version: "1.0.0"
+    executable_ref: "Workspace/77_Стандарт_iRidi/tooling/templates/topic-archetypes.yaml"
+  layers:
+    legacy_snapshot: { mutable: false, normative: false }
+    lossless_import: { mutable: false, normative: false }
+    normalized_source: { mutable: true, normative: true, change_gate: approved_editorial_assignment }
+    generated_views: { mutable: false, normative: false, generated: true }
+  missing_policy:
+    release: { required_missing_review: block, required_blocked: block }
+    internal_review: { required_missing_review: render_gap_marker, required_blocked: render_blocker }
+  guardrails:
+    - section_template_must_not_be_applied_to_each_topic
+    - topic_template_must_not_define_section_order
+    - only_typed_rule_is_normative
+    - product_fact_is_not_recommendation
+    - every_normalized_delta_requires_operation_uid
+    - every_legacy_element_requires_target_or_explicit_disposition
+  approval_boundary:
+    approved: [two_level_template_model, lighting_slot_mapping, explicit_missing_policy]
+    separate_decision: [typed_rules, new_product_facts, conflict_resolution, removal, deprecation, publication, d8]

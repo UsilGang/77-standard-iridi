@@ -1,0 +1,5 @@
+schema_version: '1.0'
+status: not_required
+section_uid: std_ch_lighting
+reason: No new or rebuilt visual was authorized by EDT-2026-0001.
+briefs: []

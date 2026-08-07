@@ -18,6 +18,12 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current
 
 [standard_template_contract_candidate_v1.yaml](standard_template_contract_candidate_v1.yaml) — CT1 review candidate: отдельные contracts для сборки целого раздела и для адресуемой темы, lighting slot map, missing policies и refactoring guardrails.
 
+[standard_template_contract_v1.yaml](standard_template_contract_v1.yaml) — действующий CT1 contract, утвержденный для EDT-2026-0001; executable templates лежат в workspace tooling.
+
+[technical_acceptance_ct1_edt1.json](technical_acceptance_ct1_edt1.json) — компактная машинная сводка повторной source/render/browser/package проверки; D8 явно оставлен отдельным gate.
+
+[agent_query_smoke_ct1_edt1.json](agent_query_smoke_ct1_edt1.json) — девять контрольных запросов по Lighting, включая documented/gap routing.
+
 [editorial_assignment_schema_candidate_v1.yaml](editorial_assignment_schema_candidate_v1.yaml) — draft contract for EDT intake, content/visual plan, outputs, acceptance, trace chain and book/unit/build versioning.
 
 [agent_knowledge_package_schema_candidate_v1.yaml](agent_knowledge_package_schema_candidate_v1.yaml) — draft contract for physical layer separation, human audiences, machine consumers, generated indexes, query/audit outputs and access profiles.
@@ -29,7 +35,7 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Current
 - разрешен для architecture review и планирования migration pilot;
 - запрещен как production build input до approve и schema validation;
 - не содержит текста книги или raw confidential sources.
-- template candidate передан на CT1 review и не разрешает автоматически исправлять legacy content до approve.
+- CT1 approved; active contract разрешает только операции утвержденного EDT и не утверждает lexical rule candidates, новые product facts, публикацию или D8.
 
 ## Реализация
 

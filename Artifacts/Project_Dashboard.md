@@ -22,14 +22,14 @@ source_types: ["key_task_log"]
 source_date_min: ""
 source_date_max: ""
 review_ids: ["2026-07-15_Transcribe_Backlog_Route_Review", "2026-08-07_Lighting_Render_Contract_Pilot_Review", "2026-08-07_Full_Book_Migration_And_Agent_Access_Audit", "2026-08-07_Full_Render_Parity_Self_Audit", "2026-08-05_Lighting_Rule_Candidates_Expert_Review", "2026-08-07_Content_Template_And_Lighting_EDT_Review"]
-decision_ids: ["2026-08-05_Standard_As_Code_Architecture_D1_D11", "2026-08-07_Standard_Render_Contract_RC1_Approval"]
-open_question_ids: ["standard_templates_1_candidate", "EDT-2026-0001"]
-backlog_ids: ["DO-001-KKZ-SWEEP-001", "DO-001-STD-PARITY-001", "DO-001-STD-LIGHTING-REF-001"]
+decision_ids: ["2026-08-05_Standard_As_Code_Architecture_D1_D11", "2026-08-07_Standard_Render_Contract_RC1_Approval", "2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval"]
+open_question_ids: ["2026-08-07_Lighting_Content_Gaps_Expert_Review", "D8-independent-certification"]
+backlog_ids: ["DO-001-KKZ-SWEEP-001", "DO-001-STD-PARITY-001"]
 downstream_project_ids: []
 upstream_project_ids: []
 property_profile: generic_project
 last_sync_at: 2026-08-07
-last_sync_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]]"
+last_sync_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Reports/2026-08-07_Lighting_CT1_EDT1_Implementation_Report]]"
 privacy: internal
 ---
 
@@ -57,6 +57,10 @@ privacy: internal
 - Нормализованные HTML/DOCX получили оглавление, переходы между темами и восстановление source inline formatting; ложная шапка таблицы ONOKOM устранена системным правилом.
 - Владелец утвердил RC1; канонический машинный контракт теперь `std_render_contract_v1`. Содержательный template contract, нормы, D8 и публикация этим решением не утверждены.
 - CT1 candidate исправлен после проверки на реальных 64 темах: шаблон целого раздела физически отделен от topic archetypes; подготовлено EDT-2026-0001 на весь раздел «Освещение».
+- CT1 и EDT-2026-0001 утверждены и применены: 64/64 темы имеют slot/archetype/disposition/operation trace, lossless content не переписан.
+- Lighting normalized view: 14 модулей, 52 самостоятельные темы, 37 таблиц, 107 изображений и три явных knowledge gaps; все 107 image refs сопоставлены со слотами.
+- Обновленный agent package: 231 topic/gap node, 4 918 fragments и slot index. Smoke-проверка 9/9; ПНР, приемка и ограничения возвращают gap, а не выдуманную норму.
+- Повторные migration и browser audits прошли с 0 critical/material/cosmetic findings. D8 по-прежнему не self-certified.
 
 ## Assumptions
 
@@ -66,11 +70,11 @@ privacy: internal
 ## Open Questions
 
 - Решить review [[01_Projects/001_77_Standard_iRidi/Reviews/2026-07-15_Transcribe_Backlog_Route_Review]] по двум Transcribe-сигналам.
-- Утвердить или скорректировать `standard_templates_1_candidate` и `EDT-2026-0001` по [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]].
+- Решить [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Content_Gaps_Expert_Review]] по ПНР, приемке, ограничениям и примеру реализации.
 
 ## Next Do
 
-- После approve CT1 + EDT1 активировать [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]]. D8 не закрывать без проверки четырех floating images и постраничного DOCX.
+- Выполнить независимый [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]]. D8 не закрывать по self-audit.
 
 ## Review Queue
 

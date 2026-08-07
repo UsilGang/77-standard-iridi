@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "status": "pass_with_independent_d8_pending",
+  "date": "2026-08-07",
+  "baseline_uid": "baseline_19K5o8mg_288e8eead70d07c1",
+  "section_uid": "std_ch_lighting",
+  "editorial_job_uid": "EDT-2026-0001",
+  "changeset_uid": "chg_2026_0001",
+  "validation": {
+    "status": "pass",
+    "sections": 17,
+    "source_topics": 276,
+    "typed_rules": 0,
+    "unit_tests": {"passed": 26, "failed": 0}
+  },
+  "source_reconciliation": {
+    "status": "pass",
+    "tabs": 18,
+    "blocks": 6758,
+    "topics": 276,
+    "tables": 146,
+    "source_assets": 471,
+    "failures": 0
+  },
+  "lighting": {
+    "modules": 14,
+    "source_topics": 64,
+    "standalone_normalized_topics": 52,
+    "tables": 37,
+    "published_images": 107,
+    "mapped_image_refs": 107,
+    "missing_assets": 0
+  },
+  "full_normalized_build": {
+    "sections": 17,
+    "tables": 146,
+    "published_images": 441,
+    "topic_anchors": 251,
+    "missing_content_lines": 0,
+    "missing_internal_targets": 0,
+    "raw_hash_markers": 0
+  },
+  "browser_audit": {
+    "status": "pass",
+    "viewports": [1600, 1024, 640],
+    "critical": 0,
+    "material": 0,
+    "cosmetic": 0,
+    "broken_images": 0,
+    "overflow_elements": 0,
+    "heading_jumps": 0
+  },
+  "agent_package": {
+    "topics_and_gaps": 231,
+    "fragments": 4918,
+    "assets": 441,
+    "buffer_included": false,
+    "smoke_queries_passed": 9,
+    "smoke_queries_total": 9,
+    "explicit_gap_uids": [
+      "std_topic_lighting_setup_and_commissioning_gap",
+      "std_topic_lighting_acceptance_tests_gap",
+      "std_topic_lighting_limitations_and_anti_patterns_gap"
+    ]
+  },
+  "findings_summary": {"critical": 0, "material": 0, "cosmetic": 0},
+  "d8_independent_certification": "deferred_not_self_certified",
+  "publication_performed": false
+}

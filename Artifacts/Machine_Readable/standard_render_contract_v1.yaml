@@ -13,8 +13,8 @@ contract:
   uid: std_render_contract_v1
   title: "Standard book rendering and pilot scaling contract"
   source_model_ref: "Workspace/77_Стандарт_iRidi/standard-src/book.yaml"
-  template_contract_ref: "Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml"
-  template_contract_status: proposal_not_approved_by_rc1
+  template_contract_ref: "Artifacts/Machine_Readable/standard_template_contract_v1.yaml"
+  template_contract_status: active_ct1
   implementation_ref: "Workspace/77_Стандарт_iRidi/tooling/standard_book.py"
   table_layout_contract_ref: "Workspace/77_Стандарт_iRidi/tooling/table_layout_contract.yaml"
   migration_scope: full_book

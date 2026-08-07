@@ -21,7 +21,7 @@ import unicodedata
 import urllib.request
 import zipfile
 import xml.etree.ElementTree as ET
-from collections import defaultdict
+from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,6 +47,12 @@ DEFAULT_MANIFEST_CANDIDATE = (
 SCHEMA_DIR = TOOLING_DIR / "schemas"
 TABLE_LAYOUT_CONTRACT = TOOLING_DIR / "table_layout_contract.yaml"
 SEMANTIC_ENRICHMENT_CONTRACT = TOOLING_DIR / "semantic_enrichment_contract.yaml"
+DEFAULT_TEMPLATE_CONTRACT = (
+    WORKSPACE_DIR.parents[1]
+    / "Artifacts"
+    / "Machine_Readable"
+    / "standard_template_contract_v1.yaml"
+)
 TOKEN_RE = re.compile(r"[\w-]{2,}", re.UNICODE)
 STOPWORDS = {
     "а", "без", "бы", "в", "во", "вот", "вы", "где", "да", "для", "до", "его", "ее", "если", "же", "за",
@@ -1005,6 +1011,21 @@ def validate(args: argparse.Namespace) -> int:
         for ref in section.get("topic_refs") or []:
             if ref not in topic_uids:
                 findings.append({"severity": "error", "code": "missing_topic_ref", "section": section.get("uid"), "ref": ref})
+        normalized_template = section.get("normalized_template") or {}
+        if normalized_template:
+            mapped_refs = [
+                ref
+                for slot in normalized_template.get("slots") or []
+                for ref in slot.get("topic_refs") or []
+            ]
+            if len(mapped_refs) != len(set(mapped_refs)):
+                findings.append({"severity": "error", "code": "duplicate_template_topic_ref", "section": section.get("uid")})
+            missing_mappings = sorted(set(refs) - set(mapped_refs))
+            unknown_mappings = sorted(set(mapped_refs) - set(refs))
+            if missing_mappings:
+                findings.append({"severity": "error", "code": "unmapped_template_topics", "section": section.get("uid"), "refs": missing_mappings})
+            if unknown_mappings:
+                findings.append({"severity": "error", "code": "unknown_template_topics", "section": section.get("uid"), "refs": unknown_mappings})
     referenced_topic_uids = {ref for section in sections for ref in (section.get("topic_refs") or [])}
     for orphan in sorted(topic_uids - referenced_topic_uids):
         findings.append({"severity": "error", "code": "orphan_topic", "uid": orphan})
@@ -1014,6 +1035,14 @@ def validate(args: argparse.Namespace) -> int:
             findings.append({"severity": "error", "code": "missing_content", "uid": topic.get("uid"), "path": str(content)})
         elif topic.get("digest") and topic["digest"] != sha256_file(content):
             findings.append({"severity": "error", "code": "digest_mismatch", "uid": topic.get("uid")})
+        if topic.get("section_template_uid"):
+            required_overlay = ("topic_archetype_uid", "primary_slot", "normalized_disposition", "transformation_refs")
+            for field in required_overlay:
+                if not topic.get(field):
+                    findings.append({"severity": "error", "code": "missing_template_metadata", "uid": topic.get("uid"), "field": field})
+            normalized_content_ref = topic.get("normalized_content_ref")
+            if normalized_content_ref and not (source_dir / str(normalized_content_ref)).is_file():
+                findings.append({"severity": "error", "code": "missing_normalized_content", "uid": topic.get("uid"), "path": str(normalized_content_ref)})
     asset_manifest = source_dir / "assets" / "manifest.yaml"
     if asset_manifest.is_file():
         for row in (read_yaml(asset_manifest) or {}).get("assets") or []:
@@ -1051,6 +1080,431 @@ def validate(args: argparse.Namespace) -> int:
 
 def ordered_section_topics(section: dict[str, Any], topics_by_uid: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
     return [topics_by_uid[uid] for uid in (section.get("topic_refs") or []) if uid in topics_by_uid]
+
+
+def effective_topic_value(topic: dict[str, Any], field: str, normalized: bool = True) -> Any:
+    if normalized:
+        normalized_field = f"normalized_{field}"
+        if normalized_field in topic:
+            return topic[normalized_field]
+    return topic.get(field)
+
+
+def effective_topic_content_ref(topic: dict[str, Any], normalized: bool = True) -> str:
+    return str(effective_topic_value(topic, "content_ref", normalized) or topic.get("content_ref") or "")
+
+
+def effective_topic_node_kind(topic: dict[str, Any], normalized: bool = True) -> str:
+    return str(effective_topic_value(topic, "node_kind", normalized) or "content")
+
+
+def effective_topic_publish(topic: dict[str, Any], normalized: bool = True) -> bool:
+    value = effective_topic_value(topic, "publish", normalized)
+    return value is not False
+
+
+def effective_topic_queryable(topic: dict[str, Any], normalized: bool = True) -> bool:
+    value = effective_topic_value(topic, "queryable", normalized)
+    return value is not False
+
+
+def normalized_section_modules(section: dict[str, Any], topics_by_uid: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    template = section.get("normalized_template") or {}
+    modules: list[dict[str, Any]] = []
+    for slot in template.get("slots") or []:
+        topics = [
+            topics_by_uid[uid]
+            for uid in slot.get("topic_refs") or []
+            if uid in topics_by_uid and effective_topic_publish(topics_by_uid[uid], normalized=True)
+        ]
+        related_topics = [
+            topics_by_uid[uid]
+            for uid in slot.get("related_topic_refs") or []
+            if uid in topics_by_uid and effective_topic_publish(topics_by_uid[uid], normalized=True)
+        ]
+        modules.append(
+            {
+                "uid": str(slot.get("uid") or stable_uid("std_module", str(section.get("uid")), str(slot.get("id")))),
+                "slot_id": str(slot.get("id")),
+                "title": str(slot.get("title")),
+                "state": str(slot.get("state") or "filled"),
+                "required": bool(slot.get("required")),
+                "generated": bool(slot.get("generated")),
+                "topics": topics,
+                "related_topics": related_topics,
+            }
+        )
+    return modules
+
+
+def template_gap_topic_uid(section: dict[str, Any], slot_id: str) -> str:
+    section_slug = re.sub(
+        r"[^a-z0-9_]+",
+        "_",
+        str(section.get("semantic_uid") or section["uid"]).removeprefix("std_ch_"),
+    ).strip("_")
+    return f"std_topic_{section_slug}_{slot_id}_gap"
+
+
+def topic_source_group(topic: dict[str, Any]) -> str | None:
+    display = str(topic.get("display_number") or "")
+    match = re.match(r"^5\.(\d+)(?:\.|$)", display)
+    if not match:
+        match = re.match(r"^5\.(\d+)(?:\.|\s)", str(topic.get("title") or ""))
+    return f"5.{int(match.group(1))}" if match else None
+
+
+def topic_archetype_for_slot(topic: dict[str, Any], primary_slot: str, source_group: str | None) -> str:
+    node_kind = str(topic.get("node_kind") or "content")
+    if node_kind == "attachment":
+        return "tpl_attachment_v1"
+    if node_kind == "container":
+        return "tpl_topic_container_v1"
+    if source_group == "5.14":
+        return "tpl_case_study_v1"
+    if source_group == "5.13":
+        return "tpl_room_pattern_v1"
+    return {
+        "value": "tpl_concept_v1",
+        "scope_and_terms": "tpl_concept_v1",
+        "technologies": "tpl_technology_v1",
+        "recommended_architecture": "tpl_engineering_guidance_v1",
+        "equipment_and_compatibility": "tpl_equipment_v1",
+        "design_and_selection": "tpl_comparison_v1",
+        "control_modes_scenarios": "tpl_engineering_guidance_v1",
+        "cabling_topology_schematics": "tpl_engineering_guidance_v1",
+        "installation": "tpl_procedure_v1",
+        "setup_and_commissioning": "tpl_procedure_v1",
+        "acceptance_tests": "tpl_procedure_v1",
+        "limitations_and_anti_patterns": "tpl_engineering_guidance_v1",
+        "examples_and_room_patterns": "tpl_case_study_v1",
+        "sources_and_changes": "tpl_topic_container_v1",
+    }.get(primary_slot, "tpl_concept_v1")
+
+
+def apply_template_cmd(args: argparse.Namespace) -> int:
+    source_dir = Path(args.source_dir).resolve()
+    section_dir = source_dir / "sections" / args.section
+    section_path = section_dir / "section.yaml"
+    if not section_path.is_file():
+        raise SystemExit(f"Unknown section UID: {args.section}")
+    contract_path = Path(args.template_contract).resolve()
+    contract = read_yaml(contract_path)
+    if contract.get("status") != "active" or contract.get("canonical") is not True:
+        raise SystemExit("Template contract must be active and canonical")
+    editorial_path = Path(args.editorial).resolve()
+    editorial = read_yaml(editorial_path)
+    if editorial.get("status") not in {"approved", "in_progress", "validation", "release_ready"}:
+        raise SystemExit("Editorial assignment must be approved, in_progress, validation or release_ready")
+    if editorial.get("publication_allowed") is not False or editorial.get("external_write") is not False:
+        raise SystemExit("This command only accepts local non-public editorial assignments")
+    try:
+        import jsonschema
+
+        jsonschema.validate(editorial, read_json(SCHEMA_DIR / "editorial-job.schema.json"))
+    except ImportError as exc:  # pragma: no cover
+        raise SystemExit("jsonschema is required for apply-template") from exc
+
+    output_dir = Path(args.output_dir).resolve()
+    if output_dir.exists() and any(output_dir.iterdir()) and not args.force:
+        raise SystemExit(f"Changeset directory is not empty: {output_dir}. Use --force for deliberate regeneration.")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    project_root = WORKSPACE_DIR.parents[1]
+    section_template_ref = ((contract.get("contract") or {}).get("section_template") or {}).get("executable_ref")
+    if not section_template_ref:
+        raise SystemExit("Active template contract has no executable section template")
+    section_template = read_yaml(project_root / str(section_template_ref))
+    if section_template.get("status") != "approved":
+        raise SystemExit("Executable section template is not approved")
+
+    section = read_yaml(section_path)
+    topic_paths = {path.parent.name: path for path in section_dir.glob("topics/*/topic.yaml")}
+    topics = [read_yaml(topic_paths[uid]) for uid in section.get("topic_refs") or []]
+    topics_by_semantic = {str(topic.get("semantic_uid") or topic.get("uid")): topic for topic in topics}
+    slot_sources: dict[str, list[str]] = defaultdict(list)
+    slot_order_from_editorial: list[str] = []
+    for row in editorial.get("content_plan") or []:
+        slot_id = str(row.get("target_slot") or "")
+        if not slot_id:
+            continue
+        slot_order_from_editorial.append(slot_id)
+        for source_group in row.get("source_groups") or []:
+            slot_sources[str(source_group)].append(slot_id)
+    slot_order_from_editorial = list(dict.fromkeys(slot_order_from_editorial))
+    template_slots = list(section_template.get("slots") or [])
+    known_slots = {str(slot.get("id")) for slot in template_slots}
+    unknown_slots = sorted(set(slot_order_from_editorial) - known_slots)
+    if unknown_slots:
+        raise SystemExit(f"Editorial assignment references unknown template slots: {', '.join(unknown_slots)}")
+
+    changeset_uid = "chg_2026_0001"
+    batch_uid = "trn_lighting_edt_2026_0001"
+    slot_topics: dict[str, list[str]] = defaultdict(list)
+    slot_related_topics: dict[str, list[str]] = defaultdict(list)
+    operations: list[dict[str, Any]] = []
+    content_changed: list[str] = []
+    suppressed: list[str] = []
+    gap_uid = "std_topic_lighting_primer_realizatsii"
+    intro_uid = "std_topic_lighting_metody_upravleniya_osvescheniem"
+
+    last_non_attachment_group: str | None = None
+    for topic in topics:
+        semantic_uid = str(topic.get("semantic_uid") or topic["uid"])
+        group = topic_source_group(topic)
+        if group:
+            last_non_attachment_group = group
+        if topic.get("node_kind") == "attachment" and not group:
+            attached_to = topics_by_semantic.get(str(topic.get("attached_to_uid") or ""))
+            group = topic_source_group(attached_to or {}) or last_non_attachment_group
+        target_slots = list(dict.fromkeys(slot_sources.get(str(group)) or []))
+        if not target_slots:
+            target_slots = ["value" if str(topic.get("display_number") or "") == "5" else "sources_and_changes"]
+        primary_slot = target_slots[0]
+        archetype_uid = topic_archetype_for_slot(topic, primary_slot, group)
+        normalized_publish = True
+        normalized_queryable = bool(topic.get("queryable"))
+        normalized_node_kind = str(topic.get("node_kind") or "content")
+        normalized_coverage_status = str(topic.get("coverage_status") or "documented")
+        disposition = "mapped_without_semantic_rewrite"
+        operation_type = "move"
+
+        if topic.get("node_kind") == "container" or str(topic.get("display_number") or "") == "5":
+            normalized_publish = False
+            normalized_queryable = False
+            disposition = "represented_by_section_or_module_heading"
+            operation_type = "merge"
+        if semantic_uid == intro_uid:
+            normalized_publish = False
+            normalized_queryable = False
+            normalized_node_kind = "container"
+            disposition = "intro_merged_into_technologies_module"
+            operation_type = "merge"
+        if semantic_uid == gap_uid:
+            normalized_publish = True
+            normalized_queryable = True
+            normalized_node_kind = "gap"
+            normalized_coverage_status = "gap"
+            disposition = "legacy_placeholder_quarantined_visible_gap_rendered"
+            operation_type = "type_separate"
+            normalized_path = topic_paths[str(topic["uid"])].parent / "normalized.md"
+            atomic_write_text(
+                normalized_path,
+                f"# {topic['title']}\n\n"
+                "> Статус: в исходной книге обнаружен черновой placeholder, не содержащий применимого технического знания.\n\n"
+                "Утвержденного примера реализации пока нет. Для заполнения требуется отдельное редакционное задание "
+                "с проверенным проектом, исходными ограничениями, схемой, результатом и экспертным review.\n",
+            )
+            topic["normalized_content_ref"] = normalized_path.relative_to(source_dir).as_posix()
+            topic["normalized_digest"] = sha256_file(normalized_path)
+            content_changed.append(semantic_uid)
+
+        operation_uid = stable_uid("std_op", editorial["editorial_job_uid"], semantic_uid, operation_type)
+        topic.update(
+            {
+                "revision": int(topic.get("revision") or 1) + (0 if changeset_uid in (topic.get("change_refs") or []) else 1),
+                "change_refs": list(dict.fromkeys([*(topic.get("change_refs") or []), changeset_uid])),
+                "last_editorial_job": editorial["editorial_job_uid"],
+                "pending_release": True,
+                "section_template_uid": section_template["template_uid"],
+                "topic_archetype_uid": archetype_uid,
+                "primary_slot": primary_slot,
+                "secondary_slots": target_slots[1:],
+                "slot_state": "missing_review" if semantic_uid == gap_uid else "filled",
+                "normalized_publish": normalized_publish,
+                "normalized_queryable": normalized_queryable,
+                "normalized_node_kind": normalized_node_kind,
+                "normalized_coverage_status": normalized_coverage_status,
+                "normalized_disposition": disposition,
+                "transformation_refs": list(dict.fromkeys([*(topic.get("transformation_refs") or []), operation_uid])),
+                "allowed_outputs": list(dict.fromkeys([*(topic.get("allowed_outputs") or []), "standard-normalized", "agent-package-internal"])),
+            }
+        )
+        write_yaml(topic_paths[str(topic["uid"])], topic)
+        slot_topics[primary_slot].append(str(topic["uid"]))
+        for secondary_slot in target_slots[1:]:
+            slot_related_topics[secondary_slot].append(str(topic["uid"]))
+        if not normalized_publish:
+            suppressed.append(semantic_uid)
+        operations.append(
+            {
+                "operation_uid": operation_uid,
+                "type": operation_type,
+                "source_locators": [str(topic.get("content_ref"))],
+                "target_uids": [semantic_uid],
+                "primary_slot": primary_slot,
+                "secondary_slots": target_slots[1:],
+                "topic_archetype_uid": archetype_uid,
+                "disposition": disposition,
+                "semantic_impact": "none" if semantic_uid != gap_uid else "legacy_placeholder_not_promoted",
+                "decision_ref": editorial.get("decision_ref"),
+            }
+        )
+
+    resolved_slots: list[dict[str, Any]] = []
+    for slot in template_slots:
+        slot_id = str(slot["id"])
+        direct_refs = slot_topics.get(slot_id, [])
+        related_refs = slot_related_topics.get(slot_id, [])
+        if direct_refs:
+            state = "filled"
+        elif related_refs and slot_id != "limitations_and_anti_patterns":
+            state = "covered_by_reference"
+        elif slot.get("generated"):
+            state = "generated"
+        else:
+            state = "missing_review" if slot.get("required") else "empty_allowed"
+        resolved_slots.append(
+            {
+                "uid": stable_uid("std_module", str(section["uid"]), slot_id),
+                "id": slot_id,
+                "title": str(slot["title"]),
+                "required": bool(slot.get("required")),
+                "generated": bool(slot.get("generated")),
+                "state": state,
+                "topic_refs": direct_refs,
+                "related_topic_refs": related_refs,
+            }
+        )
+    section.update(
+        {
+            "revision": int(section.get("revision") or 1) + (0 if changeset_uid in (section.get("change_refs") or []) else 1),
+            "change_refs": list(dict.fromkeys([*(section.get("change_refs") or []), changeset_uid])),
+            "last_editorial_job": editorial["editorial_job_uid"],
+            "pending_release": True,
+            "normalized_template": {
+                "uid": section_template["template_uid"],
+                "version": section_template["template_version"],
+                "contract_uid": (contract.get("contract") or {}).get("uid"),
+                "slots": resolved_slots,
+            },
+            "normalization_manifest_ref": (output_dir / "transformation-manifest.yaml").relative_to(source_dir).as_posix(),
+            "allowed_outputs": list(dict.fromkeys([*(section.get("allowed_outputs") or []), "standard-normalized", "agent-package-internal"])),
+        }
+    )
+    write_yaml(section_path, section)
+
+    table_count = 0
+    image_count = 0
+    character_count = 0
+    asset_slot_rows: list[dict[str, Any]] = []
+    for topic in topics:
+        content_path = source_dir / str(topic.get("content_ref") or "")
+        content = content_path.read_text(encoding="utf-8")
+        character_count += len(content)
+        image_matches = list(re.finditer(r"!\[([^]]*)\]\(([^)]+)\)", content))
+        image_count += len(image_matches)
+        for image_match in image_matches:
+            image_path = (content_path.parent / image_match.group(2)).resolve()
+            asset_slot_rows.append(
+                {
+                    "asset_ref": image_match.group(2),
+                    "asset_name": image_path.name,
+                    "asset_exists": image_path.is_file(),
+                    "asset_sha256": sha256_file(image_path) if image_path.is_file() else None,
+                    "source_locator": f"{topic.get('content_ref')}#image-{len(asset_slot_rows) + 1}",
+                    "topic_uid": str(topic.get("semantic_uid") or topic["uid"]),
+                    "primary_slot": topic.get("primary_slot"),
+                    "secondary_slots": topic.get("secondary_slots") or [],
+                    "disposition": "preserved_in_topic",
+                }
+            )
+        table_count += sum(
+            1
+            for line in logical_markdown_lines(content)
+            if line.strip().startswith("|") and markdown_is_separator(markdown_table_cells(line))
+        )
+    manifest = {
+        "schema_version": "1.0",
+        "batch_uid": batch_uid,
+        "status": "applied_local_validation_pending",
+        "editorial_job_uid": editorial["editorial_job_uid"],
+        "changeset_uid": changeset_uid,
+        "decision_ref": editorial.get("decision_ref"),
+        "source_section_uid": section["uid"],
+        "baseline_uid": "baseline_19K5o8mg_288e8eead70d07c1",
+        "template_uid": section_template["template_uid"],
+        "template_version": section_template["template_version"],
+        "source_inventory": {"topics": len(topics), "characters": character_count, "tables": table_count, "images": image_count},
+        "normalized_inventory": {
+            "mapped_topics": len(operations),
+            "suppressed_structural_topics": len(suppressed),
+            "visible_gap_topics": len(content_changed),
+            "typed_rules_approved": 0,
+        },
+        "operations": operations,
+        "unexplained_semantic_deltas": 0,
+        "d8_status": "deferred_not_self_certified",
+    }
+    write_yaml(output_dir / "transformation-manifest.yaml", manifest)
+    visual_report = {
+        "schema_version": "1.0",
+        "status": "pass" if len(asset_slot_rows) == image_count and all(row["asset_exists"] for row in asset_slot_rows) else "fail",
+        "section_uid": section["uid"],
+        "expected_source_images": image_count,
+        "mapped_image_references": len(asset_slot_rows),
+        "missing_assets": [row for row in asset_slot_rows if not row["asset_exists"]],
+        "duplicate_asset_names": sorted(
+            name for name, count in Counter(row["asset_name"] for row in asset_slot_rows).items() if count > 1
+        ),
+        "new_visual_briefs_required": False,
+        "new_visual_briefs_reason": "No new or rebuilt visual was authorized; all source images are preserved in their source topics.",
+        "assets": asset_slot_rows,
+    }
+    write_json(output_dir / "asset-to-slot-map.json", visual_report)
+    write_yaml(
+        output_dir / "visual-briefs.yaml",
+        {
+            "schema_version": "1.0",
+            "status": "not_required",
+            "section_uid": section["uid"],
+            "reason": "No new or rebuilt visual was authorized by EDT-2026-0001.",
+            "briefs": [],
+        },
+    )
+    changeset = {
+        "uid": changeset_uid,
+        "type": "changeset",
+        "status": "draft",
+        "revision": 1,
+        "digest": None,
+        "privacy": "internal",
+        "source_refs": list(editorial.get("source_refs") or []),
+        "change_refs": [batch_uid],
+        "introduced_in": None,
+        "last_changed_in": None,
+        "allowed_outputs": ["internal_review"],
+        "editorial_job_uid": editorial["editorial_job_uid"],
+        "changed_uids": [str(section.get("semantic_uid") or section["uid"]), *[str(topic.get("semantic_uid") or topic["uid"]) for topic in topics]],
+        "semantic_diff": operations,
+        "version_impact": "none",
+        "pending_release": True,
+    }
+    changeset["digest"] = sha256_bytes(json.dumps(changeset, ensure_ascii=False, sort_keys=True).encode("utf-8"))
+    write_yaml(output_dir / "changeset.yaml", changeset)
+    conformance = {
+        "status": "pass_with_visible_gaps",
+        "section_uid": section["uid"],
+        "mapped_topics": len(operations),
+        "expected_topics": len(section.get("topic_refs") or []),
+        "slot_states": {slot["id"]: slot["state"] for slot in resolved_slots},
+        "unmapped_topics": [],
+        "duplicate_primary_assignments": [],
+        "unexplained_semantic_deltas": 0,
+    }
+    write_json(output_dir / "template-conformance.json", conformance)
+    result = {
+        "status": "applied_local_validation_pending",
+        "section_uid": section["uid"],
+        "editorial_job_uid": editorial["editorial_job_uid"],
+        "changeset_uid": changeset_uid,
+        "topics": len(operations),
+        "suppressed": len(suppressed),
+        "visible_gaps": len(content_changed),
+        "output_dir": str(output_dir),
+    }
+    print(json.dumps(result, ensure_ascii=False))
+    return 0
 
 
 def selected_section_refs(book: dict[str, Any], sections: list[dict[str, Any]], requested: list[str] | None = None) -> list[str]:
@@ -1261,7 +1715,7 @@ HTML_CSS = (
     ".toc-panel h2{margin:0 0 .75rem;font-size:1.25rem}.toc-panel ol{list-style:none;margin:.35rem 0;padding-left:1.2rem}"
     ".toc-panel li{margin:.35rem 0}.toc-panel details>ol{margin-top:.55rem}.toc-panel summary{cursor:pointer;font-weight:700;color:#153A5B}"
     ".toc-panel a{color:#244E70;text-decoration:none}.toc-panel a:hover,.toc-panel a:focus{text-decoration:underline}"
-    ".toc-section-start{display:block;margin:.45rem 0 .65rem;font-size:.9rem}.toc-fragments{font-size:.88rem;color:#4B5563}"
+    ".toc-section-start{display:block;margin:.45rem 0 .65rem;font-size:.9rem}.toc-modules{padding-left:1.15rem}.toc-modules>li>a{font-weight:700}.toc-fragments{font-size:.88rem;color:#4B5563}.toc-related{font-size:.82rem;color:#5F6B76;margin:.2rem 0 .5rem}"
     ".topic-navigation{display:flex;gap:.75rem;justify-content:space-between;align-items:center;flex-wrap:wrap;"
     "margin:2rem 0 .5rem;padding:.55rem .75rem;border-top:1px solid #D5DEE5;border-bottom:1px solid #D5DEE5;font-size:.9rem}"
     ".topic-navigation a,.back-to-toc{color:#244E70;text-decoration:none}.topic-navigation a:hover,.back-to-toc:hover{text-decoration:underline}"
@@ -1274,7 +1728,7 @@ HTML_CSS = (
     "table{width:100%;table-layout:fixed;border-collapse:collapse;margin:1.25rem 0;font-size:.95rem}"
     "td,th{border:1px solid #B8C4CE;padding:12px;vertical-align:top;overflow-wrap:anywhere}th{background:#EAF1F6}"
     "td.table-cell-image{font-size:.85rem;color:#4B5563}td.table-cell-image img{width:auto;max-width:100%;max-height:320px;object-fit:contain}"
-    ".missing-asset{color:#9B1C1C}.gap-note,.unplaced-assets{border-left:4px solid #C98200;background:#FFF8E6;padding:10px 14px;margin:1rem 0}"
+    ".missing-asset{color:#9B1C1C}.template-module{padding-top:.5rem;border-top:2px solid #D7E2EA}.template-module[data-slot-state='missing_review']{color:#7A4B00}.module-crossrefs{border-left:3px solid #6B8EAD;background:#F3F7FA;padding:8px 12px;margin:.75rem 0}.gap-note,.unplaced-assets{border-left:4px solid #C98200;background:#FFF8E6;padding:10px 14px;margin:1rem 0}"
     ".machine-anchor{scroll-margin-top:24px}"
     "@media(max-width:1000px){.book-shell{display:block;padding:0}.toc-panel{position:relative;top:auto;max-height:none;margin:16px;}.book-content{box-shadow:none}}"
     "@media(max-width:640px){body{font-size:15px}.book-content{padding:28px 22px 64px}h1{font-size:1.75rem}h2{font-size:1.4rem}.back-to-toc{right:14px;bottom:14px}}"
@@ -1441,6 +1895,7 @@ def markdown_html(
     suppress_initial_heading: bool = False,
     fragment_uid_prefix: str | None = None,
     style_hints: dict[str, list[dict[str, Any]]] | None = None,
+    normalized_heading_level: int = 3,
 ) -> list[str]:
     lines = logical_markdown_lines(path.read_text(encoding="utf-8"))
     out: list[str] = []
@@ -1497,7 +1952,11 @@ def markdown_html(
         elif re.search(r"!\[([^]]*)\]\(([^)]+)\)", stripped):
             out.append(f"<p>{styled_image_paragraph_html(stripped, path, take_style_hint(style_hints, stripped))}</p>")
         elif heading:
-            level = rendered_heading_level(heading[0], normalized=skip_initial_heading is not None)
+            level = (
+                normalized_heading_level
+                if skip_initial_heading is not None
+                else rendered_heading_level(heading[0], normalized=False)
+            )
             fragment_attr = ""
             if fragment_uid_prefix:
                 heading_occurrences[heading[1]] += 1
@@ -1565,21 +2024,38 @@ def navigation_outline(
             "uid": str(section.get("semantic_uid") or section["uid"]),
             "title": f"{section.get('display_number') or ''} {section['title']}".strip(),
             "topics": [],
+            "modules": [],
         }
         if profile == "standard-normalized":
-            for topic in ordered_section_topics(section, topics_by_uid):
-                node_kind = str(topic.get("node_kind") or "content")
-                if node_kind in {"artifact", "attachment"} or topic.get("publish") is False:
-                    continue
-                topic_uid = topic_public_uid(topic)
-                content_path = source_dir / str(topic["content_ref"])
-                section_row["topics"].append(
-                    {
+            modules = normalized_section_modules(section, topics_by_uid)
+            topic_groups = modules if modules else [{"uid": None, "title": None, "state": "filled", "topics": ordered_section_topics(section, topics_by_uid)}]
+            for module in topic_groups:
+                module_row = {
+                    "uid": module.get("uid"),
+                    "title": module.get("title"),
+                    "state": module.get("state"),
+                    "topics": [],
+                    "related_topics": [],
+                }
+                for topic in module["topics"]:
+                    node_kind = effective_topic_node_kind(topic, normalized=True)
+                    if node_kind in {"artifact", "attachment"} or not effective_topic_publish(topic, normalized=True):
+                        continue
+                    topic_uid = topic_public_uid(topic)
+                    content_path = source_dir / effective_topic_content_ref(topic, normalized=True)
+                    topic_row = {
                         "uid": topic_uid,
                         "title": str(topic["title"]),
                         "fragments": markdown_navigation_headings(content_path, topic_uid, str(topic["title"])),
                     }
-                )
+                    module_row["topics"].append(topic_row)
+                    section_row["topics"].append(topic_row)
+                for topic in module.get("related_topics") or []:
+                    if effective_topic_node_kind(topic, normalized=True) in {"artifact", "attachment"}:
+                        continue
+                    module_row["related_topics"].append({"uid": topic_public_uid(topic), "title": str(topic["title"])})
+                if modules:
+                    section_row["modules"].append(module_row)
         outline.append(section_row)
     return outline
 
@@ -1596,7 +2072,33 @@ def html_toc(outline: list[dict[str, Any]], book_uid: str, book_title: str) -> s
     for section in outline:
         parts.append(f"<li><details{expanded}><summary>{html.escape(section['title'])}</summary>")
         parts.append(f"<a class='toc-section-start' href='#{html.escape(section['uid'])}'>К началу раздела</a>")
-        if section["topics"]:
+        if section.get("modules"):
+            parts.append("<ol class='toc-modules'>")
+            for module in section["modules"]:
+                module_uid = str(module.get("uid") or "")
+                module_title = str(module.get("title") or "")
+                parts.append(f"<li><a href='#{html.escape(module_uid)}'>{html.escape(module_title)}</a>")
+                if module["topics"]:
+                    parts.append("<ol class='toc-topics'>")
+                    for topic in module["topics"]:
+                        parts.append(f"<li><a href='#{html.escape(topic['uid'])}'>{html.escape(topic['title'])}</a>")
+                        if topic["fragments"]:
+                            parts.append("<ol class='toc-fragments'>")
+                            parts.extend(
+                                f"<li><a href='#{html.escape(fragment['uid'])}'>{html.escape(fragment['title'])}</a></li>"
+                                for fragment in topic["fragments"]
+                            )
+                            parts.append("</ol>")
+                        parts.append("</li>")
+                    parts.append("</ol>")
+                if module.get("related_topics"):
+                    parts.append("<div class='toc-related'>См. также: " + ", ".join(
+                        f"<a href='#{html.escape(topic['uid'])}'>{html.escape(topic['title'])}</a>"
+                        for topic in module["related_topics"]
+                    ) + "</div>")
+                parts.append("</li>")
+            parts.append("</ol>")
+        elif section["topics"]:
             parts.append("<ol class='toc-topics'>")
             for topic in section["topics"]:
                 parts.append(f"<li><a href='#{html.escape(topic['uid'])}'>{html.escape(topic['title'])}</a>")
@@ -1778,30 +2280,66 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
         if profile == "legacy-fidelity":
             body.extend(markdown_html(source_dir / "sections" / ref / "legacy.md"))
         else:
-            for topic in ordered_section_topics(section, topics_by_uid):
-                node_kind = str(topic.get("node_kind") or "content")
-                if node_kind == "artifact" or topic.get("publish") is False:
-                    continue
-                public_uid = topic_public_uid(topic)
-                if node_kind != "attachment":
-                    body.append(html_topic_navigation(public_uid, topic_navigation))
+            modules = normalized_section_modules(section, topics_by_uid)
+            groups = modules if modules else [{"uid": None, "slot_id": None, "title": None, "state": "filled", "topics": ordered_section_topics(section, topics_by_uid)}]
+            for module in groups:
+                if modules:
+                    module_uid = str(module["uid"])
+                    module_state = str(module.get("state") or "filled")
                     body.append(
-                        f"<h2 id='{html.escape(public_uid)}' class='machine-anchor topic-{html.escape(node_kind)}' "
-                        f"data-topic-uid='{html.escape(public_uid)}' data-legacy-uid='{html.escape(str(topic['uid']))}' "
-                        f"data-node-kind='{html.escape(node_kind)}'>{html.escape(topic['title'])}</h2>"
+                        f"<section class='template-module' data-template-slot='{html.escape(str(module.get('slot_id') or ''))}' "
+                        f"data-slot-state='{html.escape(module_state)}'>"
+                        f"<h2 id='{html.escape(module_uid)}' class='machine-anchor' data-module-uid='{html.escape(module_uid)}'>"
+                        f"{html.escape(str(module['title']))}</h2>"
                     )
-                body.extend(
-                    markdown_html(
-                        source_dir / topic["content_ref"],
-                        skip_initial_heading="" if node_kind == "attachment" else str(topic["title"]),
-                        table_layouts=table_layout_contract.get(str(topic["content_ref"])),
-                        suppress_initial_heading=node_kind == "attachment",
-                        fragment_uid_prefix=f"std_fragment_{public_uid.removeprefix('std_topic_')}",
-                        style_hints=topic_style_hints.get(str(topic["uid"])),
+                    if module_state in {"missing_review", "blocked"}:
+                        body.append(
+                            "<aside class='gap-note' data-coverage-status='gap'>"
+                            "В исходной книге для этого обязательного модуля нет подтвержденного содержания. "
+                            "Новая норма автоматически не создается.</aside>"
+                        )
+                    if module.get("related_topics"):
+                        body.append(
+                            "<aside class='module-crossrefs'><strong>Связанное знание:</strong> "
+                            + ", ".join(
+                                f"<a href='#{html.escape(topic_public_uid(topic))}'>{html.escape(str(topic['title']))}</a>"
+                                for topic in module["related_topics"]
+                                if effective_topic_node_kind(topic, normalized=True) not in {"artifact", "attachment"}
+                            )
+                            + ".</aside>"
+                        )
+                for topic in module["topics"]:
+                    node_kind = effective_topic_node_kind(topic, normalized=True)
+                    if node_kind == "artifact" or not effective_topic_publish(topic, normalized=True):
+                        continue
+                    public_uid = topic_public_uid(topic)
+                    content_ref = effective_topic_content_ref(topic, normalized=True)
+                    if node_kind != "attachment":
+                        body.append(html_topic_navigation(public_uid, topic_navigation))
+                        heading_level = 3 if modules else 2
+                        body.append(
+                            f"<h{heading_level} id='{html.escape(public_uid)}' class='machine-anchor topic-{html.escape(node_kind)}' "
+                            f"data-topic-uid='{html.escape(public_uid)}' data-legacy-uid='{html.escape(str(topic['uid']))}' "
+                            f"data-node-kind='{html.escape(node_kind)}' "
+                            f"data-template-slot='{html.escape(str(topic.get('primary_slot') or ''))}' "
+                            f"data-topic-archetype='{html.escape(str(topic.get('topic_archetype_uid') or ''))}'>"
+                            f"{html.escape(topic['title'])}</h{heading_level}>"
+                        )
+                    body.extend(
+                        markdown_html(
+                            source_dir / content_ref,
+                            skip_initial_heading="" if node_kind == "attachment" else str(topic["title"]),
+                            table_layouts=table_layout_contract.get(str(topic.get("content_ref") or content_ref)),
+                            suppress_initial_heading=node_kind == "attachment",
+                            fragment_uid_prefix=f"std_fragment_{public_uid.removeprefix('std_topic_')}",
+                            style_hints=topic_style_hints.get(str(topic["uid"])),
+                            normalized_heading_level=4 if modules else 3,
+                        )
                     )
-                )
-                if node_kind == "gap":
-                    body.append("<aside class='gap-note' data-coverage-status='gap'>Раздел присутствует в исходной книге, но пока не наполнен.</aside>")
+                    if node_kind == "gap":
+                        body.append("<aside class='gap-note' data-coverage-status='gap'>Раздел присутствует в исходной книге, но пока не наполнен подтвержденным содержанием.</aside>")
+                if modules:
+                    body.append("</section>")
         unplaced = positioned_assets.get(str(section.get("source_tab_id")), [])
         if unplaced:
             body.append("<aside class='unplaced-assets'><strong>Неразмещенные иллюстрации исходника</strong><br>Google Docs не передал надежную привязку этих плавающих объектов к абзацу; изображения сохранены и требуют ручной проверки места.</aside>")
@@ -1864,14 +2402,36 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
     for section_row in outline:
         section_link = doc.add_paragraph()
         add_docx_internal_link(section_link, section_row["title"], section_row["uid"])
-        for topic_row in section_row["topics"]:
-            topic_link = doc.add_paragraph()
-            topic_link.paragraph_format.left_indent = Mm(6)
-            add_docx_internal_link(topic_link, topic_row["title"], topic_row["uid"])
-            for fragment in topic_row["fragments"]:
-                fragment_link = doc.add_paragraph()
-                fragment_link.paragraph_format.left_indent = Mm(12)
-                add_docx_internal_link(fragment_link, fragment["title"], fragment["uid"])
+        if section_row.get("modules"):
+            for module_row in section_row["modules"]:
+                module_link = doc.add_paragraph()
+                module_link.paragraph_format.left_indent = Mm(6)
+                add_docx_internal_link(module_link, module_row["title"], module_row["uid"])
+                for topic_row in module_row["topics"]:
+                    topic_link = doc.add_paragraph()
+                    topic_link.paragraph_format.left_indent = Mm(12)
+                    add_docx_internal_link(topic_link, topic_row["title"], topic_row["uid"])
+                    for fragment in topic_row["fragments"]:
+                        fragment_link = doc.add_paragraph()
+                        fragment_link.paragraph_format.left_indent = Mm(18)
+                        add_docx_internal_link(fragment_link, fragment["title"], fragment["uid"])
+                if module_row.get("related_topics"):
+                    related_link = doc.add_paragraph()
+                    related_link.paragraph_format.left_indent = Mm(12)
+                    related_link.add_run("См. также: ")
+                    for related_index, related_topic in enumerate(module_row["related_topics"]):
+                        if related_index:
+                            related_link.add_run(", ")
+                        add_docx_internal_link(related_link, related_topic["title"], related_topic["uid"])
+        else:
+            for topic_row in section_row["topics"]:
+                topic_link = doc.add_paragraph()
+                topic_link.paragraph_format.left_indent = Mm(6)
+                add_docx_internal_link(topic_link, topic_row["title"], topic_row["uid"])
+                for fragment in topic_row["fragments"]:
+                    fragment_link = doc.add_paragraph()
+                    fragment_link.paragraph_format.left_indent = Mm(12)
+                    add_docx_internal_link(fragment_link, fragment["title"], fragment["uid"])
     doc.add_page_break()
     table_layout_contract = load_table_layout_contract()
     positioned_assets = positioned_assets_by_tab(source_dir)
@@ -1885,9 +2445,25 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
         bookmark_counter += 1
         section_backlink = doc.add_paragraph()
         add_docx_internal_link(section_backlink, "↑ Оглавление", "std_toc")
-        entries: list[tuple[Path, str | None, dict[int, dict[str, Any]] | None, dict[str, Any] | None]]
+        modules = normalized_section_modules(section, topics_by_uid) if profile == "standard-normalized" else []
+        entries: list[tuple[Path | None, str | None, dict[int, dict[str, Any]] | None, dict[str, Any] | None]]
         if profile == "legacy-fidelity":
             entries = [(source_dir / "sections" / ref / "legacy.md", None, None, None)]
+        elif modules:
+            entries = []
+            for module in modules:
+                entries.append((None, None, None, {"__module__": module}))
+                entries.extend(
+                    (
+                        source_dir / effective_topic_content_ref(topic, normalized=True),
+                        None if effective_topic_node_kind(topic, normalized=True) == "attachment" else str(topic["title"]),
+                        table_layout_contract.get(str(topic.get("content_ref") or effective_topic_content_ref(topic, normalized=True))),
+                        topic,
+                    )
+                    for topic in module["topics"]
+                    if effective_topic_node_kind(topic, normalized=True) != "artifact"
+                    and effective_topic_publish(topic, normalized=True)
+                )
         else:
             entries = [
                 (
@@ -1900,8 +2476,30 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                 if topic.get("node_kind") != "artifact" and topic.get("publish") is not False
             ]
         for path, normalized_topic_title, table_layouts, topic_meta in entries:
+            if topic_meta and "__module__" in topic_meta:
+                module = topic_meta["__module__"]
+                module_heading = doc.add_heading(str(module["title"]), 2)
+                add_docx_bookmark(module_heading, str(module["uid"]), bookmark_counter)
+                bookmark_counter += 1
+                if str(module.get("state") or "filled") in {"missing_review", "blocked"}:
+                    doc.add_paragraph(
+                        "В исходной книге для этого обязательного модуля нет подтвержденного содержания. "
+                        "Новая норма автоматически не создается."
+                    )
+                if module.get("related_topics"):
+                    related = doc.add_paragraph()
+                    related.add_run("Связанное знание: ").bold = True
+                    for related_index, related_topic in enumerate(module["related_topics"]):
+                        if effective_topic_node_kind(related_topic, normalized=True) in {"artifact", "attachment"}:
+                            continue
+                        if related_index:
+                            related.add_run(", ")
+                        add_docx_internal_link(related, str(related_topic["title"]), topic_public_uid(related_topic))
+                continue
+            if path is None:
+                continue
             normalized_entry = profile == "standard-normalized"
-            node_kind = str((topic_meta or {}).get("node_kind") or "content")
+            node_kind = effective_topic_node_kind(topic_meta or {}, normalized=normalized_entry)
             public_uid = topic_public_uid(topic_meta) if topic_meta else None
             style_hints = topic_style_hints.get(str((topic_meta or {}).get("uid") or ""))
             if normalized_topic_title:
@@ -1914,7 +2512,7 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                 if following := neighbors.get("next"):
                     navigation_paragraph.add_run("   |   ")
                     add_docx_internal_link(navigation_paragraph, f"{following['title']} →", following["uid"])
-                paragraph = doc.add_heading(normalized_topic_title, 2)
+                paragraph = doc.add_heading(normalized_topic_title, 3 if modules else 2)
                 if public_uid:
                     add_docx_bookmark(paragraph, public_uid, bookmark_counter)
                     bookmark_counter += 1
@@ -1990,7 +2588,7 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                     hint = take_style_hint(style_hints, renderable_line)
                     plain = re.sub(r"!\[[^]]*\]\([^)]+\)", "", renderable_line).strip()
                     if source_heading and plain:
-                        doc.add_heading(plain, rendered_heading_level(source_heading[0], normalized=normalized_entry))
+                        doc.add_heading(plain, 4 if modules and normalized_entry else rendered_heading_level(source_heading[0], normalized=normalized_entry))
 
                     def add_plain_piece(value: str) -> None:
                         value = value.strip()
@@ -2017,7 +2615,10 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                     add_plain_piece(renderable_line[cursor:])
                 elif heading := markdown_heading(stripped):
                     take_style_hint(style_hints, heading[1])
-                    paragraph = doc.add_heading(heading[1], rendered_heading_level(heading[0], normalized=normalized_entry))
+                    paragraph = doc.add_heading(
+                        heading[1],
+                        4 if modules and normalized_entry else rendered_heading_level(heading[0], normalized=normalized_entry),
+                    )
                     if public_uid:
                         heading_occurrences[heading[1]] += 1
                         fragment_uid = fragment_anchor_uid(public_uid, heading[1], heading_occurrences[heading[1]])
@@ -2212,27 +2813,34 @@ def index_cmd(args: argparse.Namespace) -> int:
     semantic_by_storage = {str(row["uid"]): topic_public_uid(row) for row in ordered_topics}
     primary_topics = [
         row for row in ordered_topics
-        if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False
+        if effective_topic_node_kind(row, normalized=True) not in {"artifact", "attachment"}
+        and effective_topic_publish(row, normalized=True)
+        and effective_topic_queryable(row, normalized=True)
     ]
     attachments_by_target: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for topic in ordered_topics:
-        if topic.get("node_kind") == "attachment" and topic.get("attached_to_uid"):
+        if (
+            effective_topic_node_kind(topic, normalized=True) == "attachment"
+            and effective_topic_publish(topic, normalized=True)
+            and topic.get("attached_to_uid")
+        ):
             attachments_by_target[str(topic["attached_to_uid"])].append(topic)
     topic_rows: list[dict[str, Any]] = []
     fragment_rows: list[dict[str, Any]] = []
     relation_rows: list[dict[str, Any]] = []
     required_assets: dict[str, Path] = {}
     indexes: dict[str, dict[str, list[str]]] = {
-        name: defaultdict(list) for name in ["audience", "job", "domain", "lifecycle", "entity", "node_kind", "alias"]
+        name: defaultdict(list) for name in ["audience", "job", "domain", "lifecycle", "entity", "node_kind", "slot", "alias"]
     }
     for topic in primary_topics:
         row = dict(topic)
-        source_content = source_dir / row["content_ref"]
+        source_content_ref = effective_topic_content_ref(row, normalized=True)
+        source_content = source_dir / source_content_ref
         semantic_uid = topic_public_uid(row)
         target_content = content_dir / f"{semantic_uid}.md"
         content_text, asset_paths = rewrite_package_asset_refs(source_content.read_text(encoding="utf-8"), source_content)
         for attachment in attachments_by_target.get(semantic_uid, []):
-            attachment_path = source_dir / attachment["content_ref"]
+            attachment_path = source_dir / effective_topic_content_ref(attachment, normalized=True)
             payload, attachment_assets = rewrite_package_asset_refs(
                 attachment_payload(attachment_path.read_text(encoding="utf-8")), attachment_path
             )
@@ -2255,6 +2863,12 @@ def index_cmd(args: argparse.Namespace) -> int:
         storage_uid = str(row["uid"])
         row["storage_uid"] = storage_uid
         row["uid"] = semantic_uid
+        row["source_content_ref"] = source_content_ref
+        row["node_kind"] = effective_topic_node_kind(row, normalized=True)
+        row["publish"] = effective_topic_publish(row, normalized=True)
+        row["queryable"] = effective_topic_queryable(row, normalized=True)
+        if effective_topic_value(row, "coverage_status", normalized=True):
+            row["coverage_status"] = effective_topic_value(row, "coverage_status", normalized=True)
         row["content_ref"] = target_content.relative_to(output_dir).as_posix()
         row["section_title"] = section_by_uid.get(row.get("parent_uid"), {}).get("title")
         row["semantic_parent_uid"] = str(row.get("semantic_parent_uid") or row.get("parent_uid"))
@@ -2264,6 +2878,9 @@ def index_cmd(args: argparse.Namespace) -> int:
             for value in row.get(field) or []:
                 indexes[index_name][str(value)].append(semantic_uid)
         indexes["node_kind"][str(row.get("node_kind") or "content")].append(semantic_uid)
+        for slot_id in [row.get("primary_slot"), *(row.get("secondary_slots") or [])]:
+            if slot_id:
+                indexes["slot"][str(slot_id)].append(semantic_uid)
         for alias in row.get("aliases") or []:
             indexes["alias"][normalize_search_text(str(alias))].append(semantic_uid)
         parent_uid = str(row.get("semantic_parent_uid") or "")
@@ -2279,6 +2896,68 @@ def index_cmd(args: argparse.Namespace) -> int:
             )
         fragments = markdown_fragments(semantic_uid, str(row.get("parent_uid")), content_text, row["content_ref"])
         fragment_rows.extend(fragments)
+
+    source_topics_by_uid = {str(row["uid"]): row for row in topics}
+    for section in sections:
+        for module in normalized_section_modules(section, source_topics_by_uid):
+            if module.get("state") not in {"missing_review", "blocked"}:
+                continue
+            section_slug = re.sub(
+                r"[^a-z0-9_]+",
+                "_",
+                str(section.get("semantic_uid") or section["uid"]).removeprefix("std_ch_"),
+            ).strip("_")
+            slot_id = str(module["slot_id"])
+            semantic_uid = template_gap_topic_uid(section, slot_id)
+            target_content = content_dir / f"{semantic_uid}.md"
+            content_text = (
+                f"# {module['title']}\n\n"
+                "В текущем утвержденном содержании книги нет подтвержденного знания для этого обязательного модуля. "
+                "Новая норма автоматически не создается; требуется отдельное редакционное задание и проверенный источник.\n"
+            )
+            atomic_write_text(target_content, content_text)
+            row = {
+                "uid": semantic_uid,
+                "storage_uid": None,
+                "type": "topic",
+                "title": str(module["title"]),
+                "display_number": None,
+                "node_kind": "gap",
+                "coverage_status": "gap",
+                "publish": True,
+                "queryable": True,
+                "parent_uid": str(section["uid"]),
+                "semantic_parent_uid": str(section.get("semantic_uid") or section["uid"]),
+                "section_title": section.get("title"),
+                "primary_slot": slot_id,
+                "secondary_slots": [],
+                "topic_archetype_uid": "tpl_topic_gap_v1",
+                "audiences": ["integrator", "designer", "presales", "sales", "commissioning", "training", "agent"],
+                "jobs": ["learn", "explain", "select", "audit"],
+                "domains": [section_slug],
+                "lifecycle": [],
+                "entity_refs": [],
+                "aliases": [str(module["title"]), f"{module['title']} {section.get('title') or ''}".strip()],
+                "answers_questions": [f"Что известно про {module['title']} для раздела {section.get('title') or ''}?"],
+                "generated_from_template_slot": True,
+                "source_ref": f"sections/{section['uid']}/section.yaml#normalized_template",
+                "content_ref": target_content.relative_to(output_dir).as_posix(),
+                "digest": sha256_file(target_content),
+            }
+            topic_rows.append(row)
+            indexes["node_kind"]["gap"].append(semantic_uid)
+            indexes["slot"][slot_id].append(semantic_uid)
+            for audience in row["audiences"]:
+                indexes["audience"][audience].append(semantic_uid)
+            for job in row["jobs"]:
+                indexes["job"][job].append(semantic_uid)
+            for domain in row["domains"]:
+                indexes["domain"][domain].append(semantic_uid)
+            for alias in row["aliases"]:
+                indexes["alias"][normalize_search_text(alias)].append(semantic_uid)
+            fragment_rows.extend(
+                markdown_fragments(semantic_uid, str(row["parent_uid"]), content_text, row["content_ref"])
+            )
 
     positioned = positioned_assets_by_tab(source_dir)
     unplaced_rows: list[dict[str, Any]] = []
@@ -2349,13 +3028,45 @@ def index_cmd(args: argparse.Namespace) -> int:
     ]
     navigation_sections = []
     published_topic_uids = {str(row["uid"]) for row in topic_rows}
+    source_topics_by_uid = {str(row["uid"]): row for row in topics}
     for section in sections:
         nav_section = dict(section)
-        nav_section["topic_refs"] = [
-            semantic_by_storage[storage_uid]
-            for storage_uid in section.get("topic_refs") or []
-            if semantic_by_storage.get(storage_uid) in published_topic_uids
-        ]
+        modules = normalized_section_modules(section, source_topics_by_uid)
+        if modules:
+            nav_section["modules"] = [
+                {
+                    "uid": module["uid"],
+                    "slot_id": module["slot_id"],
+                    "title": module["title"],
+                    "state": module["state"],
+                    "required": module["required"],
+                    "topic_refs": (
+                        [
+                            topic_public_uid(topic)
+                            for topic in module["topics"]
+                            if topic_public_uid(topic) in published_topic_uids
+                        ]
+                        + (
+                            [template_gap_topic_uid(section, str(module["slot_id"]))]
+                            if module.get("state") in {"missing_review", "blocked"}
+                            and template_gap_topic_uid(section, str(module["slot_id"])) in published_topic_uids
+                            else []
+                        )
+                    ),
+                }
+                for module in modules
+            ]
+            nav_section["topic_refs"] = [
+                topic_uid
+                for module in nav_section["modules"]
+                for topic_uid in module["topic_refs"]
+            ]
+        else:
+            nav_section["topic_refs"] = [
+                semantic_by_storage[storage_uid]
+                for storage_uid in section.get("topic_refs") or []
+                if semantic_by_storage.get(storage_uid) in published_topic_uids
+            ]
         navigation_sections.append(nav_section)
     write_json(output_dir / "navigation.json", {"book": book, "sections": navigation_sections, "topics": navigation_topics})
     for name, values in indexes.items():
@@ -2532,6 +3243,30 @@ def detected_query_domains(text: str) -> set[str]:
     return detected
 
 
+def detected_query_slots(text: str) -> set[str]:
+    normalized = normalize_search_text(text)
+    aliases = {
+        "value": ["зачем", "ценност", "польз"],
+        "scope_and_terms": ["что входит", "область действия", "термин"],
+        "technologies": ["технолог", "способ управлен", "диммир"],
+        "recommended_architecture": ["архитектур"],
+        "equipment_and_compatibility": ["оборудован", "совместим", "модул", "контроллер"],
+        "design_and_selection": ["как выбрать", "выбор", "проектир", "расчет"],
+        "control_modes_scenarios": ["сценар", "режим управлен"],
+        "cabling_topology_schematics": ["кабел", "тополог", "схем подключ"],
+        "installation": ["монтаж", "установ"],
+        "setup_and_commissioning": ["пнр", "пусконалад", "настройк"],
+        "acceptance_tests": ["приемоч", "приёмоч", "испытан", "проверка результата"],
+        "limitations_and_anti_patterns": ["огранич", "анти паттерн", "ошибк", "нельзя"],
+        "examples_and_room_patterns": ["пример", "типовое помещ", "комнат"],
+    }
+    return {
+        slot_id
+        for slot_id, phrases in aliases.items()
+        if any(normalize_search_text(phrase) in normalized for phrase in phrases)
+    }
+
+
 def field_overlap_score(query_terms: set[str], value: str | list[str], weight: int) -> tuple[int, bool]:
     text = " ".join(str(item) for item in value) if isinstance(value, list) else str(value or "")
     overlap = query_terms & token_set(text)
@@ -2543,6 +3278,7 @@ def query_cmd(args: argparse.Namespace) -> int:
     query_tokens = token_set(args.text)
     query_concepts = concept_tokens(args.text)
     query_domains = detected_query_domains(args.text)
+    query_slots = detected_query_slots(args.text)
     fragments_path = package_dir / "fragments.jsonl"
     fragments_by_topic: dict[str, list[dict[str, Any]]] = defaultdict(list)
     if fragments_path.is_file():
@@ -2605,8 +3341,17 @@ def query_cmd(args: argparse.Namespace) -> int:
         if query_domains:
             score += 20
             matched_fields.append("domain")
+        topic_slots = {str(topic.get("primary_slot") or ""), *(str(value) for value in topic.get("secondary_slots") or [])}
+        matching_slots = sorted(query_slots & topic_slots)
+        if matching_slots:
+            score += 36
+            matched_fields.append("slot:" + ",".join(matching_slots))
         if score >= 8:
             rows.append((score, topic, best_fragment, matched_fields))
+    if query_slots:
+        faceted_rows = [row for row in rows if any(field.startswith("slot:") for field in row[3])]
+        if faceted_rows:
+            rows = faceted_rows
     rows.sort(key=lambda item: (-item[0], item[1]["uid"]))
     if not rows:
         answer = {
@@ -2614,6 +3359,7 @@ def query_cmd(args: argparse.Namespace) -> int:
             "release": (read_yaml(package_dir / "package.yaml") or {}).get("release", "unknown"),
             "answer": "В опубликованном пакете не найден подтвержденный ответ.",
             "applicability": [],
+            "detected_slots": sorted(query_slots),
             "citations": [],
             "normative_levels": [],
             "next_step": "Создать editorial gap candidate; не формулировать новую норму автоматически.",
@@ -2637,6 +3383,7 @@ def query_cmd(args: argparse.Namespace) -> int:
             ),
             "applicability": [x for x in [args.audience, args.job] if x],
             "detected_domains": sorted(query_domains),
+            "detected_slots": sorted(query_slots),
             "citations": [
                 {
                     "uid": topic["uid"],
@@ -2826,7 +3573,11 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
 
     if html_path:
         html_text = html_path.read_text(encoding="utf-8") if html_path.is_file() else ""
-        expected_published = [row for row in topics if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False]
+        expected_published = [
+            row for row in topics
+            if effective_topic_node_kind(row, normalized=True) not in {"artifact", "attachment"}
+            and effective_topic_publish(row, normalized=True)
+        ]
         topic_anchor_count = len(re.findall(r"data-topic-uid=", html_text))
         html_table_count = len(re.findall(r"<table\b", html_text))
         html_image_count = len(re.findall(r"<img\b", html_text))
@@ -2852,9 +3603,12 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
         checked_content_lines = 0
         missing_content_lines: list[dict[str, str]] = []
         for topic in topics:
-            if topic.get("node_kind") == "artifact" or topic.get("publish") is False:
+            if (
+                effective_topic_node_kind(topic, normalized=True) == "artifact"
+                or not effective_topic_publish(topic, normalized=True)
+            ):
                 continue
-            content_path = source_dir / str(topic.get("content_ref") or "")
+            content_path = source_dir / effective_topic_content_ref(topic, normalized=True)
             if not content_path.is_file():
                 continue
             for line in logical_markdown_lines(content_path.read_text(encoding="utf-8")):
@@ -2968,7 +3722,11 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
             and docx_tables == baseline_tables
             and docx_images == expected_docx_images
             and docx_bookmarks >= len(sections) + len(
-                [row for row in topics if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False]
+                [
+                    row for row in topics
+                    if effective_topic_node_kind(row, normalized=True) not in {"artifact", "attachment"}
+                    and effective_topic_publish(row, normalized=True)
+                ]
             )
             and docx_internal_links > 0
             and not docx_missing_internal_targets
@@ -2998,7 +3756,17 @@ def migration_audit_cmd(args: argparse.Namespace) -> int:
             for ref in re.findall(r"!\[[^]]*\]\(([^)]+)\)", content_path.read_text(encoding="utf-8")):
                 if not (content_path.parent / ref).resolve().is_file():
                     package_failures.append(str(row.get("uid")) + ":asset")
-        expected_package_topics = sum(1 for row in topics if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False)
+        expected_package_topics = sum(
+            1 for row in topics
+            if effective_topic_node_kind(row, normalized=True) not in {"artifact", "attachment"}
+            and effective_topic_publish(row, normalized=True)
+            and effective_topic_queryable(row, normalized=True)
+        ) + sum(
+            1
+            for section in sections
+            for module in normalized_section_modules(section, topic_by_uid)
+            if module.get("state") in {"missing_review", "blocked"}
+        )
         check(
             "agent_package_integrity",
             bool(package)
@@ -3192,6 +3960,15 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--contract", default=str(SEMANTIC_ENRICHMENT_CONTRACT))
     p.add_argument("--output")
     p.set_defaults(func=remediate_migration_cmd)
+
+    p = sub.add_parser("apply-template", help="Apply an approved section template through an approved editorial assignment")
+    p.add_argument("--source-dir", default=str(DEFAULT_SOURCE_DIR))
+    p.add_argument("--section", required=True)
+    p.add_argument("--template-contract", default=str(DEFAULT_TEMPLATE_CONTRACT))
+    p.add_argument("--editorial", required=True)
+    p.add_argument("--output-dir", required=True)
+    p.add_argument("--force", action="store_true")
+    p.set_defaults(func=apply_template_cmd)
 
     p = sub.add_parser("build")
     p.add_argument("--source-dir", default=str(DEFAULT_SOURCE_DIR))

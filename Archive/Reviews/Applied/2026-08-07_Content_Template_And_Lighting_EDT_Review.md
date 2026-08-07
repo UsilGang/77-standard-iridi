@@ -1,25 +1,28 @@
 ---
 type: standard_content_contract_review
-status: review
+status: applied
 created: 2026-08-07
 project: 77 Standard iRidi
 project_id: "001"
 privacy: internal
 review_uid: std_review_content_template_lighting_edt_20260807
-template_contract_uid: standard_templates_1_candidate
+template_contract_uid: standard_templates_1
 editorial_job_uid: EDT-2026-0001
 source_ref: "user: давай, давай after RC1 approval"
 proposal_ref: "[[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-08-07_lighting-content-template-pilot/proposal]]"
-decision_required: approve_or_revise
+decision_required: resolved_approve
 action_id: operate_standard_book
-blocker: needs_human_decision
+blocker: null
 canonical_change: false
 external_write: false
+approved_at: 2026-08-07
+approval_ref: "user: Давай"
+decision_ref: "[[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval]]"
 ---
 
 # Согласование CT1 и первого редакционного задания
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]], [candidate-контрактом CT1](../Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml), [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-08-07_lighting-content-template-pilot/brief]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_template_contract_candidate_v1]], [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-08-07_lighting-content-template-pilot/brief]] и [[01_Projects/001_77_Standard_iRidi/Archive/Backlog/Done/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]].
 
 ## Решение в двух строках
 

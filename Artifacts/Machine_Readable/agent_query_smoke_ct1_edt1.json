@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "status": "pass",
+  "release": "working-2026-08-07-ct1-edt1",
+  "query_count": 9,
+  "expectations_passed": 9,
+  "checks": [
+    {"intent": "value", "actual": "documented", "uid": "std_topic_lighting_zachem_avtomatizirovat_osveschenie"},
+    {"intent": "technology_selection", "actual": "documented", "uid": "std_topic_lighting_dimming_control"},
+    {"intent": "equipment", "actual": "documented", "uid": "std_topic_lighting_io_modules"},
+    {"intent": "cabling", "actual": "documented", "uid": "std_topic_lighting_silovye_kabeli_dlya_grupp_osvescheniya_230_v"},
+    {"intent": "scenarios", "actual": "documented", "uid": "std_topic_lighting_stsenarnoe_upravlenie_osvescheniem"},
+    {"intent": "installation", "actual": "documented", "uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"},
+    {"intent": "limitations", "actual": "gap", "uid": "std_topic_lighting_limitations_and_anti_patterns_gap"},
+    {"intent": "setup_and_commissioning", "actual": "gap", "uid": "std_topic_lighting_setup_and_commissioning_gap"},
+    {"intent": "acceptance_tests", "actual": "gap", "uid": "std_topic_lighting_acceptance_tests_gap"}
+  ]
+}

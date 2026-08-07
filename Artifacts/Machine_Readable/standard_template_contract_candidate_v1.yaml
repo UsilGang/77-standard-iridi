@@ -1,11 +1,14 @@
 schema_version: "candidate-2"
-status: review
+status: approved_snapshot
 canonical: false
 do_not_use_for_build: true
 created: "2026-08-05"
 updated: "2026-08-07"
 project_id: "001"
-review_ref: "Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review.md"
+review_ref: "Archive/Reviews/Applied/2026-08-07_Content_Template_And_Lighting_EDT_Review.md"
+approved_at: "2026-08-07"
+approval_ref: "user: Давай"
+active_contract_ref: "Artifacts/Machine_Readable/standard_template_contract_v1.yaml"
 contract:
   uid: standard_templates_1_candidate
   migration_scope: full_book

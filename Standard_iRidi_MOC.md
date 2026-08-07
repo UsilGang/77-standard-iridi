@@ -41,6 +41,8 @@ key_task_uids:
 - [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/AGENTS]]
 - [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/VERSIONING]]
 - [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]]
+- [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/Standard_Book_Manifest_MOC]]
+- [[01_Projects/001_77_Standard_iRidi/Artifacts/Reports/2026-08-07_Lighting_CT1_EDT1_Implementation_Report]]
 
 ## Правила
 
@@ -55,3 +57,4 @@ key_task_uids:
 - Поддерживать связь стандартной книги с CORD-проектами.
 - Принимать только approved explanations из [[01_Projects/008_Bus77_Protocol_Knowledge/Bus77_Protocol_Knowledge_MOC]].
 - Передавать feedback из [[01_Projects/002_Panel_P4_BUS77/Panel_P4_MOC]] только через отдельный proposal.
+- Закрыть независимый D8 и отдельно решить [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Content_Gaps_Expert_Review]]; не превращать gaps в нормы автоматически.

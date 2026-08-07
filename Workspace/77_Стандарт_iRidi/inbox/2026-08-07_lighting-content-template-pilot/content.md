@@ -1,6 +1,6 @@
 # Обработанный сигнал: начать содержательный контур «Освещения»
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]] и [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-08-07_lighting-content-template-pilot/brief]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_Render_Contract_RC1_Approval]], [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Content_Template_And_Lighting_EDT_Review]] и [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-08-07_lighting-content-template-pilot/brief]].
 
 ## Суть
 

@@ -1,0 +1,26 @@
+catalog_uid: topic_archetypes_v1
+catalog_version: "1.0.0"
+status: approved
+applies_to: topic
+decision_ref: "decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval"
+common_slots:
+  - {id: purpose, required: true}
+  - {id: scope, required: true}
+  - {id: terms, required_when: introduces_terms}
+  - {id: norms, required_when: has_normative_guidance}
+  - {id: rationale, required_when: has_non_obvious_rule}
+  - {id: implementation, required_when: engineering_guidance}
+  - {id: verification, required_when: engineering_guidance}
+  - {id: limitations, required_when: engineering_guidance}
+  - {id: sources_and_changes, required: true, generated: true}
+archetypes:
+  - {uid: tpl_topic_container_v1, purpose: navigation_and_grouping, standalone_answer: false}
+  - {uid: tpl_concept_v1, purpose: concept_and_value, standalone_answer: true}
+  - {uid: tpl_technology_v1, purpose: technology_and_compatibility, standalone_answer: true}
+  - {uid: tpl_equipment_v1, purpose: equipment_and_interfaces, standalone_answer: true}
+  - {uid: tpl_engineering_guidance_v1, purpose: design_and_implementation, standalone_answer: true}
+  - {uid: tpl_procedure_v1, purpose: ordered_actions_and_verification, standalone_answer: true}
+  - {uid: tpl_comparison_v1, purpose: alternatives_and_selection, standalone_answer: true}
+  - {uid: tpl_room_pattern_v1, purpose: room_solution_pattern, standalone_answer: true}
+  - {uid: tpl_case_study_v1, purpose: worked_example, standalone_answer: true}
+  - {uid: tpl_attachment_v1, purpose: source_attachment, standalone_answer: false, published_as_topic: false}

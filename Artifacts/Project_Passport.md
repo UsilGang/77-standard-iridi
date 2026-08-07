@@ -5,8 +5,8 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 last_activity_at: 2026-08-07
-last_activity_kind: content_template_and_lighting_edt_review_prepared
-last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]]"
+last_activity_kind: lighting_ct1_edt1_implemented_and_validated
+last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Reports/2026-08-07_Lighting_CT1_EDT1_Implementation_Report]]"
 stage: active
 privacy: internal
 source_ref: "CORD backfill 2026-07-10"
@@ -25,9 +25,9 @@ project_route: "existing_project"
 ## Activity
 
 - Last activity: `2026-08-07`.
-- Kind: `content_template_and_lighting_edt_review_prepared`.
-- Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]].
+- Kind: `lighting_ct1_edt1_implemented_and_validated`.
+- Ref: [[01_Projects/001_77_Standard_iRidi/Artifacts/Reports/2026-08-07_Lighting_CT1_EDT1_Implementation_Report]].
 
 ## Следующее действие
 
-Принять или скорректировать CT1 и EDT1 в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]]. После approve выполнить трассируемый рефакторинг всего раздела «Освещение» и пересобрать его вместе со всей книгой. Floating images и постраничный DOCX остаются отдельным D8 gate.
+Провести независимый D8 по полной книге и отдельно решить пакет содержательных gaps [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Content_Gaps_Expert_Review]]. Локальный CT1/EDT1 implementation уже прошел source, browser и agent-package audits.

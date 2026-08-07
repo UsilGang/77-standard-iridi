@@ -1,0 +1,25 @@
+{
+  "duplicate_primary_assignments": [],
+  "expected_topics": 64,
+  "mapped_topics": 64,
+  "section_uid": "std_ch_lighting",
+  "slot_states": {
+    "acceptance_tests": "missing_review",
+    "cabling_topology_schematics": "filled",
+    "control_modes_scenarios": "filled",
+    "design_and_selection": "filled",
+    "equipment_and_compatibility": "filled",
+    "examples_and_room_patterns": "filled",
+    "installation": "covered_by_reference",
+    "limitations_and_anti_patterns": "missing_review",
+    "recommended_architecture": "filled",
+    "scope_and_terms": "filled",
+    "setup_and_commissioning": "missing_review",
+    "sources_and_changes": "generated",
+    "technologies": "filled",
+    "value": "filled"
+  },
+  "status": "pass_with_visible_gaps",
+  "unexplained_semantic_deltas": 0,
+  "unmapped_topics": []
+}

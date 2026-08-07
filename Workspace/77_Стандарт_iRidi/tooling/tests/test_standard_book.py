@@ -143,6 +143,27 @@ class StandardBookTests(unittest.TestCase):
                 ["<h3>5.3.2.1.1. General</h3>", "<h3>5.3.2.1.2. Phase dimming</h3>"],
             )
 
+    def test_module_topic_subheadings_render_as_heading_four(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "topic.md"
+            path.write_text("# Topic\n\n##### Phase dimming\n", encoding="utf-8")
+            rendered = standard_book.markdown_html(
+                path,
+                skip_initial_heading="Topic",
+                normalized_heading_level=4,
+            )
+            self.assertEqual(rendered, ["<h4>Phase dimming</h4>"])
+
+    def test_query_intent_detects_template_slots(self) -> None:
+        self.assertEqual(
+            standard_book.detected_query_slots("Какие приемочные испытания нужны для освещения?"),
+            {"acceptance_tests"},
+        )
+        self.assertEqual(
+            standard_book.detected_query_slots("Какое оборудование совместимо с контроллером?"),
+            {"equipment_and_compatibility"},
+        )
+
     def test_html_contract_has_readable_page_margins(self) -> None:
         self.assertIn("minmax(0,1040px)", standard_book.HTML_CSS)
         self.assertIn(".toc-panel{position:sticky", standard_book.HTML_CSS)
@@ -184,6 +205,26 @@ class StandardBookTests(unittest.TestCase):
         self.assertIn("href='#std_ch_lighting'", rendered)
         self.assertIn("href='#std_topic_dimming'", rendered)
         self.assertIn("href='#std_fragment_phase'", rendered)
+
+    def test_html_toc_links_template_modules_and_related_topics(self) -> None:
+        outline = [
+            {
+                "uid": "std_ch_lighting",
+                "title": "5. Освещение",
+                "topics": [],
+                "modules": [
+                    {
+                        "uid": "std_module_installation",
+                        "title": "Монтаж",
+                        "topics": [],
+                        "related_topics": [{"uid": "std_topic_led", "title": "LED-лента"}],
+                    }
+                ],
+            }
+        ]
+        rendered = standard_book.html_toc(outline, "std_book", "Стандарт")
+        self.assertIn("href='#std_module_installation'", rendered)
+        self.assertIn("href='#std_topic_led'", rendered)
 
     def test_docx_internal_link_targets_compact_bookmark(self) -> None:
         from docx import Document

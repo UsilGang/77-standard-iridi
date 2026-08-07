@@ -1,0 +1,908 @@
+uid: chg_2026_0001
+type: changeset
+status: draft
+revision: 1
+digest: 780bbd95e0daffc57af1e6eeedaa8db84ce05ef9b4b5ab284cbb53a3de277b71
+privacy: internal
+source_refs:
+- decision:2026-08-07_Standard_Render_Contract_RC1_Approval
+- baseline:baseline_19K5o8mg_288e8eead70d07c1#section=std_ch_lighting
+- 'user: давай, давай after RC1 approval'
+change_refs:
+- trn_lighting_edt_2026_0001
+introduced_in: null
+last_changed_in: null
+allowed_outputs:
+- internal_review
+editorial_job_uid: EDT-2026-0001
+changed_uids:
+- std_ch_lighting
+- std_topic_lighting_osveschenie_umnogo_doma
+- std_topic_lighting_naznachenie_i_tsennost
+- std_topic_lighting_zachem_avtomatizirovat_osveschenie
+- std_topic_lighting_tsennost_sistemy_upravleniya_osvescheniem_dlya_klienta
+- std_topic_lighting_bazovyy_funktsional
+- std_topic_lighting_metody_upravleniya_osvescheniem
+- std_topic_lighting_diskretnyy_ne_dimmiruemyy_tip_osvescheniya
+- std_topic_lighting_dimming_control
+- std_topic_lighting_osveschenie_dali
+- std_topic_lighting_vybor_istochnikov_osvescheniya
+- std_topic_lighting_evolyutsiya_istochnikov_sveta_v_sistemah_avtomatizatsii
+- std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_230_v
+- std_topic_lighting_svetodiodnye_lampy_230_v
+- std_topic_lighting_svetodiodnye_lenty
+- std_topic_lighting_svetodiodnye_svetilniki
+- std_topic_lighting_kriterii_vybora_istochnikov_osvescheniya_dlya_umnogo_doma
+- std_topic_lighting_printsip_raboty_podsistemy_osvescheniya
+- std_topic_lighting_klassifikatsiya_vidov_osvescheniya
+- std_topic_lighting_klassicheskie_bazovye_vidy_osvescheniya
+- std_topic_lighting_klassifikatsiya_osvescheniya_po_sposobu_upravleniya
+- std_topic_lighting_stsenarii_osvescheniya
+- std_topic_lighting_stsenarnoe_upravlenie_osvescheniem
+- std_topic_lighting_common_scenarios
+- std_topic_lighting_situatsionnye_svetovye_stsenarii
+- std_topic_lighting_oborudovanie_sistemy
+- std_topic_lighting_io_modules
+- std_topic_lighting_moduli_vvoda
+- std_topic_lighting_attachment_kix_34k4vk6fdcs5
+- std_topic_lighting_interfeysnye_moduli
+- std_topic_lighting_stsenarnye_vyklyuchateli
+- std_topic_lighting_datchiki
+- std_topic_lighting_avtomatizatsiya_osvescheniya_po_datchikam
+- std_topic_lighting_printsip_raboty
+- std_topic_lighting_parametry_konfiguratsii
+- std_topic_lighting_zona_obnaruzheniya_i_trebovaniya_k_ustanovke
+- std_topic_lighting_ogranicheniya_i_osobennosti
+- std_topic_lighting_rekomendatsii_po_primeneniyu
+- std_topic_lighting_standart_po_kabelyam_dlya_podsistemy_osvescheniya
+- std_topic_lighting_obschiy_printsip
+- std_topic_lighting_silovye_kabeli_dlya_grupp_osvescheniya_230_v
+- std_topic_lighting_kabeli_dlya_knopok_master_vyklyuchateley_i_stsenarnyh_vyklyuchat
+- std_topic_lighting_kabel_shiny_bus77
+- std_topic_lighting_kabeli_dlya_datchikov_dvizheniya_i_osveschennosti
+- std_topic_lighting_kabeli_dlya_led_lent_24_v
+- std_topic_lighting_kabeli_dlya_rgb_rgbw_tunable_white_lent
+- std_topic_lighting_svodnaya_tablitsa_dlya_standarta
+- std_topic_lighting_shemy_podklyucheniya
+- std_topic_lighting_potolochnye_led_svetilniki_s_blokom_pitaniya_220v
+- std_topic_lighting_svetodiodnye_lampy
+- std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_220v
+- std_topic_lighting_svetodiodnye_lenty_5a1c623a
+- std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent
+- std_topic_lighting_best_practices_iridi_po_osvescheniyu
+- std_topic_lighting_tipovoy_uzel_led_lenta
+- std_topic_lighting_attachment_kix_3hwreyhq38cl
+- std_topic_lighting_tipovoy_uzel_datchik_dvizheniya
+- std_topic_lighting_tipovoy_uzel_datchik_dvizheniya_2d66dca6
+- std_topic_lighting_tipovye_tehnicheskie_resheniya
+- std_topic_lighting_spalnya_detskaya
+- std_topic_lighting_kuhnya
+- std_topic_lighting_gostinaya
+- std_topic_lighting_sanuzly
+- std_topic_lighting_koridor_i_prihozhaya
+- std_topic_lighting_primer_realizatsii
+semantic_diff:
+- operation_uid: std_op_merge_c4e8d7ef98
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5_______1_73f722e408/content.md
+  target_uids:
+  - std_topic_lighting_osveschenie_umnogo_doma
+  primary_slot: value
+  secondary_slots: []
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_8028423ac0
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_51_______1_e4f4f9f21d/content.md
+  target_uids:
+  - std_topic_lighting_naznachenie_i_tsennost
+  primary_slot: value
+  secondary_slots: []
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_1c42176482
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_511_______1_b6bf11c645/content.md
+  target_uids:
+  - std_topic_lighting_zachem_avtomatizirovat_osveschenie
+  primary_slot: value
+  secondary_slots: []
+  topic_archetype_uid: tpl_concept_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_f915aa5efb
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_512_1f3a9bfc23/content.md
+  target_uids:
+  - std_topic_lighting_tsennost_sistemy_upravleniya_osvescheniem_dlya_klienta
+  primary_slot: value
+  secondary_slots: []
+  topic_archetype_uid: tpl_concept_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_bb29401bae
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_52_____1_c760b3a865/content.md
+  target_uids:
+  - std_topic_lighting_bazovyy_funktsional
+  primary_slot: scope_and_terms
+  secondary_slots:
+  - control_modes_scenarios
+  topic_archetype_uid: tpl_concept_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_8b1e5b68d8
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_53_______1_a9e90c4d61/content.md
+  target_uids:
+  - std_topic_lighting_metody_upravleniya_osvescheniem
+  primary_slot: technologies
+  secondary_slots:
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: intro_merged_into_technologies_module
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_096215ee61
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_531_e47a5a3171/content.md
+  target_uids:
+  - std_topic_lighting_diskretnyy_ne_dimmiruemyy_tip_osvescheniya
+  primary_slot: technologies
+  secondary_slots:
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_09ce43cbea
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md
+  target_uids:
+  - std_topic_lighting_dimming_control
+  primary_slot: technologies
+  secondary_slots:
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_47f92a862e
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_533___dali_1_30f37b6868/content.md
+  target_uids:
+  - std_topic_lighting_osveschenie_dali
+  primary_slot: technologies
+  secondary_slots:
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_89f19187ef
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_54_______1_62b3018f09/content.md
+  target_uids:
+  - std_topic_lighting_vybor_istochnikov_osvescheniya
+  primary_slot: technologies
+  secondary_slots:
+  - equipment_and_compatibility
+  - design_and_selection
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_d6e3b798ed
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_541_31fd7384cd/content.md
+  target_uids:
+  - std_topic_lighting_evolyutsiya_istochnikov_sveta_v_sistemah_avtomatizatsii
+  primary_slot: technologies
+  secondary_slots:
+  - equipment_and_compatibility
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_ad5b131fde
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_542___________23_6df8f4329e/content.md
+  target_uids:
+  - std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_230_v
+  primary_slot: technologies
+  secondary_slots:
+  - equipment_and_compatibility
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_29eb07bcb4
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_543_____230___2_f5ee6234a4/content.md
+  target_uids:
+  - std_topic_lighting_svetodiodnye_lampy_230_v
+  primary_slot: technologies
+  secondary_slots:
+  - equipment_and_compatibility
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_7971189f7b
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md
+  target_uids:
+  - std_topic_lighting_svetodiodnye_lenty
+  primary_slot: technologies
+  secondary_slots:
+  - equipment_and_compatibility
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_3feeb084b5
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_545_____1_d6934db565/content.md
+  target_uids:
+  - std_topic_lighting_svetodiodnye_svetilniki
+  primary_slot: technologies
+  secondary_slots:
+  - equipment_and_compatibility
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_f686053cf3
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_546_51ef45276a/content.md
+  target_uids:
+  - std_topic_lighting_kriterii_vybora_istochnikov_osvescheniya_dlya_umnogo_doma
+  primary_slot: technologies
+  secondary_slots:
+  - equipment_and_compatibility
+  - design_and_selection
+  topic_archetype_uid: tpl_technology_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_a398fa64e8
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_55_________1_058489c55c/content.md
+  target_uids:
+  - std_topic_lighting_printsip_raboty_podsistemy_osvescheniya
+  primary_slot: recommended_architecture
+  secondary_slots: []
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_196ffa6f8e
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_56_______1_e4afbdb774/content.md
+  target_uids:
+  - std_topic_lighting_klassifikatsiya_vidov_osvescheniya
+  primary_slot: scope_and_terms
+  secondary_slots:
+  - technologies
+  topic_archetype_uid: tpl_concept_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_845cbc7664
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_561_________1_95e3f15336/content.md
+  target_uids:
+  - std_topic_lighting_klassicheskie_bazovye_vidy_osvescheniya
+  primary_slot: scope_and_terms
+  secondary_slots:
+  - technologies
+  topic_archetype_uid: tpl_concept_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_50fdbc7b0b
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_562_84c15b5197/content.md
+  target_uids:
+  - std_topic_lighting_klassifikatsiya_osvescheniya_po_sposobu_upravleniya
+  primary_slot: scope_and_terms
+  secondary_slots:
+  - technologies
+  topic_archetype_uid: tpl_concept_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_9c3f4a8ba3
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_57_____1_17421b1a97/content.md
+  target_uids:
+  - std_topic_lighting_stsenarii_osvescheniya
+  primary_slot: control_modes_scenarios
+  secondary_slots: []
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_8a9e345e7c
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_571_______1_e874c7e1dd/content.md
+  target_uids:
+  - std_topic_lighting_stsenarnoe_upravlenie_osvescheniem
+  primary_slot: control_modes_scenarios
+  secondary_slots: []
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_ec04d04251
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_572______1_2fcb765ec4/content.md
+  target_uids:
+  - std_topic_lighting_common_scenarios
+  primary_slot: control_modes_scenarios
+  secondary_slots: []
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_c8baee4a78
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_573_______1_d387ac5edd/content.md
+  target_uids:
+  - std_topic_lighting_situatsionnye_svetovye_stsenarii
+  primary_slot: control_modes_scenarios
+  secondary_slots: []
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_4948d6e29f
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_58_____1_7f496315a0/content.md
+  target_uids:
+  - std_topic_lighting_oborudovanie_sistemy
+  primary_slot: equipment_and_compatibility
+  secondary_slots: []
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_6eec7a0009
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md
+  target_uids:
+  - std_topic_lighting_io_modules
+  primary_slot: equipment_and_compatibility
+  secondary_slots: []
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_61f02f4d8a
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_582_____1_539238dd34/content.md
+  target_uids:
+  - std_topic_lighting_moduli_vvoda
+  primary_slot: equipment_and_compatibility
+  secondary_slots: []
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_07a16783f5
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_assetkix34k4vk6fdcs5_1_109115a8e3/content.md
+  target_uids:
+  - std_topic_lighting_attachment_kix_34k4vk6fdcs5
+  primary_slot: equipment_and_compatibility
+  secondary_slots: []
+  topic_archetype_uid: tpl_attachment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_e2bbea75a1
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_583_____1_80b8a21fc5/content.md
+  target_uids:
+  - std_topic_lighting_interfeysnye_moduli
+  primary_slot: equipment_and_compatibility
+  secondary_slots: []
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_08d9666ea1
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_584_____1_bd9cf84d23/content.md
+  target_uids:
+  - std_topic_lighting_stsenarnye_vyklyuchateli
+  primary_slot: equipment_and_compatibility
+  secondary_slots: []
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_7814028bc5
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md
+  target_uids:
+  - std_topic_lighting_datchiki
+  primary_slot: equipment_and_compatibility
+  secondary_slots: []
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_e9089ad335
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_59_________1_935ba4f6f0/content.md
+  target_uids:
+  - std_topic_lighting_avtomatizatsiya_osvescheniya_po_datchikam
+  primary_slot: equipment_and_compatibility
+  secondary_slots:
+  - control_modes_scenarios
+  - installation
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_e6bc3e4cac
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_591_____1_59dd61cb68/content.md
+  target_uids:
+  - std_topic_lighting_printsip_raboty
+  primary_slot: equipment_and_compatibility
+  secondary_slots:
+  - control_modes_scenarios
+  - installation
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_47a2c4b7c4
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_592_____1_8cf21b0edf/content.md
+  target_uids:
+  - std_topic_lighting_parametry_konfiguratsii
+  primary_slot: equipment_and_compatibility
+  secondary_slots:
+  - control_modes_scenarios
+  - installation
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_f05f089f6a
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_593_aeb3f6d457/content.md
+  target_uids:
+  - std_topic_lighting_zona_obnaruzheniya_i_trebovaniya_k_ustanovke
+  primary_slot: equipment_and_compatibility
+  secondary_slots:
+  - control_modes_scenarios
+  - installation
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_34ffdc823d
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_594_______1_677de6099b/content.md
+  target_uids:
+  - std_topic_lighting_ogranicheniya_i_osobennosti
+  primary_slot: equipment_and_compatibility
+  secondary_slots:
+  - control_modes_scenarios
+  - installation
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_ede654eca9
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_595_______1_552fa8a811/content.md
+  target_uids:
+  - std_topic_lighting_rekomendatsii_po_primeneniyu
+  primary_slot: equipment_and_compatibility
+  secondary_slots:
+  - control_modes_scenarios
+  - installation
+  topic_archetype_uid: tpl_equipment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_872dd4b69a
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_510_60d0927efd/content.md
+  target_uids:
+  - std_topic_lighting_standart_po_kabelyam_dlya_podsistemy_osvescheniya
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_6af881eb10
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5101_____1_8eef35e864/content.md
+  target_uids:
+  - std_topic_lighting_obschiy_printsip
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_0731d38a8e
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5102___________230_ae86f46090/content.md
+  target_uids:
+  - std_topic_lighting_silovye_kabeli_dlya_grupp_osvescheniya_230_v
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_d16b602935
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5103_11da810445/content.md
+  target_uids:
+  - std_topic_lighting_kabeli_dlya_knopok_master_vyklyuchateley_i_stsenarnyh_vyklyuchat
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_005fa99326
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5104_____bus77_1_75a6464153/content.md
+  target_uids:
+  - std_topic_lighting_kabel_shiny_bus77
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_3c8d519636
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5105_90bbbdeaef/content.md
+  target_uids:
+  - std_topic_lighting_kabeli_dlya_datchikov_dvizheniya_i_osveschennosti
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_838dce17d2
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5106_____led___24___1_a4c475fb01/content.md
+  target_uids:
+  - std_topic_lighting_kabeli_dlya_led_lent_24_v
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_3b25bdbafb
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5107_____rgb_rgbw_tunable_white_18e6a3e398/content.md
+  target_uids:
+  - std_topic_lighting_kabeli_dlya_rgb_rgbw_tunable_white_lent
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_6d200c44c2
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5108_________1_a4d20e7047/content.md
+  target_uids:
+  - std_topic_lighting_svodnaya_tablitsa_dlya_standarta
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_247e536e4a
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_511_____1_3981df58ed/content.md
+  target_uids:
+  - std_topic_lighting_shemy_podklyucheniya
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_5b67e5b9b2
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5111___led_24e9de7568/content.md
+  target_uids:
+  - std_topic_lighting_potolochnye_led_svetilniki_s_blokom_pitaniya_220v
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_53133fc94e
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5112_____1_169944528c/content.md
+  target_uids:
+  - std_topic_lighting_svetodiodnye_lampy
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_cb65787370
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5113___________2_ef70af71a7/content.md
+  target_uids:
+  - std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_220v
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_c99e67d43b
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md
+  target_uids:
+  - std_topic_lighting_svetodiodnye_lenty_5a1c623a
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_518e9d7845
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md
+  target_uids:
+  - std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent
+  primary_slot: cabling_topology_schematics
+  secondary_slots:
+  - installation
+  topic_archetype_uid: tpl_engineering_guidance_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_816f19104b
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_512_best_practices_iridi_____1_96b199aa6d/content.md
+  target_uids:
+  - std_topic_lighting_best_practices_iridi_po_osvescheniyu
+  primary_slot: design_and_selection
+  secondary_slots:
+  - limitations_and_anti_patterns
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_337e371c8c
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5121_____led___1_96d54c168f/content.md
+  target_uids:
+  - std_topic_lighting_tipovoy_uzel_led_lenta
+  primary_slot: design_and_selection
+  secondary_slots:
+  - limitations_and_anti_patterns
+  topic_archetype_uid: tpl_comparison_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_012040b8de
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_assetkix3hwreyhq38cl_1_c901fc0100/content.md
+  target_uids:
+  - std_topic_lighting_attachment_kix_3hwreyhq38cl
+  primary_slot: design_and_selection
+  secondary_slots:
+  - limitations_and_anti_patterns
+  topic_archetype_uid: tpl_attachment_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_f5e0763f55
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5122_________1_0d44eb1c75/content.md
+  target_uids:
+  - std_topic_lighting_tipovoy_uzel_datchik_dvizheniya
+  primary_slot: design_and_selection
+  secondary_slots:
+  - limitations_and_anti_patterns
+  topic_archetype_uid: tpl_comparison_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_c485e2b049
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5123_________1_807fdd858f/content.md
+  target_uids:
+  - std_topic_lighting_tipovoy_uzel_datchik_dvizheniya_2d66dca6
+  primary_slot: design_and_selection
+  secondary_slots:
+  - limitations_and_anti_patterns
+  topic_archetype_uid: tpl_comparison_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_merge_ed6cb2e98b
+  type: merge
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_513_______1_2828c4ecf6/content.md
+  target_uids:
+  - std_topic_lighting_tipovye_tehnicheskie_resheniya
+  primary_slot: examples_and_room_patterns
+  secondary_slots: []
+  topic_archetype_uid: tpl_topic_container_v1
+  disposition: represented_by_section_or_module_heading
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_6820acce68
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5131___1_1a87d2b6cc/content.md
+  target_uids:
+  - std_topic_lighting_spalnya_detskaya
+  primary_slot: examples_and_room_patterns
+  secondary_slots: []
+  topic_archetype_uid: tpl_room_pattern_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_4b5fd47847
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5132___1_5febc8216c/content.md
+  target_uids:
+  - std_topic_lighting_kuhnya
+  primary_slot: examples_and_room_patterns
+  secondary_slots: []
+  topic_archetype_uid: tpl_room_pattern_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_5995c9302b
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5133___1_ff816066e3/content.md
+  target_uids:
+  - std_topic_lighting_gostinaya
+  primary_slot: examples_and_room_patterns
+  secondary_slots: []
+  topic_archetype_uid: tpl_room_pattern_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_4417b67329
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5134___1_0261bcd37e/content.md
+  target_uids:
+  - std_topic_lighting_sanuzly
+  primary_slot: examples_and_room_patterns
+  secondary_slots: []
+  topic_archetype_uid: tpl_room_pattern_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_move_555bfa82f8
+  type: move
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_5135_______1_8db27959e6/content.md
+  target_uids:
+  - std_topic_lighting_koridor_i_prihozhaya
+  primary_slot: examples_and_room_patterns
+  secondary_slots: []
+  topic_archetype_uid: tpl_room_pattern_v1
+  disposition: mapped_without_semantic_rewrite
+  semantic_impact: none
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+- operation_uid: std_op_type_separate_a2d93a3aaf
+  type: type_separate
+  source_locators:
+  - sections/std_ch_lighting/topics/std_topic_514_____1_1a8dc41ad1/content.md
+  target_uids:
+  - std_topic_lighting_primer_realizatsii
+  primary_slot: examples_and_room_patterns
+  secondary_slots: []
+  topic_archetype_uid: tpl_case_study_v1
+  disposition: legacy_placeholder_quarantined_visible_gap_rendered
+  semantic_impact: legacy_placeholder_not_promoted
+  decision_ref: decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval
+version_impact: none
+pending_release: true

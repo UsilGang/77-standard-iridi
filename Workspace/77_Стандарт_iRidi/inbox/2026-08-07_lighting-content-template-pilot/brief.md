@@ -9,7 +9,7 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Decisions/2026-08-07_Standard_R
 
 # Редакционное задание EDT-2026-0001: рефакторинг «Освещения»
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [candidate-контрактом CT1](../../../../Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml), [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Standard_iRidi_MOC]], [candidate-контрактом CT1](../../../../Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml), [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Content_Template_And_Lighting_EDT_Review]] и [[01_Projects/001_77_Standard_iRidi/Archive/Backlog/Done/DO-001-STD-LIGHTING-REF-001_Refactor_Lighting_Content]].
 
 Машинный контракт задания: [editorial.yaml](editorial.yaml). Источники и полномочия: [source_refs.yaml](source_refs.yaml). Маршрутизация очереди: [meta.yaml](meta.yaml).
 

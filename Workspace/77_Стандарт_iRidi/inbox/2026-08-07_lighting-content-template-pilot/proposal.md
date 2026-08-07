@@ -1,6 +1,6 @@
 # Предложение: CT1 + EDT-2026-0001
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Content_Template_And_Lighting_EDT_Review]], [candidate-контрактом CT1](../../../../Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml) и [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-08-07_lighting-content-template-pilot/brief]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Archive/Reviews/Applied/2026-08-07_Content_Template_And_Lighting_EDT_Review]], [candidate-контрактом CT1](../../../../Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml) и [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-08-07_lighting-content-template-pilot/brief]].
 
 ## Целевой контур
 

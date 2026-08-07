@@ -1,19 +1,23 @@
-template_uid: std_tpl_subsystem_v1
+template_uid: tpl_subsystem_section_v1
 template_version: "1.0.0"
 status: approved
+applies_to: section
+decision_ref: "decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval"
 slots:
-  - {id: purpose, title: "Назначение и ценность", required: true}
-  - {id: scope_terms, title: "Область действия и термины", required: true}
-  - {id: technologies, title: "Типы систем и технологии", required: true}
-  - {id: architecture, title: "Рекомендуемая архитектура", required: true}
-  - {id: equipment, title: "Оборудование и совместимость", required: true}
-  - {id: selection, title: "Правила проектирования и подбора", required: true}
-  - {id: control, title: "Логика управления и сценарии", required: true}
-  - {id: topology, title: "Кабели, топология и схемы", required: true}
+  - {id: value, title: "Назначение и ценность", required: true}
+  - {id: scope_and_terms, title: "Область действия и термины", required: true}
+  - {id: technologies, title: "Технологии и способы управления", required: true}
+  - {id: recommended_architecture, title: "Рекомендуемая архитектура", required: true}
+  - {id: equipment_and_compatibility, title: "Оборудование и совместимость", required: true}
+  - {id: design_and_selection, title: "Проектирование и выбор решения", required: true}
+  - {id: control_modes_scenarios, title: "Управление и сценарии", required: true}
+  - {id: cabling_topology_schematics, title: "Кабели, топология и схемы", required: true}
   - {id: installation, title: "Монтаж", required: true}
-  - {id: commissioning, title: "Настройка и ПНР", required: true}
-  - {id: acceptance, title: "Критерии приемки", required: true}
-  - {id: limits, title: "Ограничения и анти-паттерны", required: true}
-  - {id: trace, title: "Источники и история изменения", required: true}
-missing_slot_policy: explicit_not_documented
-
+  - {id: setup_and_commissioning, title: "Настройка и ПНР", required: true}
+  - {id: acceptance_tests, title: "Приемочные испытания", required: true}
+  - {id: limitations_and_anti_patterns, title: "Ограничения и анти-паттерны", required: true}
+  - {id: examples_and_room_patterns, title: "Примеры и типовые помещения", required: false}
+  - {id: sources_and_changes, title: "Источники и история изменений", required: true, generated: true}
+missing_slot_policy:
+  release: block
+  internal_review: render_gap_marker

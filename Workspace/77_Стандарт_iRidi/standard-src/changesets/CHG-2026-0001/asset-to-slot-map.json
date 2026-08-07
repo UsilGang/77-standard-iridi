@@ -1,0 +1,1332 @@
+{
+  "assets": [
+    {
+      "asset_exists": true,
+      "asset_name": "kix.gv488zcb4c2m.jpg",
+      "asset_ref": "../../../../assets/kix.gv488zcb4c2m.jpg",
+      "asset_sha256": "d59a7bd68aa3e991b39f4137098d38be813feb95d1a2e48883461fbd2e3ca1a1",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "value",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_511_______1_b6bf11c645/content.md#image-1",
+      "topic_uid": "std_topic_lighting_zachem_avtomatizirovat_osveschenie"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.ccae5bnfy2rr.png",
+      "asset_ref": "../../../../assets/kix.ccae5bnfy2rr.png",
+      "asset_sha256": "9cde6e372a1648a683d536bb2c8a8ec051048da4ef77dc020910ccde38a2024b",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_531_e47a5a3171/content.md#image-2",
+      "topic_uid": "std_topic_lighting_diskretnyy_ne_dimmiruemyy_tip_osvescheniya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.k934f5uedf61.png",
+      "asset_ref": "../../../../assets/kix.k934f5uedf61.png",
+      "asset_sha256": "e3f91feb461acbb0633dc4795a71170e5f162fc10c738d74ba507e7dc4ee0238",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md#image-3",
+      "topic_uid": "std_topic_lighting_dimming_control"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.ezw0a1xcua2h.png",
+      "asset_ref": "../../../../assets/kix.ezw0a1xcua2h.png",
+      "asset_sha256": "7da603b4a6bcf6b808b17fa6ddc1f33c32abe0ae8c5160397e19b5e5f0ffc785",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md#image-4",
+      "topic_uid": "std_topic_lighting_dimming_control"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.6rwc02btpn7k.png",
+      "asset_ref": "../../../../assets/kix.6rwc02btpn7k.png",
+      "asset_sha256": "92456bdf9c976f16d8d99b6fc83d331d498549cc27d50e1188f9d95f08390396",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md#image-5",
+      "topic_uid": "std_topic_lighting_dimming_control"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.zgvhlj5kkuaz.png",
+      "asset_ref": "../../../../assets/kix.zgvhlj5kkuaz.png",
+      "asset_sha256": "3403d18df159c8d0232cd830288a2216087bf544712f25747e25ca9a432701fd",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md#image-6",
+      "topic_uid": "std_topic_lighting_dimming_control"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.z3bb9sq76nfv.png",
+      "asset_ref": "../../../../assets/kix.z3bb9sq76nfv.png",
+      "asset_sha256": "1eb027b23a0b045de2155141e69b241ed11ea7e6a1e0c55949f4f25507bcd220",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md#image-7",
+      "topic_uid": "std_topic_lighting_dimming_control"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.ooemyuko3xrn.png",
+      "asset_ref": "../../../../assets/kix.ooemyuko3xrn.png",
+      "asset_sha256": "9ec9ffc9bc08bdbeca317b79bdd519a1f75ec55601fa14a62a3171f95070eb00",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md#image-8",
+      "topic_uid": "std_topic_lighting_dimming_control"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.n9xh8jbctftt.png",
+      "asset_ref": "../../../../assets/kix.n9xh8jbctftt.png",
+      "asset_sha256": "77491a9f159a9e58a763342d2a49c9ff7945e86ac7a900320a871c05eda3bfe8",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_532_______1_dbec585a19/content.md#image-9",
+      "topic_uid": "std_topic_lighting_dimming_control"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.b586ypanr1zq.png",
+      "asset_ref": "../../../../assets/kix.b586ypanr1zq.png",
+      "asset_sha256": "fc9ed3b0b3628999a24c0921af5f82993cb866fffcac8b23795bf0db34cad35a",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_542___________23_6df8f4329e/content.md#image-10",
+      "topic_uid": "std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_230_v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.nr8tmt25n3j.png",
+      "asset_ref": "../../../../assets/kix.nr8tmt25n3j.png",
+      "asset_sha256": "3203c348231442074ce6bb3ce715626e9de319e823de49503992e516de97c883",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_542___________23_6df8f4329e/content.md#image-11",
+      "topic_uid": "std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_230_v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.a6qlndbwvfka.png",
+      "asset_ref": "../../../../assets/kix.a6qlndbwvfka.png",
+      "asset_sha256": "3aea8ce2fd1eee8c12434258315237198cfd16fa91808d1b3196865301286d11",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_543_____230___2_f5ee6234a4/content.md#image-12",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lampy_230_v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.joo5v3z9svam.png",
+      "asset_ref": "../../../../assets/kix.joo5v3z9svam.png",
+      "asset_sha256": "53c8b950fa291357c99a6b37e84a9ea6877ae631cac4544a424584615d1bdb57",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_543_____230___2_f5ee6234a4/content.md#image-13",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lampy_230_v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.r334cparqov.png",
+      "asset_ref": "../../../../assets/kix.r334cparqov.png",
+      "asset_sha256": "f9b3c81d1c0ed6b52e0b44ae94f2b82954778f4d6dc39a9873bfc70c7545424c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_543_____230___2_f5ee6234a4/content.md#image-14",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lampy_230_v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.ju6br96zdag6.png",
+      "asset_ref": "../../../../assets/kix.ju6br96zdag6.png",
+      "asset_sha256": "b51634decc6c20ea1125dda82a9022351ede68617a36cd964c11c2ce66a5bf26",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md#image-15",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.5bgyhj42ooor.png",
+      "asset_ref": "../../../../assets/kix.5bgyhj42ooor.png",
+      "asset_sha256": "e245e089c0a00f54f96367df5af14433d1a9390cd29b2b67ec069450458b9ca6",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md#image-16",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.lac8pbsipkhn.png",
+      "asset_ref": "../../../../assets/kix.lac8pbsipkhn.png",
+      "asset_sha256": "6e2c64ced5a2a8f0462d2b098bbfc7f59523de1b468aa5b744ed8a2e83f9b39c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md#image-17",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.mky2bpfzc195.png",
+      "asset_ref": "../../../../assets/kix.mky2bpfzc195.png",
+      "asset_sha256": "3163ff61b588217b14e4c3ccff0cedbb05e316244335640419993c5c55ab20a2",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md#image-18",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.nzl65qwuqxrh.png",
+      "asset_ref": "../../../../assets/kix.nzl65qwuqxrh.png",
+      "asset_sha256": "7249655ffaa59c60480193983589c53a833d79bfefa5dfadfaef313a5a62e0b4",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md#image-19",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.ytnhpuuo2yd2.png",
+      "asset_ref": "../../../../assets/kix.ytnhpuuo2yd2.png",
+      "asset_sha256": "fea04f34b2e8c25e02d90aa2cfc5e3dab4e50f0438c1f3879fab3927cd84e2b3",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md#image-20",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.42t7smb8211y.png",
+      "asset_ref": "../../../../assets/kix.42t7smb8211y.png",
+      "asset_sha256": "384b2683f1e5185ece99101cb42fdef971d00bcf2b02f12172337da8c4e805d1",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md#image-21",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.mewpo7dcn05c.png",
+      "asset_ref": "../../../../assets/kix.mewpo7dcn05c.png",
+      "asset_sha256": "c9ef19d3b3a58fb326ee2111e15eb9c276bf3b0237bbc5585daf347a9d78b3bd",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_545_____1_d6934db565/content.md#image-22",
+      "topic_uid": "std_topic_lighting_svetodiodnye_svetilniki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.swnkg0matg93.png",
+      "asset_ref": "../../../../assets/kix.swnkg0matg93.png",
+      "asset_sha256": "c9ef19d3b3a58fb326ee2111e15eb9c276bf3b0237bbc5585daf347a9d78b3bd",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "technologies",
+      "secondary_slots": [
+        "equipment_and_compatibility",
+        "design_and_selection"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_545_____1_d6934db565/content.md#image-23",
+      "topic_uid": "std_topic_lighting_svetodiodnye_svetilniki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.27x7304pm9m8.png",
+      "asset_ref": "../../../../assets/kix.27x7304pm9m8.png",
+      "asset_sha256": "dc12f2a804bd0d3d39e0b505a656135e290cb74069a6c113b50aa643e5ff0b67",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "scope_and_terms",
+      "secondary_slots": [
+        "technologies"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_561_________1_95e3f15336/content.md#image-24",
+      "topic_uid": "std_topic_lighting_klassicheskie_bazovye_vidy_osvescheniya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.50utbdwhwpej.png",
+      "asset_ref": "../../../../assets/kix.50utbdwhwpej.png",
+      "asset_sha256": "0710aeba118f9e9df93c95e793faa8c441c9d833351b02c419d1db02d7c3237d",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "scope_and_terms",
+      "secondary_slots": [
+        "technologies"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_561_________1_95e3f15336/content.md#image-25",
+      "topic_uid": "std_topic_lighting_klassicheskie_bazovye_vidy_osvescheniya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.3cpys1szgxi0.png",
+      "asset_ref": "../../../../assets/kix.3cpys1szgxi0.png",
+      "asset_sha256": "97dc74c30a4de7fce11da040d5c0c6de148a70a7c24981fe6cd52d7d5b89f483",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "scope_and_terms",
+      "secondary_slots": [
+        "technologies"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_561_________1_95e3f15336/content.md#image-26",
+      "topic_uid": "std_topic_lighting_klassicheskie_bazovye_vidy_osvescheniya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.dv5pm8ll47cu.png",
+      "asset_ref": "../../../../assets/kix.dv5pm8ll47cu.png",
+      "asset_sha256": "7b33b2ef8b2afba39548b03109488701af282c326286dff7b738e345d1dd957c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "scope_and_terms",
+      "secondary_slots": [
+        "technologies"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_561_________1_95e3f15336/content.md#image-27",
+      "topic_uid": "std_topic_lighting_klassicheskie_bazovye_vidy_osvescheniya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.5h7li3ml4vav.png",
+      "asset_ref": "../../../../assets/kix.5h7li3ml4vav.png",
+      "asset_sha256": "49e144105869c988ce0e9b63da6861beab6f19fb094fde6bb1ee03af9a8d46d1",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-28",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.r4i2z4es2bwk.png",
+      "asset_ref": "../../../../assets/kix.r4i2z4es2bwk.png",
+      "asset_sha256": "891bc8c8691f228ef95d7146d10524f569c6a392bd8237065c78bf42a0de40b4",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-29",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.j41dz62ojok.png",
+      "asset_ref": "../../../../assets/kix.j41dz62ojok.png",
+      "asset_sha256": "3a597b5408a177cd06c4066f479252a70318428473332628b0b5400104a7fbcf",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-30",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.meq0djap1xie.png",
+      "asset_ref": "../../../../assets/kix.meq0djap1xie.png",
+      "asset_sha256": "96b5ca0889a914e021c8e7ecfac2eb99ee8559988ef6ce467cacd14b8b3b6d78",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-31",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.nuupseb2d4sr.png",
+      "asset_ref": "../../../../assets/kix.nuupseb2d4sr.png",
+      "asset_sha256": "28bc42d2043eeced42e725eb3c11f66ee34e7ba0765ac96bc50fe8aea0288789",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-32",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.offeqqrrj3ml.png",
+      "asset_ref": "../../../../assets/kix.offeqqrrj3ml.png",
+      "asset_sha256": "807d0a0ec802d7c7cbb104bb2a96185997b6d013b9a0cdb155760f80a547873c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-33",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.fr5u8vm0xitp.png",
+      "asset_ref": "../../../../assets/kix.fr5u8vm0xitp.png",
+      "asset_sha256": "364fa79fee419865ff92efe2a317887fb1f6c5afc95ad416679c496d4d1d624c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-34",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.g28tip26nxpp.png",
+      "asset_ref": "../../../../assets/kix.g28tip26nxpp.png",
+      "asset_sha256": "807d0a0ec802d7c7cbb104bb2a96185997b6d013b9a0cdb155760f80a547873c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-35",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.aza51j1x2gs9.png",
+      "asset_ref": "../../../../assets/kix.aza51j1x2gs9.png",
+      "asset_sha256": "4e7b8f6ee437fea14b1fc972fff640e076abf694b590a7fdd5609fde3520ff1d",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-36",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.u03pull2jrda.png",
+      "asset_ref": "../../../../assets/kix.u03pull2jrda.png",
+      "asset_sha256": "05b24b9b10d5b94ed511a08199a9c61bd746937fec37fe6f18e8c3a952936b52",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-37",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.u2gawwvu0nfk.png",
+      "asset_ref": "../../../../assets/kix.u2gawwvu0nfk.png",
+      "asset_sha256": "7bf4dd70d39a1817e1371d1a738237cca5e91622bdd1510796d0918c1cb7eaae",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-38",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.sv9ej0tpw54n.png",
+      "asset_ref": "../../../../assets/kix.sv9ej0tpw54n.png",
+      "asset_sha256": "89dd9493647f319e258928180282fee791bfe9597c83a099eac1ee7186e0b7f3",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-39",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.aks6pyv4gczj.png",
+      "asset_ref": "../../../../assets/kix.aks6pyv4gczj.png",
+      "asset_sha256": "9ed768ddd5085e3652f281e753c65ba00371ce6623c4d4bc91855964e332faf8",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-40",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.k5e2tva3icqt.jpg",
+      "asset_ref": "../../../../assets/kix.k5e2tva3icqt.jpg",
+      "asset_sha256": "b1dbf9e35594d9c2ce082dfbdc542105f8110be18f10cccf117433628d61fc3c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-41",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.3jmbaphmz6x7.png",
+      "asset_ref": "../../../../assets/kix.3jmbaphmz6x7.png",
+      "asset_sha256": "f08ea1e12aed85ca0d2862f454b4f51e711f404854674849048b60b6a7962383",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-42",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.ye140wtjj58k.png",
+      "asset_ref": "../../../../assets/kix.ye140wtjj58k.png",
+      "asset_sha256": "876998345b1a1fe165b9c151228e314db9fe91e022a288594987168a03b98fc3",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-43",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.vi1litdg83u.png",
+      "asset_ref": "../../../../assets/kix.vi1litdg83u.png",
+      "asset_sha256": "4740aec9931627d054e55b6724311f82ae17e08f54838f31a7270642ee1714a6",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-44",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.rftc0hk9jjzo.png",
+      "asset_ref": "../../../../assets/kix.rftc0hk9jjzo.png",
+      "asset_sha256": "034b271e977f7cba4b779d8cf9cb8f78bd1c7a9c76c3c63ab3677ebf36c8c548",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-45",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.zevrsdws3wb6.png",
+      "asset_ref": "../../../../assets/kix.zevrsdws3wb6.png",
+      "asset_sha256": "0f2d6a5d1f5644e12a136b69824c865ddbea4c63728982ce42127f3654a2e114",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_581_______1_2562eae291/content.md#image-46",
+      "topic_uid": "std_topic_lighting_io_modules"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.5lphco8jp5aw.png",
+      "asset_ref": "../../../../assets/kix.5lphco8jp5aw.png",
+      "asset_sha256": "99ee2709382f2d1a37f4230eb9cc259412895e148b094a1e89bf6755371cc7a5",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_582_____1_539238dd34/content.md#image-47",
+      "topic_uid": "std_topic_lighting_moduli_vvoda"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.6udaccm4gznn.png",
+      "asset_ref": "../../../../assets/kix.6udaccm4gznn.png",
+      "asset_sha256": "58b685224762c7279224fc682128f2bd313ef76bc539db7ccc2616d294d1f65f",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_582_____1_539238dd34/content.md#image-48",
+      "topic_uid": "std_topic_lighting_moduli_vvoda"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.34k4vk6fdcs5.png",
+      "asset_ref": "../../../../assets/kix.34k4vk6fdcs5.png",
+      "asset_sha256": "489a11b37714342e5f64fbc92e41c55e097f3e3d5843ee160d0b323e7b4a9f62",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_assetkix34k4vk6fdcs5_1_109115a8e3/content.md#image-49",
+      "topic_uid": "std_topic_lighting_attachment_kix_34k4vk6fdcs5"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.u8yfzi2zw2x3.png",
+      "asset_ref": "../../../../assets/kix.u8yfzi2zw2x3.png",
+      "asset_sha256": "ee5f8deea4b995bd197b52c3c7066721d0fc741ba52c572fa5e23a7138cf85ff",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_assetkix34k4vk6fdcs5_1_109115a8e3/content.md#image-50",
+      "topic_uid": "std_topic_lighting_attachment_kix_34k4vk6fdcs5"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.5toxuney13re.png",
+      "asset_ref": "../../../../assets/kix.5toxuney13re.png",
+      "asset_sha256": "33950448ab6ea3fdb943c2b93264de8de432fff12429d71931a31559e46b97bf",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_assetkix34k4vk6fdcs5_1_109115a8e3/content.md#image-51",
+      "topic_uid": "std_topic_lighting_attachment_kix_34k4vk6fdcs5"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.rv1uracghz5t.jpg",
+      "asset_ref": "../../../../assets/kix.rv1uracghz5t.jpg",
+      "asset_sha256": "c1721c50086a7e12aa9ce06802b0e26676f64fa63544070a9a2738ddb9cd7b70",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_assetkix34k4vk6fdcs5_1_109115a8e3/content.md#image-52",
+      "topic_uid": "std_topic_lighting_attachment_kix_34k4vk6fdcs5"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.vs4mmj7maouo.png",
+      "asset_ref": "../../../../assets/kix.vs4mmj7maouo.png",
+      "asset_sha256": "f78c3469f5b7775558f10aab60488cb91ed6eba67d743b7f49024f178257d3b4",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_583_____1_80b8a21fc5/content.md#image-53",
+      "topic_uid": "std_topic_lighting_interfeysnye_moduli"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.nus27jb6obsk.png",
+      "asset_ref": "../../../../assets/kix.nus27jb6obsk.png",
+      "asset_sha256": "e874eeea54bd7ed3cb4a6ae189abaf8496bb516ec102ae71fdf94ca161d62040",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_583_____1_80b8a21fc5/content.md#image-54",
+      "topic_uid": "std_topic_lighting_interfeysnye_moduli"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.rzjmnn441c22.png",
+      "asset_ref": "../../../../assets/kix.rzjmnn441c22.png",
+      "asset_sha256": "2068657f521e62a14818a1705d8233a8769dfdc9856f95e5ed485d21d97d7a9a",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_584_____1_bd9cf84d23/content.md#image-55",
+      "topic_uid": "std_topic_lighting_stsenarnye_vyklyuchateli"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.vfsgrndib0i8.png",
+      "asset_ref": "../../../../assets/kix.vfsgrndib0i8.png",
+      "asset_sha256": "235caf4e0d5548e31e5ae8dcd373cf5fbee2d7ccc38db026fb869fd94e72796b",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_584_____1_bd9cf84d23/content.md#image-56",
+      "topic_uid": "std_topic_lighting_stsenarnye_vyklyuchateli"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.oj8o31eb3nl6.png",
+      "asset_ref": "../../../../assets/kix.oj8o31eb3nl6.png",
+      "asset_sha256": "698fc77a37799815e53d0ab32ab235b0b0a14f1871bac48d1c52e1752a5ad13c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-57",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.mxyz7vcw96i7.png",
+      "asset_ref": "../../../../assets/kix.mxyz7vcw96i7.png",
+      "asset_sha256": "9cdb5acdf46cd323a7968c5287efc0bd089e50896360489deff00c57ce0d7d1c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-58",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.qd3ys7knmr9z.png",
+      "asset_ref": "../../../../assets/kix.qd3ys7knmr9z.png",
+      "asset_sha256": "698fc77a37799815e53d0ab32ab235b0b0a14f1871bac48d1c52e1752a5ad13c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-59",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.4wqre3x295e1.png",
+      "asset_ref": "../../../../assets/kix.4wqre3x295e1.png",
+      "asset_sha256": "9cdb5acdf46cd323a7968c5287efc0bd089e50896360489deff00c57ce0d7d1c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-60",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.fr60im5kq4ng.png",
+      "asset_ref": "../../../../assets/kix.fr60im5kq4ng.png",
+      "asset_sha256": "db53c1883a7367061d42b8fccaa3cb463ac57567f756cb63a38668e2e4f8472e",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-61",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.d0hn5ipg0nly.png",
+      "asset_ref": "../../../../assets/kix.d0hn5ipg0nly.png",
+      "asset_sha256": "887a3daadbf8022222f11dc90682641220f4ecf54ea42b7ab841fdca774e18c8",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-62",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.ia291xygt8n1.png",
+      "asset_ref": "../../../../assets/kix.ia291xygt8n1.png",
+      "asset_sha256": "db53c1883a7367061d42b8fccaa3cb463ac57567f756cb63a38668e2e4f8472e",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-63",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.rattznyt3c2l.png",
+      "asset_ref": "../../../../assets/kix.rattznyt3c2l.png",
+      "asset_sha256": "887a3daadbf8022222f11dc90682641220f4ecf54ea42b7ab841fdca774e18c8",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_585___1_88530c029b/content.md#image-64",
+      "topic_uid": "std_topic_lighting_datchiki"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.7ve9o8yr6fdc.png",
+      "asset_ref": "../../../../assets/kix.7ve9o8yr6fdc.png",
+      "asset_sha256": "0153bc4a72d0f5a1ae89a374404456b41291cf58b0ce6ae288eeb2d5619e3894",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [
+        "control_modes_scenarios",
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_593_aeb3f6d457/content.md#image-65",
+      "topic_uid": "std_topic_lighting_zona_obnaruzheniya_i_trebovaniya_k_ustanovke"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.yyhnv3pc0zpw.png",
+      "asset_ref": "../../../../assets/kix.yyhnv3pc0zpw.png",
+      "asset_sha256": "01049a9dd80165288b1301e512bd2b2a46718829c7d09737b86641f4dce7c0a1",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "equipment_and_compatibility",
+      "secondary_slots": [
+        "control_modes_scenarios",
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_593_aeb3f6d457/content.md#image-66",
+      "topic_uid": "std_topic_lighting_zona_obnaruzheniya_i_trebovaniya_k_ustanovke"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.c6aggfczqmdi.png",
+      "asset_ref": "../../../../assets/kix.c6aggfczqmdi.png",
+      "asset_sha256": "7b2d28166628a0fd7baeea7f6921dd5577b078bf76cf904eed2df274bda75faf",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5111___led_24e9de7568/content.md#image-67",
+      "topic_uid": "std_topic_lighting_potolochnye_led_svetilniki_s_blokom_pitaniya_220v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.4w8amjgsp0b.png",
+      "asset_ref": "../../../../assets/kix.4w8amjgsp0b.png",
+      "asset_sha256": "482f327ad965c2018635d971a7abce8125bc7e8cc562da7c74bac766cb9183c7",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5112_____1_169944528c/content.md#image-68",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lampy"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.a09sge7xyxba.png",
+      "asset_ref": "../../../../assets/kix.a09sge7xyxba.png",
+      "asset_sha256": "d46829bd4c42601f7e2b2602384258a0201178ff7fc279405d820e090c269357",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5112_____1_169944528c/content.md#image-69",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lampy"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.r6isgn7kt1uw.png",
+      "asset_ref": "../../../../assets/kix.r6isgn7kt1uw.png",
+      "asset_sha256": "dcb7578b723e45556ff5002e916b3faf9c3c11ce29d6b65b01eb9a8533330795",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5113___________2_ef70af71a7/content.md#image-70",
+      "topic_uid": "std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_220v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.3n0jxx2vrblq.png",
+      "asset_ref": "../../../../assets/kix.3n0jxx2vrblq.png",
+      "asset_sha256": "d45f8aa1ed97b48793bc8469675822f15a258f276f27d47147a79afa6a2398a8",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5113___________2_ef70af71a7/content.md#image-71",
+      "topic_uid": "std_topic_lighting_galogenovye_lampy_i_lampy_nakalivaniya_220v"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.2wk1thhcnaku.jpg",
+      "asset_ref": "../../../../assets/kix.2wk1thhcnaku.jpg",
+      "asset_sha256": "35daaf7ef981a48fb1c8c2248d823a35459dbfa40b10948bc77e68a963d30e6c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md#image-72",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.jz5xxpdk5xs8.png",
+      "asset_ref": "../../../../assets/kix.jz5xxpdk5xs8.png",
+      "asset_sha256": "873aaa37ccd0348999da14a7d4fec9c96a8e5e9b5a82a24e440677a42683ae21",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md#image-73",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.9tom9lb0arwg.png",
+      "asset_ref": "../../../../assets/kix.9tom9lb0arwg.png",
+      "asset_sha256": "8df5435438321c1b23ca67797f673cf0777d5456d5d481497aa7268767abf59a",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md#image-74",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.bcaivbataskp.png",
+      "asset_ref": "../../../../assets/kix.bcaivbataskp.png",
+      "asset_sha256": "2b8dc0549e714e9ed3c38e3800e5842195be9cb6a4377bbec010d78ebeb6cee5",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md#image-75",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.7aiu3hmlpm5r.png",
+      "asset_ref": "../../../../assets/kix.7aiu3hmlpm5r.png",
+      "asset_sha256": "f0dac6c53c2729168a2e3ad8169431fd83d39d87d20704d4928de481c23b3a5c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md#image-76",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.xvbyu4pptc51.jpg",
+      "asset_ref": "../../../../assets/kix.xvbyu4pptc51.jpg",
+      "asset_sha256": "37c4d4292aecbd45ce0acef463992d7888b5d5efe6313d6192ac47e1fbaf531f",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md#image-77",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.55su9pi9fwpm.png",
+      "asset_ref": "../../../../assets/kix.55su9pi9fwpm.png",
+      "asset_sha256": "b94e8c5123b48d0fbc36ebfc9762321473fd190f7f18d90355c6adc87c07e7db",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5114_____1_612099d01d/content.md#image-78",
+      "topic_uid": "std_topic_lighting_svetodiodnye_lenty_5a1c623a"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.sdb4ij9kqbha.png",
+      "asset_ref": "../../../../assets/kix.sdb4ij9kqbha.png",
+      "asset_sha256": "09df5711f6ae651b48e5a5b1f32e2ed5dea0cfd855079558fdc009382306adfb",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-79",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.oo1zyyxlt1pr.png",
+      "asset_ref": "../../../../assets/kix.oo1zyyxlt1pr.png",
+      "asset_sha256": "d69f8072044f5b42ff0e016d802e6908be2070763a3f69cd68df0395d98ebfde",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-80",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.x3k8zotbr5gw.png",
+      "asset_ref": "../../../../assets/kix.x3k8zotbr5gw.png",
+      "asset_sha256": "f0dac6c53c2729168a2e3ad8169431fd83d39d87d20704d4928de481c23b3a5c",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-81",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.i465vwp58hlr.png",
+      "asset_ref": "../../../../assets/kix.i465vwp58hlr.png",
+      "asset_sha256": "f75bf4914182f1b302800d6663fa380888ab4f099a92b9bb3caad8c4a32798a9",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-82",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.l1sochkdorga.jpg",
+      "asset_ref": "../../../../assets/kix.l1sochkdorga.jpg",
+      "asset_sha256": "d07ab69b83124afac5dee94bf61efde57e3e16f995319ae77edb73000abcbadd",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-83",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.2cbqngdw8zx.jpg",
+      "asset_ref": "../../../../assets/kix.2cbqngdw8zx.jpg",
+      "asset_sha256": "cd5e839ca31de2a7aa0ff7051716fcd0a6dbc26b2541bbbef9e13e5752533c2e",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-84",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.3jlub1pvnxeq.png",
+      "asset_ref": "../../../../assets/kix.3jlub1pvnxeq.png",
+      "asset_sha256": "88bdd81d81d551996830d47a97b346b2a404d42b8037cfcdf7a40f632635cd17",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-85",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.k566v5emg9v6.png",
+      "asset_ref": "../../../../assets/kix.k566v5emg9v6.png",
+      "asset_sha256": "73dc08fc92c329c627000804c65adb16c6886a7a1bf51fff7d4bedc91c98f41b",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-86",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.5xq7rphwh09a.jpg",
+      "asset_ref": "../../../../assets/kix.5xq7rphwh09a.jpg",
+      "asset_sha256": "3c286c6888cb28ef3a90515fddf505daf761df5b66379ff5108989a4fb1bc2e0",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-87",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.jc1o3q33joc6.png",
+      "asset_ref": "../../../../assets/kix.jc1o3q33joc6.png",
+      "asset_sha256": "ba7ac0cc6c8af39f63df43bbfb7a0c04ee99846a9c270936a80f310e2b80ef35",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-88",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.d8viniqdnq59.png",
+      "asset_ref": "../../../../assets/kix.d8viniqdnq59.png",
+      "asset_sha256": "64a2e0e74407e0172ebe37e0b3ec7e2bbd3342f3f9dba6b7d4842e0bd48048c7",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-89",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.umebgzzdgy81.png",
+      "asset_ref": "../../../../assets/kix.umebgzzdgy81.png",
+      "asset_sha256": "1d76d2cf1869784344b9a9d1fb63c571862f16f5dc8e65ab892d602ffb078b65",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-90",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.mxlqy9zgv8oo.jpg",
+      "asset_ref": "../../../../assets/kix.mxlqy9zgv8oo.jpg",
+      "asset_sha256": "8d74c0a48369b474bb587b785a6bae9a613c472b433336f010f8f2a327cba375",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-91",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.3d5mybfsasnn.png",
+      "asset_ref": "../../../../assets/kix.3d5mybfsasnn.png",
+      "asset_sha256": "babd836b2ca73c41fb8632ef8d85cea1d03ab6d24726977f9fbc42bf96569d0d",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-92",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.f50usb79gh59.png",
+      "asset_ref": "../../../../assets/kix.f50usb79gh59.png",
+      "asset_sha256": "76ae1883c1ae514813b45d4c277ebe61f258734aab20b7216a90a4d1894c3caf",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-93",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.be1cevetqh0o.jpg",
+      "asset_ref": "../../../../assets/kix.be1cevetqh0o.jpg",
+      "asset_sha256": "816dfa8df8dca3aa1584582e0c7102dd1dfc19151136e31020e7e1360fac37ae",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-94",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.7dqxac8sh9t1.png",
+      "asset_ref": "../../../../assets/kix.7dqxac8sh9t1.png",
+      "asset_sha256": "53e3d21a4c2acf9c4702ceece927508cc583ca0510971d50a757e2c202c98f89",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-95",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.9cvdg9gnx5ep.png",
+      "asset_ref": "../../../../assets/kix.9cvdg9gnx5ep.png",
+      "asset_sha256": "1dfcf121799102b62e2af349dd7635b30536a5fa79043ab22b48d6202a230441",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-96",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.lhoguv21fwhi.png",
+      "asset_ref": "../../../../assets/kix.lhoguv21fwhi.png",
+      "asset_sha256": "1661324c03888e062dff100710c1f107934b13483a4dbac717b14ed9feecacbb",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "cabling_topology_schematics",
+      "secondary_slots": [
+        "installation"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5115_3bc4e66701/content.md#image-97",
+      "topic_uid": "std_topic_lighting_podklyuchenie_razlichnyh_tipov_svetodiodnyh_lent"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.3hwreyhq38cl.jpg",
+      "asset_ref": "../../../../assets/kix.3hwreyhq38cl.jpg",
+      "asset_sha256": "071cd6759e3c0a9a8acdf4cb1e3b32599c0bb2d93d16a3db41e85415ac98bf10",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "design_and_selection",
+      "secondary_slots": [
+        "limitations_and_anti_patterns"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_assetkix3hwreyhq38cl_1_c901fc0100/content.md#image-98",
+      "topic_uid": "std_topic_lighting_attachment_kix_3hwreyhq38cl"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.93c8m5nm8zy2.jpg",
+      "asset_ref": "../../../../assets/kix.93c8m5nm8zy2.jpg",
+      "asset_sha256": "35c035c91b839b9e4fc448db96d5fed740e48bc784940f9e168655f64d524e4f",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "design_and_selection",
+      "secondary_slots": [
+        "limitations_and_anti_patterns"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5122_________1_0d44eb1c75/content.md#image-99",
+      "topic_uid": "std_topic_lighting_tipovoy_uzel_datchik_dvizheniya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.x69eewu8skha.jpg",
+      "asset_ref": "../../../../assets/kix.x69eewu8skha.jpg",
+      "asset_sha256": "909c68f353bda3c82c4ea341cf2ffd67549faacf78e07472bc90723ab513fb74",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "design_and_selection",
+      "secondary_slots": [
+        "limitations_and_anti_patterns"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5123_________1_807fdd858f/content.md#image-100",
+      "topic_uid": "std_topic_lighting_tipovoy_uzel_datchik_dvizheniya_2d66dca6"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.kx9uwgpj5pvy.jpg",
+      "asset_ref": "../../../../assets/kix.kx9uwgpj5pvy.jpg",
+      "asset_sha256": "bf83a55a5d356178df83e0cd3ffaf325ad4bae1016ffda802d561b1b9dedf2e5",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "design_and_selection",
+      "secondary_slots": [
+        "limitations_and_anti_patterns"
+      ],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5123_________1_807fdd858f/content.md#image-101",
+      "topic_uid": "std_topic_lighting_tipovoy_uzel_datchik_dvizheniya_2d66dca6"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.qjbp8p82j2bc.png",
+      "asset_ref": "../../../../assets/kix.qjbp8p82j2bc.png",
+      "asset_sha256": "df453c69356fa27ad0a073aa59e0f330dcdb2e64330cec2be042ab584b89932e",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "examples_and_room_patterns",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5131___1_1a87d2b6cc/content.md#image-102",
+      "topic_uid": "std_topic_lighting_spalnya_detskaya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.kqys1z73z09h.png",
+      "asset_ref": "../../../../assets/kix.kqys1z73z09h.png",
+      "asset_sha256": "fd713fc9b76fc104b51e7e0c4627a82be7cc4909e36aee95a2b5405ee7f5bb03",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "examples_and_room_patterns",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5132___1_5febc8216c/content.md#image-103",
+      "topic_uid": "std_topic_lighting_kuhnya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.wnkuh7194oqh.png",
+      "asset_ref": "../../../../assets/kix.wnkuh7194oqh.png",
+      "asset_sha256": "9906be075c1a02629f36faa4ff92a7c8564c46fe9716a9758b8e83645dfe33a3",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "examples_and_room_patterns",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5133___1_ff816066e3/content.md#image-104",
+      "topic_uid": "std_topic_lighting_gostinaya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.amfe8x4lbcvn.png",
+      "asset_ref": "../../../../assets/kix.amfe8x4lbcvn.png",
+      "asset_sha256": "5513a1cfce60e5b68250556a393a26db1e9d45e92c77ac6d5a81568ee8656fe3",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "examples_and_room_patterns",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5134___1_0261bcd37e/content.md#image-105",
+      "topic_uid": "std_topic_lighting_sanuzly"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.pq9ybap1tq3t.png",
+      "asset_ref": "../../../../assets/kix.pq9ybap1tq3t.png",
+      "asset_sha256": "b2bea18104d4cf9bb9a12576b1526a656a65cc35acd39cae17d2dbf2b2baa8f5",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "examples_and_room_patterns",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5135_______1_8db27959e6/content.md#image-106",
+      "topic_uid": "std_topic_lighting_koridor_i_prihozhaya"
+    },
+    {
+      "asset_exists": true,
+      "asset_name": "kix.k8c8v4risep.png",
+      "asset_ref": "../../../../assets/kix.k8c8v4risep.png",
+      "asset_sha256": "46198d8ee24311fb462dbee7c4131d2584f5e0649aa6f3d2f2e34e9d46cebfca",
+      "disposition": "preserved_in_topic",
+      "primary_slot": "examples_and_room_patterns",
+      "secondary_slots": [],
+      "source_locator": "sections/std_ch_lighting/topics/std_topic_5135_______1_8db27959e6/content.md#image-107",
+      "topic_uid": "std_topic_lighting_koridor_i_prihozhaya"
+    }
+  ],
+  "duplicate_asset_names": [],
+  "expected_source_images": 107,
+  "mapped_image_references": 107,
+  "missing_assets": [],
+  "new_visual_briefs_reason": "No new or rebuilt visual was authorized; all source images are preserved in their source topics.",
+  "new_visual_briefs_required": false,
+  "schema_version": "1.0",
+  "section_uid": "std_ch_lighting",
+  "status": "pass"
+}

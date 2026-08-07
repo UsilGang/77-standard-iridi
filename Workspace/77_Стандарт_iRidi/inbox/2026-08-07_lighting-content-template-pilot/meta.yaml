@@ -1,5 +1,5 @@
 id: 2026-08-07_lighting-content-template-pilot
-status: review
+status: validation
 created_at: 2026-08-07
 created_by: codex
 editorial_job_uid: EDT-2026-0001
@@ -23,3 +23,6 @@ proposed_release_bump: pending_first_release_decision
 tags: [standard-as-code, lighting, content-template, editorial-assignment]
 
 notes: "Пакет разрешает локальный трассируемый рефакторинг после approve, но не утверждает нормы, D8, cutover или публикацию."
+approval_ref: "decision:2026-08-07_Content_Template_CT1_And_Lighting_EDT1_Approval"
+result_ref: "Artifacts/Reports/2026-08-07_Lighting_CT1_EDT1_Implementation_Report.md"
+d8_status: deferred_not_self_certified
