@@ -100,6 +100,49 @@ class StandardBookTests(unittest.TestCase):
         self.assertIn("max-width:1040px", standard_book.HTML_CSS)
         self.assertIn("padding:48px clamp(28px,6vw,80px) 96px", standard_book.HTML_CSS)
 
+    def test_headerless_image_table_contract_restores_effective_columns(self) -> None:
+        rows = [
+            ["Monochrome Long description", "![image](image.png) Caption", ""],
+            ["Tunable White Long description", "![image2](image2.png) Caption", ""],
+        ]
+        normalized, header_rows, widths = standard_book.analyze_table_rows(
+            rows,
+            {"header_rows": 0, "effective_columns": 2, "column_width_percent": [60, 40]},
+        )
+        self.assertEqual(header_rows, 0)
+        self.assertEqual([len(row) for row in normalized], [2, 2])
+        self.assertEqual(widths, [60.0, 40.0])
+
+    def test_normalized_html_renders_headerless_table_with_colgroup(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            folder = Path(raw)
+            (folder / "image.png").write_bytes(b"image")
+            path = folder / "topic.md"
+            path.write_text(
+                "# Topic\n\n| Description | ![scheme](image.png) Caption |  |\n| --- | --- | --- |\n| More | ![scheme](image.png) Caption 2 |  |\n",
+                encoding="utf-8",
+            )
+            rendered = "".join(
+                standard_book.markdown_html(
+                    path,
+                    skip_initial_heading="Topic",
+                    table_layouts={0: {"header_rows": 0, "effective_columns": 2, "column_width_percent": [60, 40]}},
+                )
+            )
+            self.assertIn("<table class='table-headerless'>", rendered)
+            self.assertIn("<col style='width:60%'><col style='width:40%'>", rendered)
+            self.assertNotIn("<thead>", rendered)
+            self.assertNotIn("<th>", rendered)
+            self.assertIn("class='table-cell-image'", rendered)
+
+    def test_docx_table_geometry_uses_fixed_60_40_columns(self) -> None:
+        from docx import Document
+
+        table = Document().add_table(rows=1, cols=2)
+        widths = standard_book.set_docx_table_geometry(table, [60, 40])
+        self.assertEqual(sum(widths), 9072)
+        self.assertEqual(widths, [5443, 3629])
+
 
 if __name__ == "__main__":
     unittest.main()

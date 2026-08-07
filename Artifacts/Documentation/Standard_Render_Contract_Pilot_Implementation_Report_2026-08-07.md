@@ -8,7 +8,7 @@ privacy: internal
 action_id: operate_standard_book
 source_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
 contract_uid: std_render_contract_v1_candidate
-feedback_ref: "user browser comments 2026-08-07: heading markers and missing readable margins"
+feedback_ref: "user browser comments 2026-08-07: heading markers, readable margins, and LED table geometry"
 ---
 
 # Отчет: пилот контракта генерации книги
@@ -27,20 +27,23 @@ feedback_ref: "user browser comments 2026-08-07: heading markers and missing rea
 | Код | `Workspace/77_Стандарт_iRidi/tooling/standard_book.py` |
 | Новая команда | `build ... --section std_ch_lighting` |
 | Контракт | `Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml` |
+| Контракт таблиц | `Workspace/77_Стандарт_iRidi/tooling/table_layout_contract.yaml` |
 | Review | `Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review.md` |
 | Private build root | `Workspace/77_Стандарт_iRidi/build/contract-pilot/` |
 
 ## Проверки
 
 - source validation: PASS, 17 разделов, 276 тем, 0 approved typed rules;
-- unit tests: PASS, 9 tests;
+- unit tests: PASS, 12 tests;
 - Lighting HTML: 64 topic headings, 37 таблиц, 107 изображений, 0 missing image links;
 - full-book HTML: 276 topic headings, 150 таблиц, 437 изображений, 0 missing image links;
 - Lighting DOCX: 37 таблиц, 107 inline shapes, ZIP integrity PASS;
-- full-book DOCX: ZIP integrity PASS;
+- full-book DOCX: 150 таблиц, 434 inline shapes, ZIP integrity PASS;
 - landing page `START_HERE.html` проверена headless Chrome;
 - exact browser regression: `5.3.2.1.2. Принцип фазового диммирования` — tag `H3`, literal `####` absent;
 - HTML layout at 1280 px: centered 1040 px paper, 120 px outer margins plus 80 px inner padding;
+- LED table browser regression: `table-headerless`, 0 `thead`, 5 строк по 2 `td`, колонки `60%/40%`, первая строка без заливки, горизонтального переполнения нет;
+- LED table DOCX regression: fixed grid, 5 строк, 2 колонки, ширины `5443/3629` DXA;
 - scoped CORD rail: project type valid, artifact coverage has no missing rows, dashboard audit has 0 findings;
 - generated book, images and QA screenshots остаются под `**/build/` и не попадают в Git.
 
@@ -50,8 +53,9 @@ feedback_ref: "user browser comments 2026-08-07: heading markers and missing rea
 - Разрозненные legacy list paragraphs собираются в один список без потери inline images.
 - По browser feedback заголовки `####`–`######` внутри темы нормализуются в `Heading 3` в HTML и DOCX; literal Markdown markers исчезли.
 - По browser feedback HTML получил ограниченную читаемую колонку и адаптивные боковые поля.
+- По browser feedback восстановлена семантика таблицы видов LED-лент: исходный Google baseline содержит 5 строк без заголовка, ширины `243/162 pt` и объединение второй ячейки на две source-колонки. Контракт удаляет пустую extraction-колонку, фиксирует две эффективные колонки `60/40`, не красит первую строку и ограничивает изображения размером ячейки.
 
-Все четыре случая закреплены детерминированными тестами и проверены повторной сборкой раздела и всей книги.
+Все пять случаев закреплены детерминированными тестами и проверены повторной сборкой раздела и всей книги.
 
 ## Оставшиеся ограничения и gates
 

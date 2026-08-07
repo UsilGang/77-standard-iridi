@@ -1,0 +1,27 @@
+schema_version: "candidate-1"
+status: proposal
+canonical: false
+source_baseline_uid: baseline_19K5o8mg_288e8eead70d07c1
+defaults:
+  remove_trailing_columns_empty_in_all_rows: true
+  header_detection:
+    image_in_first_row: headerless
+    long_or_empty_first_row_cell: headerless
+    otherwise: one_header_row
+  column_widths:
+    text_image_pair: [60, 40]
+    fallback: deterministic_content_weight
+overrides:
+  - uid: table_layout_std_topic_544_led_types_0
+    content_ref: sections/std_ch_lighting/topics/std_topic_544_____3_57ff6335e7/content.md
+    table_index: 0
+    header_rows: 0
+    effective_columns: 2
+    column_width_percent: [60, 40]
+    source_evidence:
+      google_tab_id: t.l7u1dg4ndfef
+      source_rows: 5
+      source_columns: 3
+      source_column_width_pt: [243, 162]
+      source_second_cell_column_span: 2
+    rationale: "The source table has five data rows and no header; Markdown introduced a synthetic separator and lost the merged image cell."

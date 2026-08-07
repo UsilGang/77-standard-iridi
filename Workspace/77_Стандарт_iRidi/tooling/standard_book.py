@@ -42,6 +42,7 @@ DEFAULT_MANIFEST_CANDIDATE = (
     / "standard_book_manifest_candidate_v1.yaml"
 )
 SCHEMA_DIR = TOOLING_DIR / "schemas"
+TABLE_LAYOUT_CONTRACT = TOOLING_DIR / "table_layout_contract.yaml"
 TOKEN_RE = re.compile(r"[\w-]{2,}", re.UNICODE)
 STOPWORDS = {
     "а", "без", "бы", "в", "во", "вот", "вы", "где", "да", "для", "до", "его", "ее", "если", "же", "за",
@@ -739,6 +740,119 @@ def markdown_is_separator(cells: list[str]) -> bool:
     return bool(cells) and all(re.fullmatch(r":?-{3,}:?", cell.strip()) for cell in cells)
 
 
+def load_table_layout_contract(path: Path = TABLE_LAYOUT_CONTRACT) -> dict[str, dict[int, dict[str, Any]]]:
+    if not path.is_file():
+        return {}
+    data = read_yaml(path) or {}
+    result: dict[str, dict[int, dict[str, Any]]] = defaultdict(dict)
+    for row in data.get("overrides") or []:
+        content_ref = str(row.get("content_ref") or "")
+        table_index = int(row.get("table_index", -1))
+        if content_ref and table_index >= 0:
+            result[content_ref][table_index] = row
+    return dict(result)
+
+
+def table_cell_plain_text(cell: str) -> str:
+    value = re.sub(r"!\[[^]]*\]\([^)]+\)", "", cell)
+    return re.sub(r"https?://\S+", "", value).strip()
+
+
+def infer_table_header_rows(rows: list[list[str]]) -> int:
+    if len(rows) <= 1:
+        return 0
+    first = rows[0]
+    if any("![" in cell for cell in first):
+        return 0
+    if any(len(table_cell_plain_text(cell)) > 80 for cell in first):
+        return 0
+    if any(not table_cell_plain_text(cell) for cell in first):
+        return 0
+    return 1
+
+
+def infer_column_width_percent(rows: list[list[str]]) -> list[float]:
+    width = max((len(row) for row in rows), default=1)
+    if width <= 1:
+        return [100.0]
+    image_columns = [any("![" in row[index] for row in rows) for index in range(width)]
+    if width == 2 and image_columns == [False, True]:
+        return [60.0, 40.0]
+    if width == 2 and image_columns == [True, False]:
+        return [40.0, 60.0]
+    scores: list[float] = []
+    for index in range(width):
+        lengths = [len(table_cell_plain_text(row[index])) for row in rows]
+        text_score = max(lengths, default=0) ** 0.5 * 5
+        scores.append(max(18.0, min(60.0, text_score) + (28.0 if image_columns[index] else 0.0)))
+    total = sum(scores) or 1.0
+    return [round(score * 100.0 / total, 3) for score in scores]
+
+
+def analyze_table_rows(rows: list[list[str]], override: dict[str, Any] | None = None) -> tuple[list[list[str]], int, list[float]]:
+    override = override or {}
+    width = max((len(row) for row in rows), default=1)
+    normalized = [row + [""] * (width - len(row)) for row in rows]
+    explicit_width = int(override.get("effective_columns") or 0)
+    if explicit_width:
+        width = max(1, min(explicit_width, width))
+    else:
+        while width > 1 and all(not row[width - 1].strip() for row in normalized):
+            width -= 1
+    normalized = [row[:width] for row in normalized]
+    header_rows = int(override["header_rows"]) if "header_rows" in override else infer_table_header_rows(normalized)
+    widths = [float(value) for value in (override.get("column_width_percent") or infer_column_width_percent(normalized))]
+    if len(widths) != width or any(value <= 0 for value in widths):
+        raise ValueError(f"Invalid table column width contract: expected {width} positive values, got {widths}")
+    total = sum(widths)
+    widths = [round(value * 100.0 / total, 3) for value in widths]
+    return normalized, max(0, min(header_rows, len(normalized))), widths
+
+
+def legacy_table_rows(rows: list[list[str]]) -> tuple[list[list[str]], int, list[float]]:
+    width = max((len(row) for row in rows), default=1)
+    normalized = [row + [""] * (width - len(row)) for row in rows]
+    return normalized, min(1, len(normalized)), [round(100.0 / width, 3)] * width
+
+
+def set_docx_table_geometry(table: Any, column_width_percent: list[float], total_width_dxa: int = 9072) -> list[int]:
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+
+    widths = [round(total_width_dxa * value / 100.0) for value in column_width_percent]
+    widths[-1] += total_width_dxa - sum(widths)
+    table.autofit = False
+    tbl_pr = table._tbl.tblPr
+    for tag, attrs in (
+        ("w:tblW", {"w:type": "dxa", "w:w": str(total_width_dxa)}),
+        ("w:tblLayout", {"w:type": "fixed"}),
+        ("w:tblInd", {"w:type": "dxa", "w:w": "0"}),
+    ):
+        element = tbl_pr.find(qn(tag))
+        if element is None:
+            element = OxmlElement(tag)
+            tbl_pr.append(element)
+        for key, value in attrs.items():
+            element.set(qn(key), value)
+    grid = table._tbl.tblGrid
+    for child in list(grid):
+        grid.remove(child)
+    for width in widths:
+        grid_col = OxmlElement("w:gridCol")
+        grid_col.set(qn("w:w"), str(width))
+        grid.append(grid_col)
+    for row in table.rows:
+        for index, cell in enumerate(row.cells):
+            tc_pr = cell._tc.get_or_add_tcPr()
+            tc_w = tc_pr.find(qn("w:tcW"))
+            if tc_w is None:
+                tc_w = OxmlElement("w:tcW")
+                tc_pr.append(tc_w)
+            tc_w.set(qn("w:type"), "dxa")
+            tc_w.set(qn("w:w"), str(widths[index]))
+    return widths
+
+
 def markdown_heading(line: str) -> tuple[int, str] | None:
     match = re.fullmatch(r"(#{1,6})\s+(.+?)\s*", line.strip())
     if not match:
@@ -762,8 +876,9 @@ HTML_CSS = (
     "h1{margin:0 0 1.5rem}h2{margin:2.25rem 0 .9rem}h3{margin:1.75rem 0 .7rem}"
     "p{margin:.7rem 0 1rem}ul{margin:.6rem 0 1.2rem;padding-left:1.75rem}li{margin:.25rem 0}"
     "img{display:block;max-width:100%;height:auto;margin:1rem auto}figure{margin:1.25rem 0}"
-    "table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-size:.95rem}"
-    "td,th{border:1px solid #B8C4CE;padding:8px;vertical-align:top}th{background:#EAF1F6}"
+    "table{width:100%;table-layout:fixed;border-collapse:collapse;margin:1.25rem 0;font-size:.95rem}"
+    "td,th{border:1px solid #B8C4CE;padding:12px;vertical-align:top;overflow-wrap:anywhere}th{background:#EAF1F6}"
+    "td.table-cell-image{font-size:.85rem;color:#4B5563}td.table-cell-image img{width:auto;max-width:100%;max-height:320px;object-fit:contain}"
     ".missing-asset{color:#9B1C1C}"
     "@media(max-width:640px){body{padding:28px 22px 64px;font-size:15px}h1{font-size:1.75rem}h2{font-size:1.4rem}}"
 )
@@ -784,10 +899,15 @@ def markdown_cell_html(cell: str, source_path: Path) -> str:
     return "".join(parts)
 
 
-def markdown_html(path: Path, skip_initial_heading: str | None = None) -> list[str]:
+def markdown_html(
+    path: Path,
+    skip_initial_heading: str | None = None,
+    table_layouts: dict[int, dict[str, Any]] | None = None,
+) -> list[str]:
     lines = path.read_text(encoding="utf-8").splitlines()
     out: list[str] = []
     index = 0
+    table_index = 0
     checked_initial_heading = False
     while index < len(lines):
         stripped = lines[index].strip()
@@ -808,10 +928,26 @@ def markdown_html(path: Path, skip_initial_heading: str | None = None) -> list[s
                     rows.append(cells)
                 index += 1
             if rows:
-                header, *body_rows = rows
-                out.append("<table><thead><tr>" + "".join(f"<th>{markdown_cell_html(cell, path)}</th>" for cell in header) + "</tr></thead><tbody>")
-                out.extend("<tr>" + "".join(f"<td>{markdown_cell_html(cell, path)}</td>" for cell in row) + "</tr>" for row in body_rows)
+                if skip_initial_heading is not None:
+                    rows, header_rows, column_widths = analyze_table_rows(rows, (table_layouts or {}).get(table_index))
+                else:
+                    rows, header_rows, column_widths = legacy_table_rows(rows)
+                out.append("<table class='table-headered'>" if header_rows else "<table class='table-headerless'>")
+                out.append("<colgroup>" + "".join(f"<col style='width:{width:g}%'>" for width in column_widths) + "</colgroup>")
+                if header_rows:
+                    out.append("<thead>")
+                    for row in rows[:header_rows]:
+                        out.append("<tr>" + "".join(f"<th>{markdown_cell_html(cell, path)}</th>" for cell in row) + "</tr>")
+                    out.append("</thead>")
+                out.append("<tbody>")
+                for row in rows[header_rows:]:
+                    cells_html = []
+                    for cell in row:
+                        cell_class = " class='table-cell-image'" if "![" in cell else ""
+                        cells_html.append(f"<td{cell_class}>{markdown_cell_html(cell, path)}</td>")
+                    out.append("<tr>" + "".join(cells_html) + "</tr>")
                 out.append("</tbody></table>")
+                table_index += 1
             continue
         image_match = re.search(r"!\[([^]]*)\]\(([^)]+)\)", stripped)
         if image_match:
@@ -847,6 +983,7 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
     book, sections, topics, _ = collect_units(source_dir)
     topics_by_uid = {row["uid"]: row for row in topics}
     section_by_uid = {row["uid"]: row for row in sections}
+    table_layout_contract = load_table_layout_contract()
     body: list[str] = [f"<h1>{html.escape(book['title'])}</h1>"]
     for ref in selected_section_refs(book, sections, section_uids):
         section = section_by_uid[ref]
@@ -856,7 +993,13 @@ def render_html(source_dir: Path, output: Path, profile: str, section_uids: list
         else:
             for topic in ordered_section_topics(section, topics_by_uid):
                 body.append(f"<h2>{html.escape(topic['title'])}</h2>")
-                body.extend(markdown_html(source_dir / topic["content_ref"], skip_initial_heading=str(topic["title"])))
+                body.extend(
+                    markdown_html(
+                        source_dir / topic["content_ref"],
+                        skip_initial_heading=str(topic["title"]),
+                        table_layouts=table_layout_contract.get(str(topic["content_ref"])),
+                    )
+                )
     atomic_write_text(output, "<!doctype html><html lang='ru'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>" + HTML_CSS + "</style><body>" + "\n".join(body) + "</body></html>\n")
 
 
@@ -883,21 +1026,30 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
         doc.add_paragraph("Нормализованное представление: единая структура разделов и адресуемых тем.")
     section_by_uid = {row["uid"]: row for row in sections}
     topics_by_uid = {row["uid"]: row for row in topics}
+    table_layout_contract = load_table_layout_contract()
     for section_index, ref in enumerate(selected_section_refs(book, sections, section_uids)):
         section = section_by_uid[ref]
         if profile == "standard-normalized" and section_index:
             doc.add_page_break()
         doc.add_heading(f"{section.get('display_number') or ''} {section['title']}".strip(), 1)
-        entries: list[tuple[Path, str | None]]
+        entries: list[tuple[Path, str | None, dict[int, dict[str, Any]] | None]]
         if profile == "legacy-fidelity":
-            entries = [(source_dir / "sections" / ref / "legacy.md", None)]
+            entries = [(source_dir / "sections" / ref / "legacy.md", None, None)]
         else:
-            entries = [(source_dir / topic["content_ref"], str(topic["title"])) for topic in ordered_section_topics(section, topics_by_uid)]
-        for path, normalized_topic_title in entries:
+            entries = [
+                (
+                    source_dir / topic["content_ref"],
+                    str(topic["title"]),
+                    table_layout_contract.get(str(topic["content_ref"])),
+                )
+                for topic in ordered_section_topics(section, topics_by_uid)
+            ]
+        for path, normalized_topic_title, table_layouts in entries:
             if normalized_topic_title:
                 doc.add_heading(normalized_topic_title, 2)
             lines = path.read_text(encoding="utf-8").splitlines()
             index = 0
+            table_index = 0
             checked_initial_heading = False
             while index < len(lines):
                 line = lines[index]
@@ -919,15 +1071,20 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                             rows.append(cells)
                         index += 1
                     if rows:
-                        width = max(len(row) for row in rows)
+                        if normalized_topic_title:
+                            rows, header_rows, column_widths = analyze_table_rows(rows, (table_layouts or {}).get(table_index))
+                        else:
+                            rows, header_rows, column_widths = legacy_table_rows(rows)
+                        table_index += 1
+                        width = len(rows[0])
                         table = doc.add_table(rows=len(rows), cols=width)
                         table.style = "Table Grid"
-                        table.autofit = False
-                        cell_width = Mm(160 / max(1, width))
+                        set_docx_table_geometry(table, column_widths)
                         for row_index, row in enumerate(rows):
                             for col_index in range(width):
                                 cell = table.cell(row_index, col_index)
-                                cell.width = cell_width
+                                column_width_mm = 160 * column_widths[col_index] / 100.0
+                                cell.width = Mm(column_width_mm)
                                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
                                 value = row[col_index] if col_index < len(row) else ""
                                 image_matches = list(re.finditer(r"!\[([^]]*)\]\(([^)]+)\)", value))
@@ -941,12 +1098,13 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                                         image_path = (path.parent / image_match.group(2)).resolve()
                                         if image_path.is_file():
                                             try:
-                                                paragraph.add_run().add_picture(str(image_path), width=Mm(min(45, 145 / max(1, width))))
+                                                image_width_mm = max(20.0, min(70.0, column_width_mm - 6.0))
+                                                paragraph.add_run().add_picture(str(image_path), width=Mm(image_width_mm))
                                             except Exception:  # noqa: BLE001
                                                 paragraph.add_run(f" [Изображение: {image_path.name}]")
                                 else:
                                     cell.text = value
-                                if row_index == 0:
+                                if row_index < header_rows:
                                     for run in cell.paragraphs[0].runs:
                                         run.bold = True
                     continue

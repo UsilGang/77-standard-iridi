@@ -10,6 +10,7 @@ contract:
   source_model_ref: "Workspace/77_Стандарт_iRidi/standard-src/book.yaml"
   template_contract_ref: "Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml"
   implementation_ref: "Workspace/77_Стандарт_iRidi/tooling/standard_book.py"
+  table_layout_contract_ref: "Workspace/77_Стандарт_iRidi/tooling/table_layout_contract.yaml"
   migration_scope: full_book
   pilot_section_uid: std_ch_lighting
   pilot_is_approval_surface: true
@@ -49,8 +50,16 @@ contract:
     content_background: "#FFFFFF"
   tables:
     preserve_source_order: true
-    preserve_rows_and_columns: true
+    preserve_rows_and_effective_columns: true
     explicit_grid: true
+    header_rows: explicit_override_or_deterministic_inference
+    trailing_columns_empty_in_all_rows: remove_as_extraction_artifact
+    column_widths: explicit_percent_or_deterministic_content_inference
+    docx_layout: fixed_grid
+    html_layout: fixed_colgroup
+    merged_source_cells: restore_as_effective_columns_when_source_evidence_exists
+    text_image_default_column_width_percent: [60, 40]
+    image_cell_max_height_px: 320
     missing_content_must_be_visible: true
   images:
     preserve_source_asset_identity: true
