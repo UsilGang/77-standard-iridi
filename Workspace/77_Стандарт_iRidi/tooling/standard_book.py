@@ -714,6 +714,22 @@ def ordered_section_topics(section: dict[str, Any], topics_by_uid: dict[str, dic
     return [topics_by_uid[uid] for uid in (section.get("topic_refs") or []) if uid in topics_by_uid]
 
 
+def selected_section_refs(book: dict[str, Any], sections: list[dict[str, Any]], requested: list[str] | None = None) -> list[str]:
+    """Return requested section UIDs in book order, or the complete book scope."""
+    book_refs = list(book.get("section_refs") or [])
+    if not requested:
+        return book_refs
+    known = {str(section.get("uid")) for section in sections}
+    unknown = sorted(set(requested) - known)
+    outside_book = sorted(set(requested) - set(book_refs))
+    if unknown:
+        raise SystemExit(f"Unknown section UID(s): {', '.join(unknown)}")
+    if outside_book:
+        raise SystemExit(f"Section UID(s) are not in book.section_refs: {', '.join(outside_book)}")
+    requested_set = set(requested)
+    return [ref for ref in book_refs if ref in requested_set]
+
+
 def markdown_table_cells(line: str) -> list[str]:
     value = line.strip().strip("|")
     return [cell.strip().replace("\\|", "|") for cell in re.split(r"(?<!\\)\|", value)]
@@ -738,15 +754,22 @@ def markdown_cell_html(cell: str, source_path: Path) -> str:
     return "".join(parts)
 
 
-def markdown_html(path: Path) -> list[str]:
+def markdown_html(path: Path, skip_initial_heading: str | None = None) -> list[str]:
     lines = path.read_text(encoding="utf-8").splitlines()
     out: list[str] = []
     index = 0
+    checked_initial_heading = False
     while index < len(lines):
         stripped = lines[index].strip()
         if not stripped:
             index += 1
             continue
+        if not checked_initial_heading:
+            checked_initial_heading = True
+            heading_text = re.sub(r"^#+\s*", "", stripped).strip()
+            if skip_initial_heading and stripped.startswith("#") and heading_text == skip_initial_heading:
+                index += 1
+                continue
         if stripped.startswith("| "):
             rows: list[list[str]] = []
             while index < len(lines) and lines[index].strip().startswith("|"):
@@ -770,19 +793,35 @@ def markdown_html(path: Path) -> list[str]:
         elif stripped.startswith("# "):
             out.append(f"<h2>{html.escape(stripped[2:])}</h2>")
         elif stripped.startswith("- "):
-            out.append(f"<ul><li>{html.escape(stripped[2:])}</li></ul>")
+            items: list[str] = []
+            while index < len(lines):
+                candidate = lines[index].strip()
+                if candidate.startswith("- "):
+                    items.append(candidate[2:])
+                    index += 1
+                    continue
+                if not candidate:
+                    probe = index + 1
+                    while probe < len(lines) and not lines[probe].strip():
+                        probe += 1
+                    if probe < len(lines) and lines[probe].strip().startswith("- "):
+                        index = probe
+                        continue
+                break
+            out.append("<ul>" + "".join(f"<li>{markdown_cell_html(item, path)}</li>" for item in items) + "</ul>")
+            continue
         else:
             out.append(f"<p>{html.escape(stripped)}</p>")
         index += 1
     return out
 
 
-def render_html(source_dir: Path, output: Path, profile: str) -> None:
+def render_html(source_dir: Path, output: Path, profile: str, section_uids: list[str] | None = None) -> None:
     book, sections, topics, _ = collect_units(source_dir)
     topics_by_uid = {row["uid"]: row for row in topics}
     section_by_uid = {row["uid"]: row for row in sections}
     body: list[str] = [f"<h1>{html.escape(book['title'])}</h1>"]
-    for ref in book.get("section_refs") or []:
+    for ref in selected_section_refs(book, sections, section_uids):
         section = section_by_uid[ref]
         body.append(f"<h1>{html.escape(str(section.get('display_number') or ''))} {html.escape(section['title'])}</h1>")
         if profile == "legacy-fidelity":
@@ -790,12 +829,12 @@ def render_html(source_dir: Path, output: Path, profile: str) -> None:
         else:
             for topic in ordered_section_topics(section, topics_by_uid):
                 body.append(f"<h2>{html.escape(topic['title'])}</h2>")
-                body.extend(markdown_html(source_dir / topic["content_ref"]))
+                body.extend(markdown_html(source_dir / topic["content_ref"], skip_initial_heading=str(topic["title"])))
     css = "body{font-family:Arial,sans-serif;max-width:1100px;margin:2rem auto;line-height:1.35;color:#202124}h1,h2,h3{color:#153A5B}img{max-width:100%;height:auto}figure{margin:1rem 0}table{width:100%;border-collapse:collapse;margin:1rem 0}td,th{border:1px solid #B8C4CE;padding:6px;vertical-align:top}th{background:#EAF1F6}.missing-asset{color:#9B1C1C}"
     atomic_write_text(output, "<!doctype html><html lang='ru'><meta charset='utf-8'><style>" + css + "</style><body>" + "\n".join(body) + "</body></html>\n")
 
 
-def render_docx(source_dir: Path, output: Path, profile: str) -> None:
+def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list[str] | None = None) -> None:
     try:
         from docx import Document
         from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
@@ -818,7 +857,7 @@ def render_docx(source_dir: Path, output: Path, profile: str) -> None:
         doc.add_paragraph("Нормализованное представление: единая структура разделов и адресуемых тем.")
     section_by_uid = {row["uid"]: row for row in sections}
     topics_by_uid = {row["uid"]: row for row in topics}
-    for section_index, ref in enumerate(book.get("section_refs") or []):
+    for section_index, ref in enumerate(selected_section_refs(book, sections, section_uids)):
         section = section_by_uid[ref]
         if profile == "standard-normalized" and section_index:
             doc.add_page_break()
@@ -924,18 +963,31 @@ def render_docx(source_dir: Path, output: Path, profile: str) -> None:
 def build_cmd(args: argparse.Namespace) -> int:
     source_dir = Path(args.source_dir).resolve()
     output_dir = Path(args.output_dir).resolve()
+    requested_sections = list(getattr(args, "sections", None) or [])
+    book, sections, topics, _ = collect_units(source_dir)
+    section_refs = selected_section_refs(book, sections, requested_sections)
+    section_by_uid = {row["uid"]: row for row in sections}
+    topics_by_uid = {row["uid"]: row for row in topics}
+    topic_refs = [
+        topic["uid"]
+        for ref in section_refs
+        for topic in ordered_section_topics(section_by_uid[ref], topics_by_uid)
+    ]
     output_dir.mkdir(parents=True, exist_ok=True)
     source_assets = source_dir / "assets"
     if source_assets.is_dir():
         shutil.copytree(source_assets, output_dir / "assets", dirs_exist_ok=True)
     if args.format in {"html", "all"}:
-        render_html(source_dir, output_dir / f"standard-{args.profile}.html", args.profile)
+        render_html(source_dir, output_dir / f"standard-{args.profile}.html", args.profile, section_refs)
     if args.format in {"docx", "all"}:
-        render_docx(source_dir, output_dir / f"standard-{args.profile}.docx", args.profile)
+        render_docx(source_dir, output_dir / f"standard-{args.profile}.docx", args.profile, section_refs)
     manifest = {
         "profile": args.profile,
         "built_at": utc_now(),
         "source_book_digest": sha256_file(source_dir / "book.yaml"),
+        "scope": "full_book" if not requested_sections else "selected_sections",
+        "section_refs": section_refs,
+        "counts": {"sections": len(section_refs), "topics": len(topic_refs)},
         "outputs": [
             {"path": path.name, "sha256": sha256_file(path), "bytes": path.stat().st_size}
             for path in sorted(output_dir.glob(f"standard-{args.profile}.*"))
@@ -1277,6 +1329,7 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--output-dir", default=str(DEFAULT_BUILD_DIR))
     p.add_argument("--profile", choices=["legacy-fidelity", "standard-normalized"], required=True)
     p.add_argument("--format", choices=["html", "docx", "all"], default="all")
+    p.add_argument("--section", action="append", dest="sections", help="Build only this section UID; repeat for multiple sections")
     p.set_defaults(func=build_cmd)
 
     p = sub.add_parser("index")

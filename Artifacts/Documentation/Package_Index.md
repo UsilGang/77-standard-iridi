@@ -5,7 +5,7 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 created: 2026-07-20
-updated: 2026-08-05
+updated: 2026-08-07
 privacy: internal
 source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/README]]"
 ---
@@ -30,9 +30,12 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/README]
 | Content refactoring and templates | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]] |
 | Editorial assignment and versioning | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Editorial_Assignment_And_Versioning_Model_v1]] |
 | Audiences and agent knowledge access | approved_design | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]] |
+| Rendering and scaling contract | needs_human_decision | [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]] |
+| Rendering contract pilot evidence | completed_for_review | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Render_Contract_Pilot_Implementation_Report_2026-08-07]] |
 
 ## Open Gates
 
+- [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]] - на разделе «Освещение» утвердить или скорректировать единый контракт генерации раздела и полной книги.
 - [[01_Projects/001_77_Standard_iRidi/Reviews/2026-07-15_Transcribe_Backlog_Route_Review]] - решить, какие Transcribe-сигналы можно превратить в proposal стандарта.
 - [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-07-08_standard-book-publishing-pipeline/proposal]] - выбрать переходную модель публикации.
 - [[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/inbox/2026-07-18_track-lighting-classification/proposal]] - проверить классификацию трековых систем.

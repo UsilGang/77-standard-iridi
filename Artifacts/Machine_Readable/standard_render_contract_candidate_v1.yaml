@@ -1,0 +1,75 @@
+schema_version: "candidate-1"
+status: proposal
+canonical: false
+do_not_use_for_release: true
+created: "2026-08-07"
+project_id: "001"
+contract:
+  uid: std_render_contract_v1_candidate
+  title: "Standard book rendering and pilot scaling contract"
+  source_model_ref: "Workspace/77_Стандарт_iRidi/standard-src/book.yaml"
+  template_contract_ref: "Artifacts/Machine_Readable/standard_template_contract_candidate_v1.yaml"
+  implementation_ref: "Workspace/77_Стандарт_iRidi/tooling/standard_book.py"
+  migration_scope: full_book
+  pilot_section_uid: std_ch_lighting
+  pilot_is_approval_surface: true
+  pilot_is_not_full_book_certification: true
+  same_renderer_for_pilot_and_full_book: true
+  canonical_order:
+    sections_from: book.section_refs
+    topics_from: section.topic_refs
+  profiles:
+    legacy-fidelity:
+      purpose: reconstruction_evidence
+      release_eligible: false
+    standard-normalized:
+      purpose: unified_human_readable_view
+      release_eligible_before_d8: false
+  outputs:
+    - format: html
+      role: primary_visual_contract_review
+    - format: docx
+      role: shareable_book_candidate
+  normalized_structure:
+    book_title: heading_level_0
+    section: heading_level_1
+    topic: heading_level_2
+    source_subheading: heading_level_3
+    repeated_source_heading_matching_topic_title: suppress_in_generated_view
+    consecutive_source_list_items: group_as_one_list
+  tables:
+    preserve_source_order: true
+    preserve_rows_and_columns: true
+    explicit_grid: true
+    missing_content_must_be_visible: true
+  images:
+    preserve_source_asset_identity: true
+    preserve_source_order: true
+    keep_aspect_ratio: true
+    fit_to_readable_width: true
+    missing_or_unsupported_asset_must_have_visible_fallback: true
+  traceability:
+    section_uid_required: true
+    topic_uid_required: true
+    source_refs_required: true
+    normalized_delta_requires_operation_uid: true
+    editorial_change_requires_edt_and_changeset: true
+  approval_effect:
+    approves:
+      - source_to_view_architecture
+      - one_renderer_for_section_and_full_book
+      - hierarchy_and_navigation_model
+      - table_and_image_handling_rules
+      - lighting_as_first_deep_slice
+      - full_book_as_required_scope
+    does_not_approve:
+      - semantic_correctness_of_all_legacy_content
+      - lighting_rule_candidates
+      - full_book_reconstruction_certification_d8
+      - cutover
+      - external_publication
+  gates_after_approval:
+    - refactor_lighting_content_to_approved_template
+    - regenerate_lighting_and_full_book
+    - review_explained_deltas
+    - run_independent_d8_before_cutover

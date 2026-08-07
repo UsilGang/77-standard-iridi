@@ -50,6 +50,39 @@ class StandardBookTests(unittest.TestCase):
         self.assertTrue(standard_book.markdown_is_separator(["---", ":---:"]))
         self.assertFalse(standard_book.markdown_is_separator(["DALI", "---"]))
 
+    def test_selected_section_refs_preserve_book_order(self) -> None:
+        book = {"section_refs": ["std_ch_a", "std_ch_b", "std_ch_c"]}
+        sections = [{"uid": uid} for uid in book["section_refs"]]
+        self.assertEqual(
+            standard_book.selected_section_refs(book, sections, ["std_ch_c", "std_ch_a"]),
+            ["std_ch_a", "std_ch_c"],
+        )
+
+    def test_selected_section_refs_reject_unknown_uid(self) -> None:
+        with self.assertRaises(SystemExit):
+            standard_book.selected_section_refs(
+                {"section_refs": ["std_ch_a"]},
+                [{"uid": "std_ch_a"}],
+                ["std_ch_missing"],
+            )
+
+    def test_normalized_html_skips_repeated_topic_heading_and_groups_list(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "topic.md"
+            path.write_text("# 5.1 Topic\n\nIntro\n\n- one\n\n- two\n", encoding="utf-8")
+            rendered = standard_book.markdown_html(path, skip_initial_heading="5.1 Topic")
+            self.assertNotIn("<h2>5.1 Topic</h2>", rendered)
+            self.assertIn("<ul><li>one</li><li>two</li></ul>", rendered)
+
+    def test_grouped_html_list_preserves_inline_image(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            folder = Path(raw)
+            (folder / "image.png").write_bytes(b"image")
+            path = folder / "topic.md"
+            path.write_text("- text\n\n- ![scheme](image.png)\n", encoding="utf-8")
+            rendered = standard_book.markdown_html(path)
+            self.assertIn("<img src='assets/image.png' alt='scheme'>", rendered[0])
+
 
 if __name__ == "__main__":
     unittest.main()

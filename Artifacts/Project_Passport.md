@@ -4,9 +4,9 @@ status: draft
 project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
-last_activity_at: 2026-08-05
-last_activity_kind: standard_as_code_toolchain_implemented
-last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Implementation_Report_2026-08-05]]"
+last_activity_at: 2026-08-07
+last_activity_kind: lighting_render_contract_pilot_prepared
+last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
 stage: active
 privacy: internal
 source_ref: "CORD backfill 2026-07-10"
@@ -24,10 +24,10 @@ project_route: "existing_project"
 
 ## Activity
 
-- Last activity: `2026-08-05`.
-- Kind: `standard_as_code_toolchain_implemented`.
-- Ref: [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Implementation_Report_2026-08-05]].
+- Last activity: `2026-08-07`.
+- Kind: `lighting_render_contract_pilot_prepared`.
+- Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]].
 
 ## Следующее действие
 
-Выполнить [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]] независимо от implementation agent. Параллельно экспертно разобрать 96 lighting rule candidates; cutover запрещен до D8 PASS.
+Владельцу просмотреть пилот «Освещение» и полное превью в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]], затем утвердить или скорректировать RC1. После этого — содержательный рефакторинг «Освещения»; D8 остается отдельным cutover gate.

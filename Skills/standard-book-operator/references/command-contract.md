@@ -25,8 +25,11 @@ Use `extract --force` only for an explicitly approved regeneration of the import
 & $python $cli validate --source-dir 'Workspace/77_Стандарт_iRidi/standard-src' --output <validation.json>
 & $python $cli build --source-dir 'Workspace/77_Стандарт_iRidi/standard-src' --output-dir <legacy-output> --profile legacy-fidelity --format all
 & $python $cli build --source-dir 'Workspace/77_Стандарт_iRidi/standard-src' --output-dir <normalized-output> --profile standard-normalized --format all
+& $python $cli build --source-dir 'Workspace/77_Стандарт_iRidi/standard-src' --output-dir <pilot-output> --profile standard-normalized --format all --section std_ch_lighting
 & $python $cli index --source-dir 'Workspace/77_Стандарт_iRidi/standard-src' --output-dir <package-output> --release <version-or-working-label>
 ```
+
+`--section` is repeatable and preserves the canonical order from `book.section_refs`. The scoped build uses the same renderer as the full book and is intended for template-contract review; it does not certify the remaining sections.
 
 ## Query and audit
 
