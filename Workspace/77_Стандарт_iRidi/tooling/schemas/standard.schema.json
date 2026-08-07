@@ -47,7 +47,7 @@
     "topic": {
       "allOf": [
         {"$ref": "#/$defs/base"},
-        {"type": "object", "required": ["title", "parent_uid", "audiences", "jobs", "coverage_status", "content_ref"], "properties": {"type": {"const": "topic"}, "title": {"type": "string"}, "parent_uid": {"$ref": "#/$defs/uid"}, "summary": {"type": "string"}, "aliases": {"$ref": "#/$defs/refs"}, "audiences": {"$ref": "#/$defs/refs"}, "jobs": {"$ref": "#/$defs/refs"}, "domains": {"$ref": "#/$defs/refs"}, "lifecycle": {"$ref": "#/$defs/refs"}, "entity_refs": {"$ref": "#/$defs/refs"}, "rule_refs": {"$ref": "#/$defs/refs"}, "coverage_status": {"enum": ["documented", "gap", "out_of_scope", "conflict", "deprecated", "needs_input"]}, "content_ref": {"type": "string"}}}
+        {"type": "object", "required": ["title", "parent_uid", "audiences", "jobs", "coverage_status", "content_ref"], "properties": {"type": {"const": "topic"}, "title": {"type": "string"}, "parent_uid": {"$ref": "#/$defs/uid"}, "semantic_uid": {"$ref": "#/$defs/uid"}, "legacy_uids": {"$ref": "#/$defs/refs"}, "node_kind": {"enum": ["content", "container", "gap", "attachment", "artifact"]}, "display_number": {"type": ["string", "null"]}, "semantic_parent_uid": {"$ref": "#/$defs/uid"}, "attached_to_uid": {"type": ["string", "null"]}, "summary": {"type": "string"}, "aliases": {"$ref": "#/$defs/refs"}, "answers_questions": {"$ref": "#/$defs/refs"}, "audiences": {"$ref": "#/$defs/refs"}, "jobs": {"$ref": "#/$defs/refs"}, "consumer_applications": {"$ref": "#/$defs/refs"}, "domains": {"$ref": "#/$defs/refs"}, "lifecycle": {"$ref": "#/$defs/refs"}, "entity_refs": {"$ref": "#/$defs/refs"}, "rule_refs": {"$ref": "#/$defs/refs"}, "coverage_status": {"enum": ["documented", "gap", "out_of_scope", "conflict", "deprecated", "needs_input"]}, "publish": {"type": "boolean"}, "queryable": {"type": "boolean"}, "search_metadata_origin": {"type": "string"}, "metadata_review_status": {"enum": ["needs_editorial_review", "reviewed", "approved"]}, "content_ref": {"type": "string"}}}
       ]
     },
     "rule": {
@@ -70,4 +70,3 @@
     }
   }
 }
-

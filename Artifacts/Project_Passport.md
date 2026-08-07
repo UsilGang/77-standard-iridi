@@ -5,8 +5,8 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 last_activity_at: 2026-08-07
-last_activity_kind: table_layout_contract_feedback_applied
-last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
+last_activity_kind: full_migration_and_agent_access_audit_completed
+last_activity_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]"
 stage: active
 privacy: internal
 source_ref: "CORD backfill 2026-07-10"
@@ -25,9 +25,9 @@ project_route: "existing_project"
 ## Activity
 
 - Last activity: `2026-08-07`.
-- Kind: `table_layout_contract_feedback_applied`.
-- Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]].
+- Kind: `full_migration_and_agent_access_audit_completed`.
+- Ref: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]].
 
 ## Следующее действие
 
-Владельцу просмотреть пилот «Освещение» и полное превью в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]], затем утвердить или скорректировать RC1. После этого — содержательный рефакторинг «Освещения»; D8 остается отдельным cutover gate.
+Владельцу просмотреть одну точку решения в [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]] с обновленными evidence из [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]. После approve — содержательный рефакторинг «Освещения»; D8 остается отдельным cutover gate.

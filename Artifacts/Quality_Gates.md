@@ -31,3 +31,12 @@ source_ref: "[[01_Projects/000_CORD_System/Archive/Reviews/Applied/2026-07-08_Pr
 - Задача перенесена из `inbox` в `archive`.
 - Зафиксирован version bump или явно указано `no version change`.
 - Если изменение влияет на P4, добавлена ссылка в [[01_Projects/002_Panel_P4_BUS77/Panel_P4_MOC]] или его артефакты.
+
+## Перед сборкой и agent package
+
+- Каждая публикуемая тема имеет уникальный `semantic_uid`, `legacy_uids`, `node_kind`, `coverage_status` и `change_refs`.
+- `attachment` не отвечает как самостоятельное знание, `artifact` не публикуется, `gap` не превращается в выдуманную норму.
+- Buffer, private baseline и drafts не включаются в agent package.
+- `audit-migration` подтверждает exact source tabs, blocks, topic content, tables, asset digests, HTML/DOCX и package integrity.
+- Отрицательный агентский тест обязан вернуть `gap` без citations, а не подобрать случайную тему по общему слову.
+- Эта техническая проверка не заменяет независимый D8 и не дает разрешение на cutover или публикацию.

@@ -27,6 +27,9 @@ source_ref: "[[07_Source_Registry/Source_Registry]]"
 
 - `standard-src/` — редактируемое ядро знаний; полный импорт локален и не публикуется;
 - `tooling/` — schemas, tokens, templates, tests и единый `standard_book.py`;
+- `tooling/semantic_enrichment_contract.yaml` — стабильные домены, aliases и ключевые semantic UID для агентов;
 - `editorial/` — трассируемые редакционные задания и transformation manifests;
 - `build/` и `releases/` — generated private outputs;
 - оператор проекта — `$standard-book-operator`.
+
+`standard_book.py remediate-migration` добавляет семантический слой без переписывания lossless content. `standard_book.py audit-migration` сверяет Google baseline, source, HTML, DOCX и agent package; он не заменяет независимую сертификацию D8.

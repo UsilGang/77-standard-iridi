@@ -5,7 +5,7 @@ project: 77 Standard iRidi
 project_id: "001"
 project_type_id: "C7"
 created: 2026-07-20
-updated: 2026-08-05
+updated: 2026-08-07
 privacy: internal
 source_ref: "[[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_iRidi/README]]"
 ---
@@ -37,6 +37,7 @@ source_ref: "[[01_Projects/001_77_Standard_iRidi/Workspace/77_Стандарт_i
 | Content refactoring and templates | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]] | approved_design | lossless import, normalized canon, archetypes и защита от побочных правил |
 | Editorial assignment and versioning | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Editorial_Assignment_And_Versioning_Model_v1]] | approved_design | EDT contract, text/visual brief, unit revisions, draft builds и release SemVer |
 | Audiences and agent knowledge access | [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Audience_And_Agent_Knowledge_Access_Model_v1]] | approved_design | человеческие аудитории, machine applications, физическое разделение слоев, generated agent package и query/audit contract |
+| Full migration and agent access audit | [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]] | completed_for_review | exact сверка baseline/source/build, semantic UID, node kinds, agent queries и известные manual gates |
 
 ## Текущие открытые предложения
 

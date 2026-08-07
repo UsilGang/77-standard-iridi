@@ -40,7 +40,7 @@ class StandardBookTests(unittest.TestCase):
             }
             (package / "topics.jsonl").write_text(json.dumps(row, ensure_ascii=False) + "\n", encoding="utf-8")
             standard_book.write_yaml(package / "package.yaml", {"release": "test"})
-            args = argparse.Namespace(package_dir=str(package), text="квантовый телепортатор для бассейна", audience="presales", job="audit", limit=3, max_chars=500)
+            args = argparse.Namespace(package_dir=str(package), text="поддерживается ли квантовый телепортатор для бассейна", audience="presales", job="audit", limit=3, max_chars=500)
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
                 standard_book.query_cmd(args)
@@ -49,6 +49,24 @@ class StandardBookTests(unittest.TestCase):
     def test_markdown_table_separator_is_not_data(self) -> None:
         self.assertTrue(standard_book.markdown_is_separator(["---", ":---:"]))
         self.assertFalse(standard_book.markdown_is_separator(["DALI", "---"]))
+
+    def test_google_soft_break_does_not_split_markdown_table(self) -> None:
+        content = "| Device | IP-Hub/\vLH-Hub |\n| --- | --- |\n| Camera | yes |\n"
+        lines = standard_book.logical_markdown_lines(content)
+        self.assertEqual(len([line for line in lines if line.startswith("|")]), 3)
+        self.assertIn("IP-Hub/ LH-Hub", lines[0])
+
+    def test_migrated_nodes_are_classified_without_inventing_content(self) -> None:
+        self.assertEqual(standard_book.topic_classification("5. Lighting", "# 5. Lighting\n", "5.1 General"), "container")
+        self.assertEqual(standard_book.topic_classification("5.9 Missing", "# 5.9 Missing\n"), "gap")
+        self.assertEqual(standard_book.topic_classification("[[asset:kix.image]]", "# [[asset:kix.image]]\n\n![x](x.png)"), "attachment")
+        self.assertEqual(standard_book.topic_classification("\ue907\ue907", "# \ue907\ue907\n"), "artifact")
+
+    def test_semantic_uid_is_ascii_and_stable(self) -> None:
+        first = standard_book.topic_semantic_uid("lighting", "5.3.2.1. Диммируемое освещение", "legacy-1", "content", set())
+        second = standard_book.topic_semantic_uid("lighting", "5.3.2.1. Диммируемое освещение", "legacy-1", "content", set())
+        self.assertEqual(first, second)
+        self.assertRegex(first, r"^std_topic_[a-z0-9_]+$")
 
     def test_selected_section_refs_preserve_book_order(self) -> None:
         book = {"section_refs": ["std_ch_a", "std_ch_b", "std_ch_c"]}
@@ -142,6 +160,47 @@ class StandardBookTests(unittest.TestCase):
         widths = standard_book.set_docx_table_geometry(table, [60, 40])
         self.assertEqual(sum(widths), 9072)
         self.assertEqual(widths, [5443, 3629])
+
+    def test_query_domain_prevents_cross_domain_false_positive(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            package = Path(raw)
+            (package / "content").mkdir()
+            (package / "content" / "ventilation.md").write_text("Интеграция вентустановки по Modbus.", encoding="utf-8")
+            (package / "content" / "voice.md").write_text("Поддерживается голосовой помощник.", encoding="utf-8")
+            rows = [
+                {
+                    "uid": "std_topic_ventilation_modbus_interface_modules",
+                    "title": "Интеграция вентиляции",
+                    "aliases": ["вентиляционная установка"],
+                    "answers_questions": ["Какие вентиляционные установки поддерживаются?"],
+                    "summary": "Modbus для вентиляции",
+                    "domains": ["ventilation"],
+                    "node_kind": "content",
+                    "queryable": True,
+                    "content_ref": "content/ventilation.md",
+                },
+                {
+                    "uid": "std_topic_voice_assistant",
+                    "title": "Голосовой помощник",
+                    "aliases": ["поддержка"],
+                    "answers_questions": ["Что поддерживается?"],
+                    "summary": "Голосовое управление",
+                    "domains": ["architecture"],
+                    "node_kind": "content",
+                    "queryable": True,
+                    "content_ref": "content/voice.md",
+                },
+            ]
+            (package / "topics.jsonl").write_text("".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows), encoding="utf-8")
+            standard_book.write_yaml(package / "package.yaml", {"release": "test"})
+            args = argparse.Namespace(package_dir=str(package), text="Какие вентиляционные установки поддерживаются?", audience=None, job=None, limit=3, max_chars=500)
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                standard_book.query_cmd(args)
+            result = json.loads(output.getvalue())
+            self.assertEqual(result["answer_status"], "documented")
+            self.assertEqual(result["citations"][0]["uid"], "std_topic_ventilation_modbus_interface_modules")
+            self.assertEqual(result["detected_domains"], ["ventilation"])
 
 
 if __name__ == "__main__":

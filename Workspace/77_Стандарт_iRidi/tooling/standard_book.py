@@ -16,8 +16,11 @@ import os
 import re
 import shutil
 import sys
+import tempfile
+import unicodedata
 import urllib.request
 import zipfile
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -43,6 +46,7 @@ DEFAULT_MANIFEST_CANDIDATE = (
 )
 SCHEMA_DIR = TOOLING_DIR / "schemas"
 TABLE_LAYOUT_CONTRACT = TOOLING_DIR / "table_layout_contract.yaml"
+SEMANTIC_ENRICHMENT_CONTRACT = TOOLING_DIR / "semantic_enrichment_contract.yaml"
 TOKEN_RE = re.compile(r"[\w-]{2,}", re.UNICODE)
 STOPWORDS = {
     "а", "без", "бы", "в", "во", "вот", "вы", "где", "да", "для", "до", "его", "ее", "если", "же", "за",
@@ -127,6 +131,129 @@ def stable_uid(prefix: str, *parts: str) -> str:
     readable_source = slugify(parts[-1] if parts else prefix, fallback="unit", limit=44).replace("-", "_")
     readable = re.sub(r"[^a-z0-9_]+", "_", readable_source.lower()).strip("_") or "unit"
     return f"{prefix}_{readable}_{digest}"
+
+
+RU_TRANSLIT = str.maketrans(
+    {
+        "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "e", "ж": "zh", "з": "z",
+        "и": "i", "й": "y", "к": "k", "л": "l", "м": "m", "н": "n", "о": "o", "п": "p", "р": "r",
+        "с": "s", "т": "t", "у": "u", "ф": "f", "х": "h", "ц": "ts", "ч": "ch", "ш": "sh", "щ": "sch",
+        "ъ": "", "ы": "y", "ь": "", "э": "e", "ю": "yu", "я": "ya",
+    }
+)
+
+
+def ascii_semantic_slug(text: str, *, fallback: str = "topic", limit: int = 64) -> str:
+    value = unicodedata.normalize("NFKC", text).casefold().translate(RU_TRANSLIT)
+    value = re.sub(r"https?://\S+", " ", value)
+    value = re.sub(r"\[\[asset:([^]]+)\]\]", r"asset \1", value)
+    value = re.sub(r"[^a-z0-9]+", "_", value).strip("_")
+    return (value or fallback)[:limit].rstrip("_")
+
+
+def display_number_from_title(title: str) -> str | None:
+    match = re.match(r"^\s*(?:раздел\s+)?(\d+(?:\.\d+)*)\.?\s+", title, flags=re.I)
+    return match.group(1) if match else None
+
+
+def title_without_display_number(title: str) -> str:
+    value = re.sub(r"^\s*(?:раздел\s+)?\d+(?:\.\d+)*\.?\s+", "", title, flags=re.I).strip()
+    return value or title.strip()
+
+
+def contains_private_use(text: str) -> bool:
+    for char in text:
+        code = ord(char)
+        if 0xE000 <= code <= 0xF8FF or 0xF0000 <= code <= 0xFFFFD or 0x100000 <= code <= 0x10FFFD:
+            return True
+    return False
+
+
+def logical_markdown_lines(content: str) -> list[str]:
+    """Split Markdown only on real line endings.
+
+    Google Docs uses vertical-tab/form-feed characters for soft line breaks
+    inside table cells. ``str.splitlines`` treats those controls as physical
+    rows and can silently split one Markdown table into several blocks.
+    """
+    return content.replace("\v", " ").replace("\f", " ").split("\n")
+
+
+def markdown_without_initial_heading(content: str) -> str:
+    lines = logical_markdown_lines(content)
+    if lines and markdown_heading(lines[0].strip()):
+        lines = lines[1:]
+    return "\n".join(lines).strip()
+
+
+def markdown_plain_text(content: str) -> str:
+    value = re.sub(r"!\[[^]]*\]\([^)]+\)", " ", content)
+    value = re.sub(r"\[([^]]+)\]\([^)]+\)", r"\1", value)
+    value = re.sub(r"^\s{0,3}#{1,6}\s*", "", value, flags=re.M)
+    value = re.sub(r"[|:*_~`>#]+", " ", value)
+    return re.sub(r"\s+", " ", value).strip()
+
+
+def derived_summary(title: str, content: str, *, limit: int = 280) -> str:
+    body = markdown_plain_text(markdown_without_initial_heading(content))
+    if not body:
+        return title
+    sentence = re.split(r"(?<=[.!?])\s+", body, maxsplit=1)[0]
+    return sentence[:limit].rstrip()
+
+
+def topic_classification(title: str, content: str, next_title: str | None = None) -> str:
+    if contains_private_use(title) or "\ufffd" in title:
+        return "artifact"
+    if re.fullmatch(r"\s*\[\[asset:[^]]+\]\]\s*", title) or re.fullmatch(r"https?://\S+", title.strip()):
+        return "attachment"
+    body = markdown_without_initial_heading(content)
+    body_text = markdown_plain_text(body)
+    body_images = bool(re.search(r"!\[[^]]*\]\([^)]+\)", body))
+    if body_text or body_images:
+        return "content"
+    current_number = display_number_from_title(title)
+    next_number = display_number_from_title(next_title or "")
+    if current_number and next_number and next_number.startswith(current_number + "."):
+        return "container"
+    return "gap"
+
+
+def topic_semantic_uid(domain: str, title: str, storage_uid: str, node_kind: str, used: set[str]) -> str:
+    if node_kind == "attachment":
+        object_match = re.search(r"asset:([^]]+)", title)
+        base = "attachment_" + ascii_semantic_slug(object_match.group(1) if object_match else title, fallback="attachment")
+    elif node_kind == "artifact":
+        base = "artifact_" + hashlib.sha1(storage_uid.encode("utf-8")).hexdigest()[:8]
+    elif storage_uid.startswith("std_topic_preamble_"):
+        base = "overview"
+    else:
+        base = ascii_semantic_slug(title_without_display_number(title), fallback="topic")
+    candidate = f"std_topic_{domain}_{base}"[:128].rstrip("_")
+    if candidate in used:
+        candidate = f"{candidate[:119].rstrip('_')}_{hashlib.sha1(storage_uid.encode('utf-8')).hexdigest()[:8]}"
+    used.add(candidate)
+    return candidate
+
+
+def topic_alias_defaults(title: str) -> list[str]:
+    clean = title_without_display_number(title).strip()
+    if not clean or contains_private_use(clean) or clean.startswith("[[asset:") or re.fullmatch(r"https?://\S+", clean):
+        return []
+    aliases = [clean]
+    for value in re.findall(r"\(([^)]+)\)", clean):
+        if 2 <= len(value.strip()) <= 80:
+            aliases.append(value.strip())
+    return list(dict.fromkeys(aliases))
+
+
+def topic_question_defaults(title: str, node_kind: str) -> list[str]:
+    if node_kind not in {"content", "gap"}:
+        return []
+    clean = title_without_display_number(title).rstrip(".?").strip()
+    if not clean:
+        return []
+    return [f"Что нужно знать про {clean}?", f"Как применяется {clean}?"]
 
 
 def iter_tabs(tabs: Iterable[dict[str, Any]]) -> Iterable[dict[str, Any]]:
@@ -636,6 +763,210 @@ def collect_units(source_dir: Path) -> tuple[dict[str, Any], list[dict[str, Any]
     return book, sections, topics, rules
 
 
+def load_semantic_enrichment_contract(path: Path = SEMANTIC_ENRICHMENT_CONTRACT) -> dict[str, Any]:
+    return read_yaml(path) if path.is_file() else {}
+
+
+def remediate_migration_cmd(args: argparse.Namespace) -> int:
+    source_dir = Path(args.source_dir).resolve()
+    contract_path = Path(args.contract).resolve()
+    contract = load_semantic_enrichment_contract(contract_path)
+    change_uid = str(contract.get("change_uid") or "std_change_migration_semantic_addressing")
+    domain_contract = contract.get("domains") or {}
+    overrides = contract.get("topic_overrides") or {}
+    book = read_yaml(source_dir / "book.yaml")
+    section_paths = {path.parent.name: path for path in (source_dir / "sections").glob("*/section.yaml")}
+    used_semantic_uids: set[str] = set()
+    changed_topic_uids: list[str] = []
+    changed_section_uids: list[str] = []
+    mappings: list[dict[str, Any]] = []
+    node_counts: dict[str, int] = defaultdict(int)
+
+    for section_uid in book.get("section_refs") or []:
+        section_path = section_paths[section_uid]
+        section = read_yaml(section_path)
+        section_dir = section_path.parent
+        domain_row = domain_contract.get(section_uid) or {}
+        domain = str(domain_row.get("id") or section_uid.removeprefix("std_ch_"))
+        topic_records: list[tuple[Path, dict[str, Any], str]] = []
+        for storage_uid in section.get("topic_refs") or []:
+            topic_path = section_dir / "topics" / storage_uid / "topic.yaml"
+            topic = read_yaml(topic_path)
+            content = (source_dir / topic["content_ref"]).read_text(encoding="utf-8")
+            topic_records.append((topic_path, topic, content))
+
+        prepared: list[dict[str, Any]] = []
+        for index, (topic_path, topic, content) in enumerate(topic_records):
+            next_title = str(topic_records[index + 1][1].get("title") or "") if index + 1 < len(topic_records) else None
+            title = str(topic.get("title") or "")
+            node_kind = topic_classification(title, content, next_title)
+            override = overrides.get(str(topic["uid"])) or {}
+            semantic_uid = str(override.get("semantic_uid") or topic.get("semantic_uid") or "")
+            if semantic_uid:
+                if semantic_uid in used_semantic_uids:
+                    raise ValueError(f"Duplicate semantic UID in remediation input: {semantic_uid}")
+                used_semantic_uids.add(semantic_uid)
+            else:
+                semantic_uid = topic_semantic_uid(domain, title, str(topic["uid"]), node_kind, used_semantic_uids)
+            prepared.append(
+                {
+                    "path": topic_path,
+                    "topic": topic,
+                    "content": content,
+                    "node_kind": node_kind,
+                    "semantic_uid": semantic_uid,
+                    "override": override,
+                }
+            )
+
+        number_to_uid: dict[str, str] = {}
+        last_content_uid: str | None = None
+        for row in prepared:
+            topic = row["topic"]
+            title = str(topic.get("title") or "")
+            node_kind = row["node_kind"]
+            semantic_uid = row["semantic_uid"]
+            display_number = display_number_from_title(title)
+            semantic_parent_uid = section_uid
+            if display_number:
+                pieces = display_number.split(".")
+                for length in range(len(pieces) - 1, 0, -1):
+                    candidate = ".".join(pieces[:length])
+                    if candidate in number_to_uid:
+                        semantic_parent_uid = number_to_uid[candidate]
+                        break
+            attached_to_uid = None
+            if node_kind == "attachment":
+                attached_to_uid = last_content_uid
+                semantic_parent_uid = attached_to_uid or section_uid
+            elif node_kind != "artifact":
+                if display_number:
+                    number_to_uid[display_number] = semantic_uid
+                if node_kind in {"content", "gap"}:
+                    last_content_uid = semantic_uid
+
+            override = row["override"]
+            aliases = list(dict.fromkeys([*topic_alias_defaults(title), *(override.get("aliases") or [])]))
+            questions = list(dict.fromkeys([*topic_question_defaults(title, node_kind), *(override.get("answers_questions") or [])]))
+            coverage_status = {
+                "content": "documented",
+                "container": "out_of_scope",
+                "gap": "gap",
+                "attachment": "documented",
+                "artifact": "out_of_scope",
+            }[node_kind]
+            updated = dict(topic)
+            updated.update(
+                {
+                    "revision": max(2, int(topic.get("revision") or 1)),
+                    "change_refs": list(dict.fromkeys([*(topic.get("change_refs") or []), change_uid])),
+                    "semantic_uid": semantic_uid,
+                    "legacy_uids": list(dict.fromkeys([str(topic["uid"]), *(topic.get("legacy_uids") or [])])),
+                    "node_kind": node_kind,
+                    "display_number": display_number,
+                    "semantic_parent_uid": semantic_parent_uid,
+                    "attached_to_uid": attached_to_uid,
+                    "summary": derived_summary(title, row["content"]),
+                    "aliases": aliases,
+                    "answers_questions": questions,
+                    "domains": [domain],
+                    "consumer_applications": [
+                        "reference_agent",
+                        "sales_technical_qa",
+                        "presales_auditor",
+                        "training_agent",
+                        "editorial_agent",
+                        "gap_router",
+                    ],
+                    "coverage_status": coverage_status,
+                    "publish": node_kind != "artifact",
+                    "queryable": node_kind in {"content", "gap"},
+                    "search_metadata_origin": "machine_derived_baseline_remediation",
+                    "metadata_review_status": "needs_editorial_review",
+                }
+            )
+            if updated != topic:
+                write_yaml(row["path"], updated)
+                changed_topic_uids.append(str(topic["uid"]))
+            node_counts[node_kind] += 1
+            mappings.append(
+                {
+                    "legacy_uid": topic["uid"],
+                    "semantic_uid": semantic_uid,
+                    "node_kind": node_kind,
+                    "parent_uid": semantic_parent_uid,
+                    "attached_to_uid": attached_to_uid,
+                    "content_ref": topic["content_ref"],
+                }
+            )
+
+        updated_section = dict(section)
+        section_coverage = "documented" if prepared else "gap"
+        updated_section.update(
+            {
+                "revision": max(2, int(section.get("revision") or 1)),
+                "change_refs": list(dict.fromkeys([*(section.get("change_refs") or []), change_uid])),
+                "semantic_uid": section_uid,
+                "legacy_uids": list(dict.fromkeys([section_uid, *(section.get("legacy_uids") or [])])),
+                "node_kind": "section",
+                "domain": domain,
+                "aliases": list(domain_row.get("aliases") or []),
+                "coverage_status": section_coverage,
+            }
+        )
+        if updated_section != section:
+            write_yaml(section_path, updated_section)
+            changed_section_uids.append(section_uid)
+
+    updated_book = dict(book)
+    updated_book.update(
+        {
+            "revision": max(2, int(book.get("revision") or 1)),
+            "change_refs": list(dict.fromkeys([*(book.get("change_refs") or []), change_uid])),
+            "semantic_uid": str(book.get("semantic_uid") or book.get("uid") or "std_iridi"),
+        }
+    )
+    if updated_book != book:
+        write_yaml(source_dir / "book.yaml", updated_book)
+
+    assets = (read_yaml(source_dir / "assets" / "manifest.yaml") or {}).get("assets") or []
+    unplaced_assets = [
+        {
+            "object_id": row.get("object_id"),
+            "tab_id": row.get("tab_id"),
+            "path": row.get("path"),
+            "sha256": row.get("sha256"),
+            "placement": "positioned",
+            "placement_status": "needs_manual_placement",
+        }
+        for row in assets
+        if row.get("placement") == "positioned"
+    ]
+    report = {
+        "schema_version": "1.0",
+        "status": "applied_to_local_migrated_source",
+        "applied_at": utc_now(),
+        "source_ref": contract.get("source_ref"),
+        "change_uid": change_uid,
+        "contract_ref": contract_path.relative_to(WORKSPACE_DIR).as_posix() if contract_path.is_relative_to(WORKSPACE_DIR) else str(contract_path),
+        "counts": {
+            "sections": len(book.get("section_refs") or []),
+            "topics": len(mappings),
+            "changed_sections": len(changed_section_uids),
+            "changed_topics": len(changed_topic_uids),
+            "node_kinds": dict(sorted(node_counts.items())),
+            "unplaced_positioned_assets": len(unplaced_assets),
+        },
+        "mappings": mappings,
+        "unplaced_assets": unplaced_assets,
+        "semantic_content_changed": False,
+    }
+    output = Path(args.output).resolve() if args.output else source_dir / "transformation-manifest.yaml"
+    write_yaml(output, report)
+    print(json.dumps({key: report[key] for key in ("status", "change_uid", "counts", "semantic_content_changed")}, ensure_ascii=False))
+    return 0
+
+
 def validate(args: argparse.Namespace) -> int:
     source_dir = Path(args.source_dir).resolve()
     findings: list[dict[str, Any]] = []
@@ -879,7 +1210,8 @@ HTML_CSS = (
     "table{width:100%;table-layout:fixed;border-collapse:collapse;margin:1.25rem 0;font-size:.95rem}"
     "td,th{border:1px solid #B8C4CE;padding:12px;vertical-align:top;overflow-wrap:anywhere}th{background:#EAF1F6}"
     "td.table-cell-image{font-size:.85rem;color:#4B5563}td.table-cell-image img{width:auto;max-width:100%;max-height:320px;object-fit:contain}"
-    ".missing-asset{color:#9B1C1C}"
+    ".missing-asset{color:#9B1C1C}.gap-note,.unplaced-assets{border-left:4px solid #C98200;background:#FFF8E6;padding:10px 14px;margin:1rem 0}"
+    ".machine-anchor{scroll-margin-top:24px}"
     "@media(max-width:640px){body{padding:28px 22px 64px;font-size:15px}h1{font-size:1.75rem}h2{font-size:1.4rem}}"
 )
 
@@ -903,8 +1235,10 @@ def markdown_html(
     path: Path,
     skip_initial_heading: str | None = None,
     table_layouts: dict[int, dict[str, Any]] | None = None,
+    suppress_initial_heading: bool = False,
+    fragment_uid_prefix: str | None = None,
 ) -> list[str]:
-    lines = path.read_text(encoding="utf-8").splitlines()
+    lines = logical_markdown_lines(path.read_text(encoding="utf-8"))
     out: list[str] = []
     index = 0
     table_index = 0
@@ -917,7 +1251,9 @@ def markdown_html(
         if not checked_initial_heading:
             checked_initial_heading = True
             heading = markdown_heading(stripped)
-            if skip_initial_heading and heading and heading[1] == skip_initial_heading:
+            if suppress_initial_heading and heading:
+                stripped = heading[1]
+            elif skip_initial_heading and heading and heading[1] == skip_initial_heading:
                 index += 1
                 continue
         if stripped.startswith("| "):
@@ -949,12 +1285,18 @@ def markdown_html(
                 out.append("</tbody></table>")
                 table_index += 1
             continue
-        image_match = re.search(r"!\[([^]]*)\]\(([^)]+)\)", stripped)
-        if image_match:
+        heading = markdown_heading(stripped)
+        if heading and re.search(r"!\[([^]]*)\]\(([^)]+)\)", heading[1]):
+            out.append(f"<div class='heading-asset'>{markdown_cell_html(heading[1], path)}</div>")
+        elif re.search(r"!\[([^]]*)\]\(([^)]+)\)", stripped):
             out.append(f"<p>{markdown_cell_html(stripped, path)}</p>")
-        elif heading := markdown_heading(stripped):
+        elif heading:
             level = rendered_heading_level(heading[0], normalized=skip_initial_heading is not None)
-            out.append(f"<h{level}>{html.escape(heading[1])}</h{level}>")
+            fragment_attr = ""
+            if fragment_uid_prefix:
+                fragment_uid = f"{fragment_uid_prefix}_{hashlib.sha1(heading[1].encode('utf-8')).hexdigest()[:10]}"
+                fragment_attr = f" id='{html.escape(fragment_uid)}' data-fragment-uid='{html.escape(fragment_uid)}'"
+            out.append(f"<h{level}{fragment_attr}>{html.escape(heading[1])}</h{level}>")
         elif stripped.startswith("- "):
             items: list[str] = []
             while index < len(lines):
@@ -979,27 +1321,109 @@ def markdown_html(
     return out
 
 
+def topic_public_uid(topic: dict[str, Any]) -> str:
+    return str(topic.get("semantic_uid") or topic.get("uid"))
+
+
+def positioned_assets_by_tab(source_dir: Path) -> dict[str, list[dict[str, Any]]]:
+    path = source_dir / "assets" / "manifest.yaml"
+    result: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    if not path.is_file():
+        return {}
+    for row in (read_yaml(path) or {}).get("assets") or []:
+        if row.get("placement") == "positioned" and row.get("status") == "downloaded":
+            result[str(row.get("tab_id"))].append(row)
+    return dict(result)
+
+
+def add_docx_bookmark(paragraph: Any, uid: str, bookmark_id: int) -> None:
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+
+    bookmark_name = re.sub(r"[^A-Za-z0-9_]", "_", uid)
+    if not bookmark_name or not bookmark_name[0].isalpha():
+        bookmark_name = "uid_" + bookmark_name
+    start = OxmlElement("w:bookmarkStart")
+    start.set(qn("w:id"), str(bookmark_id))
+    start.set(qn("w:name"), bookmark_name[:120])
+    end = OxmlElement("w:bookmarkEnd")
+    end.set(qn("w:id"), str(bookmark_id))
+    paragraph._p.insert(0, start)
+    paragraph._p.append(end)
+
+
+def add_docx_picture_resilient(owner: Any, image_path: Path, width: Any) -> None:
+    """Insert an image, normalizing valid JPEGs rejected by python-docx."""
+    try:
+        owner.add_picture(str(image_path), width=width)
+        return
+    except Exception as original_exc:  # noqa: BLE001
+        try:
+            from PIL import Image
+
+            with tempfile.TemporaryDirectory(prefix="std-docx-image-") as raw:
+                normalized = Path(raw) / "normalized.png"
+                with Image.open(image_path) as image:
+                    if image.mode not in {"RGB", "RGBA"}:
+                        image = image.convert("RGB")
+                    image.save(normalized, format="PNG")
+                owner.add_picture(str(normalized), width=width)
+                return
+        except Exception:  # noqa: BLE001
+            raise original_exc
+
+
 def render_html(source_dir: Path, output: Path, profile: str, section_uids: list[str] | None = None) -> None:
     book, sections, topics, _ = collect_units(source_dir)
     topics_by_uid = {row["uid"]: row for row in topics}
     section_by_uid = {row["uid"]: row for row in sections}
     table_layout_contract = load_table_layout_contract()
-    body: list[str] = [f"<h1>{html.escape(book['title'])}</h1>"]
+    positioned_assets = positioned_assets_by_tab(source_dir)
+    book_uid = str(book.get("semantic_uid") or book.get("uid") or "std_iridi")
+    body: list[str] = [f"<h1 id='{html.escape(book_uid)}' class='machine-anchor' data-book-uid='{html.escape(book_uid)}'>{html.escape(book['title'])}</h1>"]
     for ref in selected_section_refs(book, sections, section_uids):
         section = section_by_uid[ref]
-        body.append(f"<h1>{html.escape(str(section.get('display_number') or ''))} {html.escape(section['title'])}</h1>")
+        section_uid = str(section.get("semantic_uid") or section["uid"])
+        body.append(
+            f"<h1 id='{html.escape(section_uid)}' class='machine-anchor' data-section-uid='{html.escape(section_uid)}'>"
+            f"{html.escape(str(section.get('display_number') or ''))} {html.escape(section['title'])}</h1>"
+        )
         if profile == "legacy-fidelity":
             body.extend(markdown_html(source_dir / "sections" / ref / "legacy.md"))
         else:
             for topic in ordered_section_topics(section, topics_by_uid):
-                body.append(f"<h2>{html.escape(topic['title'])}</h2>")
+                node_kind = str(topic.get("node_kind") or "content")
+                if node_kind == "artifact" or topic.get("publish") is False:
+                    continue
+                public_uid = topic_public_uid(topic)
+                if node_kind != "attachment":
+                    body.append(
+                        f"<h2 id='{html.escape(public_uid)}' class='machine-anchor topic-{html.escape(node_kind)}' "
+                        f"data-topic-uid='{html.escape(public_uid)}' data-legacy-uid='{html.escape(str(topic['uid']))}' "
+                        f"data-node-kind='{html.escape(node_kind)}'>{html.escape(topic['title'])}</h2>"
+                    )
                 body.extend(
                     markdown_html(
                         source_dir / topic["content_ref"],
-                        skip_initial_heading=str(topic["title"]),
+                        skip_initial_heading="" if node_kind == "attachment" else str(topic["title"]),
                         table_layouts=table_layout_contract.get(str(topic["content_ref"])),
+                        suppress_initial_heading=node_kind == "attachment",
+                        fragment_uid_prefix=f"std_fragment_{public_uid.removeprefix('std_topic_')}",
                     )
                 )
+                if node_kind == "gap":
+                    body.append("<aside class='gap-note' data-coverage-status='gap'>Раздел присутствует в исходной книге, но пока не наполнен.</aside>")
+        unplaced = positioned_assets.get(str(section.get("source_tab_id")), [])
+        if unplaced:
+            body.append("<aside class='unplaced-assets'><strong>Неразмещенные иллюстрации исходника</strong><br>Google Docs не передал надежную привязку этих плавающих объектов к абзацу; изображения сохранены и требуют ручной проверки места.</aside>")
+            for asset in unplaced:
+                path = source_dir / str(asset.get("path") or "")
+                if path.is_file():
+                    body.append(
+                        f"<figure data-asset-uid='{html.escape(str(asset.get('object_id')))}' data-placement-status='needs_manual_placement'>"
+                        f"<img src='assets/{html.escape(path.name)}' alt='{html.escape(str(asset.get('object_id')))}'>"
+                        f"<figcaption>{html.escape(str(asset.get('object_id')))} — исходное плавающее изображение, место требует проверки.</figcaption></figure>"
+                    )
     atomic_write_text(output, "<!doctype html><html lang='ru'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><style>" + HTML_CSS + "</style><body>" + "\n".join(body) + "</body></html>\n")
 
 
@@ -1021,33 +1445,47 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
     normal = doc.styles["Normal"]
     normal.font.name = "Arial"
     normal.font.size = Pt(10.5)
-    doc.add_heading(book["title"], 0)
+    bookmark_counter = 1
+    title_paragraph = doc.add_heading(book["title"], 0)
+    add_docx_bookmark(title_paragraph, str(book.get("semantic_uid") or book.get("uid") or "std_iridi"), bookmark_counter)
+    bookmark_counter += 1
     if profile == "standard-normalized":
         doc.add_paragraph("Нормализованное представление: единая структура разделов и адресуемых тем.")
     section_by_uid = {row["uid"]: row for row in sections}
     topics_by_uid = {row["uid"]: row for row in topics}
     table_layout_contract = load_table_layout_contract()
+    positioned_assets = positioned_assets_by_tab(source_dir)
     for section_index, ref in enumerate(selected_section_refs(book, sections, section_uids)):
         section = section_by_uid[ref]
         if profile == "standard-normalized" and section_index:
             doc.add_page_break()
-        doc.add_heading(f"{section.get('display_number') or ''} {section['title']}".strip(), 1)
-        entries: list[tuple[Path, str | None, dict[int, dict[str, Any]] | None]]
+        section_heading = doc.add_heading(f"{section.get('display_number') or ''} {section['title']}".strip(), 1)
+        add_docx_bookmark(section_heading, str(section.get("semantic_uid") or section["uid"]), bookmark_counter)
+        bookmark_counter += 1
+        entries: list[tuple[Path, str | None, dict[int, dict[str, Any]] | None, dict[str, Any] | None]]
         if profile == "legacy-fidelity":
-            entries = [(source_dir / "sections" / ref / "legacy.md", None, None)]
+            entries = [(source_dir / "sections" / ref / "legacy.md", None, None, None)]
         else:
             entries = [
                 (
                     source_dir / topic["content_ref"],
-                    str(topic["title"]),
+                    None if topic.get("node_kind") == "attachment" else str(topic["title"]),
                     table_layout_contract.get(str(topic["content_ref"])),
+                    topic,
                 )
                 for topic in ordered_section_topics(section, topics_by_uid)
+                if topic.get("node_kind") != "artifact" and topic.get("publish") is not False
             ]
-        for path, normalized_topic_title, table_layouts in entries:
+        for path, normalized_topic_title, table_layouts, topic_meta in entries:
+            normalized_entry = profile == "standard-normalized"
+            node_kind = str((topic_meta or {}).get("node_kind") or "content")
+            public_uid = topic_public_uid(topic_meta) if topic_meta else None
             if normalized_topic_title:
-                doc.add_heading(normalized_topic_title, 2)
-            lines = path.read_text(encoding="utf-8").splitlines()
+                paragraph = doc.add_heading(normalized_topic_title, 2)
+                if public_uid:
+                    add_docx_bookmark(paragraph, public_uid, bookmark_counter)
+                    bookmark_counter += 1
+            lines = logical_markdown_lines(path.read_text(encoding="utf-8"))
             index = 0
             table_index = 0
             checked_initial_heading = False
@@ -1060,7 +1498,9 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                 if not checked_initial_heading:
                     checked_initial_heading = True
                     heading = markdown_heading(stripped)
-                    if normalized_topic_title and heading and heading[1] == normalized_topic_title:
+                    if node_kind == "attachment" and heading:
+                        stripped = heading[1]
+                    elif normalized_topic_title and heading and heading[1] == normalized_topic_title:
                         index += 1
                         continue
                 if stripped.startswith("| "):
@@ -1071,7 +1511,7 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                             rows.append(cells)
                         index += 1
                     if rows:
-                        if normalized_topic_title:
+                        if normalized_entry:
                             rows, header_rows, column_widths = analyze_table_rows(rows, (table_layouts or {}).get(table_index))
                         else:
                             rows, header_rows, column_widths = legacy_table_rows(rows)
@@ -1099,7 +1539,7 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                                         if image_path.is_file():
                                             try:
                                                 image_width_mm = max(20.0, min(70.0, column_width_mm - 6.0))
-                                                paragraph.add_run().add_picture(str(image_path), width=Mm(image_width_mm))
+                                                add_docx_picture_resilient(paragraph.add_run(), image_path, Mm(image_width_mm))
                                             except Exception:  # noqa: BLE001
                                                 paragraph.add_run(f" [Изображение: {image_path.name}]")
                                 else:
@@ -1108,12 +1548,17 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                                     for run in cell.paragraphs[0].runs:
                                         run.bold = True
                     continue
-                image_matches = list(re.finditer(r"!\[([^]]*)\]\(([^)]+)\)", stripped))
+                source_heading = markdown_heading(stripped)
+                renderable_line = source_heading[1] if source_heading else stripped
+                image_matches = list(re.finditer(r"!\[([^]]*)\]\(([^)]+)\)", renderable_line))
                 if image_matches:
-                    plain = re.sub(r"!\[[^]]*\]\([^)]+\)", "", stripped).strip()
-                    heading = markdown_heading(plain)
-                    if heading:
-                        doc.add_heading(heading[1], rendered_heading_level(heading[0], normalized=bool(normalized_topic_title)))
+                    plain = re.sub(r"!\[[^]]*\]\([^)]+\)", "", renderable_line).strip()
+                    if source_heading and plain:
+                        paragraph = doc.add_heading(plain, rendered_heading_level(source_heading[0], normalized=normalized_entry))
+                        if public_uid:
+                            fragment_uid = f"std_fragment_{public_uid.removeprefix('std_topic_')}_{hashlib.sha1(plain.encode('utf-8')).hexdigest()[:10]}"
+                            add_docx_bookmark(paragraph, fragment_uid, bookmark_counter)
+                            bookmark_counter += 1
                     elif plain.startswith("- "):
                         doc.add_paragraph(plain[2:], style="List Bullet")
                     elif plain:
@@ -1122,13 +1567,17 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                         image_path = (path.parent / image_match.group(2)).resolve()
                         if image_path.is_file():
                             try:
-                                doc.add_picture(str(image_path), width=Mm(160))
+                                add_docx_picture_resilient(doc, image_path, Mm(160))
                             except Exception:  # noqa: BLE001
                                 doc.add_paragraph(f"[Изображение: {image_path.name}]")
                         else:
                             doc.add_paragraph(image_match.group(0))
                 elif heading := markdown_heading(stripped):
-                    doc.add_heading(heading[1], rendered_heading_level(heading[0], normalized=bool(normalized_topic_title)))
+                    paragraph = doc.add_heading(heading[1], rendered_heading_level(heading[0], normalized=normalized_entry))
+                    if public_uid:
+                        fragment_uid = f"std_fragment_{public_uid.removeprefix('std_topic_')}_{hashlib.sha1(heading[1].encode('utf-8')).hexdigest()[:10]}"
+                        add_docx_bookmark(paragraph, fragment_uid, bookmark_counter)
+                        bookmark_counter += 1
                 elif stripped.startswith("- "):
                     doc.add_paragraph(stripped[2:], style="List Bullet")
                 elif stripped.startswith("| "):
@@ -1136,6 +1585,23 @@ def render_docx(source_dir: Path, output: Path, profile: str, section_uids: list
                 else:
                     doc.add_paragraph(stripped)
                 index += 1
+            if node_kind == "gap":
+                doc.add_paragraph("Раздел присутствует в исходной книге, но пока не наполнен.")
+        unplaced = positioned_assets.get(str(section.get("source_tab_id")), [])
+        if unplaced:
+            doc.add_heading("Неразмещенные иллюстрации исходника", 2)
+            doc.add_paragraph(
+                "Google Docs не передал надежную привязку этих плавающих объектов к абзацу. "
+                "Изображения сохранены; место требует ручной проверки по исходной книге."
+            )
+            for asset in unplaced:
+                image_path = source_dir / str(asset.get("path") or "")
+                if image_path.is_file():
+                    try:
+                        add_docx_picture_resilient(doc, image_path, Mm(100))
+                    except Exception:  # noqa: BLE001
+                        doc.add_paragraph(f"[Изображение: {image_path.name}]")
+                    doc.add_paragraph(f"{asset.get('object_id')} — исходное плавающее изображение; место требует проверки.")
     output.parent.mkdir(parents=True, exist_ok=True)
     doc.save(output)
     normalize_zip_archive(output)
@@ -1179,6 +1645,100 @@ def build_cmd(args: argparse.Namespace) -> int:
     return 0
 
 
+def canonical_topic_rows(book: dict[str, Any], sections: list[dict[str, Any]], topics: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    section_by_uid = {row["uid"]: row for row in sections}
+    topic_by_uid = {row["uid"]: row for row in topics}
+    return [
+        topic_by_uid[topic_uid]
+        for section_uid in book.get("section_refs") or []
+        for topic_uid in section_by_uid.get(section_uid, {}).get("topic_refs") or []
+        if topic_uid in topic_by_uid
+    ]
+
+
+def attachment_payload(content: str) -> str:
+    lines = logical_markdown_lines(content)
+    if lines:
+        heading = markdown_heading(lines[0].strip())
+        if heading:
+            lines[0] = heading[1]
+    return "\n".join(lines).strip()
+
+
+def rewrite_package_asset_refs(content: str, source_content: Path) -> tuple[str, list[Path]]:
+    assets: list[Path] = []
+
+    def replace(match: re.Match[str]) -> str:
+        image_path = (source_content.parent / match.group(2)).resolve()
+        if image_path.is_file():
+            assets.append(image_path)
+            return f"{match.group(1)}(../../assets/{image_path.name})"
+        return match.group(0)
+
+    return re.sub(r"(!\[[^]]*\])\(([^)]+)\)", replace, content), assets
+
+
+def markdown_fragments(topic_uid: str, section_uid: str, content: str, content_ref: str) -> list[dict[str, Any]]:
+    lines = logical_markdown_lines(content)
+    fragments: list[dict[str, Any]] = []
+    current_heading = ""
+    buffer: list[str] = []
+    occurrence: dict[str, int] = defaultdict(int)
+
+    def flush() -> None:
+        nonlocal buffer
+        raw = "\n".join(buffer).strip()
+        buffer = []
+        plain = markdown_plain_text(raw)
+        if not raw or not plain:
+            return
+        digest = hashlib.sha1(f"{topic_uid}|{current_heading}|{plain}".encode("utf-8")).hexdigest()[:12]
+        occurrence[digest] += 1
+        fragment_uid = f"std_fragment_{digest}_{occurrence[digest]}"
+        fragments.append(
+            {
+                "uid": fragment_uid,
+                "type": "fragment",
+                "topic_uid": topic_uid,
+                "section_uid": section_uid,
+                "heading": current_heading,
+                "ordinal": len(fragments) + 1,
+                "text": raw,
+                "plain_text": plain,
+                "content_ref": content_ref,
+            }
+        )
+
+    for line in lines:
+        heading = markdown_heading(line.strip())
+        if heading:
+            flush()
+            current_heading = heading[1]
+            continue
+        if not line.strip():
+            flush()
+            continue
+        buffer.append(line)
+    flush()
+    if not fragments and markdown_plain_text(content):
+        plain = markdown_plain_text(content)
+        digest = hashlib.sha1(f"{topic_uid}|{plain}".encode("utf-8")).hexdigest()[:12]
+        fragments.append(
+            {
+                "uid": f"std_fragment_{digest}_1",
+                "type": "fragment",
+                "topic_uid": topic_uid,
+                "section_uid": section_uid,
+                "heading": "",
+                "ordinal": 1,
+                "text": content.strip(),
+                "plain_text": plain,
+                "content_ref": content_ref,
+            }
+        )
+    return fragments
+
+
 def index_cmd(args: argparse.Namespace) -> int:
     source_dir = Path(args.source_dir).resolve()
     output_dir = Path(args.output_dir).resolve()
@@ -1191,41 +1751,168 @@ def index_cmd(args: argparse.Namespace) -> int:
                 raise SystemExit(f"Unsafe package reset refused: {target}")
             if target.exists():
                 shutil.rmtree(target)
-        for name in ("topics.jsonl", "rules.jsonl", "entities.jsonl", "relations.jsonl", "aliases.json", "changes.json", "navigation.json", "package.yaml", "START_HERE.md"):
+        for name in (
+            "topics.jsonl", "fragments.jsonl", "rules.jsonl", "entities.jsonl", "relations.jsonl", "unplaced_assets.jsonl",
+            "aliases.json", "changes.json", "navigation.json", "package.yaml", "START_HERE.md",
+        ):
             target = output_dir / name
             if target.exists():
                 target.unlink()
     output_dir.mkdir(parents=True, exist_ok=True)
     content_dir = output_dir / "content" / "by-uid"
     content_dir.mkdir(parents=True, exist_ok=True)
-    if (source_dir / "assets").is_dir():
-        shutil.copytree(source_dir / "assets", output_dir / "assets", dirs_exist_ok=True)
     book, sections, topics, rules = collect_units(source_dir)
     section_by_uid = {row["uid"]: row for row in sections}
+    ordered_topics = canonical_topic_rows(book, sections, topics)
+    semantic_by_storage = {str(row["uid"]): topic_public_uid(row) for row in ordered_topics}
+    primary_topics = [
+        row for row in ordered_topics
+        if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False
+    ]
+    attachments_by_target: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for topic in ordered_topics:
+        if topic.get("node_kind") == "attachment" and topic.get("attached_to_uid"):
+            attachments_by_target[str(topic["attached_to_uid"])].append(topic)
     topic_rows: list[dict[str, Any]] = []
-    indexes: dict[str, dict[str, list[str]]] = {name: defaultdict(list) for name in ["audience", "job", "domain", "lifecycle", "entity"]}
-    for topic in topics:
+    fragment_rows: list[dict[str, Any]] = []
+    relation_rows: list[dict[str, Any]] = []
+    required_assets: dict[str, Path] = {}
+    indexes: dict[str, dict[str, list[str]]] = {
+        name: defaultdict(list) for name in ["audience", "job", "domain", "lifecycle", "entity", "node_kind", "alias"]
+    }
+    for topic in primary_topics:
         row = dict(topic)
         source_content = source_dir / row["content_ref"]
-        target_content = content_dir / f"{row['uid']}.md"
-        content_text = source_content.read_text(encoding="utf-8")
-        content_text = re.sub(
-            r"(!\[[^]]*\])\(([^)]+)\)",
-            lambda match: f"{match.group(1)}(../../assets/{(source_content.parent / match.group(2)).resolve().name})",
-            content_text,
-        )
+        semantic_uid = topic_public_uid(row)
+        target_content = content_dir / f"{semantic_uid}.md"
+        content_text, asset_paths = rewrite_package_asset_refs(source_content.read_text(encoding="utf-8"), source_content)
+        for attachment in attachments_by_target.get(semantic_uid, []):
+            attachment_path = source_dir / attachment["content_ref"]
+            payload, attachment_assets = rewrite_package_asset_refs(
+                attachment_payload(attachment_path.read_text(encoding="utf-8")), attachment_path
+            )
+            if payload:
+                content_text = content_text.rstrip() + "\n\n" + payload + "\n"
+            asset_paths.extend(attachment_assets)
+            relation_rows.append(
+                {
+                    "uid": stable_uid("std_relation", topic_public_uid(attachment), semantic_uid, "attached_to"),
+                    "type": "relation",
+                    "relation_type": "attached_to",
+                    "from_uid": topic_public_uid(attachment),
+                    "to_uid": semantic_uid,
+                    "source_ref": attachment["content_ref"],
+                }
+            )
+        for asset_path in asset_paths:
+            required_assets[asset_path.name] = asset_path
         atomic_write_text(target_content, content_text)
+        storage_uid = str(row["uid"])
+        row["storage_uid"] = storage_uid
+        row["uid"] = semantic_uid
         row["content_ref"] = target_content.relative_to(output_dir).as_posix()
         row["section_title"] = section_by_uid.get(row.get("parent_uid"), {}).get("title")
+        row["semantic_parent_uid"] = str(row.get("semantic_parent_uid") or row.get("parent_uid"))
+        row["digest"] = sha256_file(target_content)
         topic_rows.append(row)
         for field, index_name in [("audiences", "audience"), ("jobs", "job"), ("domains", "domain"), ("lifecycle", "lifecycle"), ("entity_refs", "entity")]:
             for value in row.get(field) or []:
-                indexes[index_name][str(value)].append(row["uid"])
-    for filename, rows in [("topics.jsonl", topic_rows), ("rules.jsonl", rules), ("entities.jsonl", []), ("relations.jsonl", [])]:
+                indexes[index_name][str(value)].append(semantic_uid)
+        indexes["node_kind"][str(row.get("node_kind") or "content")].append(semantic_uid)
+        for alias in row.get("aliases") or []:
+            indexes["alias"][normalize_search_text(str(alias))].append(semantic_uid)
+        parent_uid = str(row.get("semantic_parent_uid") or "")
+        if parent_uid and parent_uid != row.get("parent_uid"):
+            relation_rows.append(
+                {
+                    "uid": stable_uid("std_relation", semantic_uid, parent_uid, "child_of"),
+                    "type": "relation",
+                    "relation_type": "child_of",
+                    "from_uid": semantic_uid,
+                    "to_uid": parent_uid,
+                }
+            )
+        fragments = markdown_fragments(semantic_uid, str(row.get("parent_uid")), content_text, row["content_ref"])
+        fragment_rows.extend(fragments)
+
+    positioned = positioned_assets_by_tab(source_dir)
+    unplaced_rows: list[dict[str, Any]] = []
+    for section in sections:
+        if section["uid"] not in (book.get("section_refs") or []):
+            continue
+        for asset in positioned.get(str(section.get("source_tab_id")), []):
+            source_asset = source_dir / str(asset.get("path") or "")
+            if source_asset.is_file():
+                required_assets[source_asset.name] = source_asset
+            asset_uid = str(asset.get("object_id"))
+            unplaced_rows.append(
+                {
+                    "uid": asset_uid,
+                    "type": "asset",
+                    "asset_type": "image",
+                    "path": f"assets/{source_asset.name}",
+                    "checksum": asset.get("sha256"),
+                    "section_uid": section["uid"],
+                    "placement_status": "needs_manual_placement",
+                    "source_tab_id": section.get("source_tab_id"),
+                }
+            )
+            relation_rows.append(
+                {
+                    "uid": stable_uid("std_relation", section["uid"], asset_uid, "has_unplaced_asset"),
+                    "type": "relation",
+                    "relation_type": "has_unplaced_asset",
+                    "from_uid": section["uid"],
+                    "to_uid": asset_uid,
+                }
+            )
+
+    for name, source_asset in sorted(required_assets.items()):
+        target = output_dir / "assets" / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists() or sha256_file(target) != sha256_file(source_asset):
+            shutil.copy2(source_asset, target)
+
+    semantic_rules: list[dict[str, Any]] = []
+    for original in rules:
+        rule = dict(original)
+        if rule.get("parent_uid") in semantic_by_storage:
+            rule["parent_uid"] = semantic_by_storage[str(rule["parent_uid"])]
+        semantic_rules.append(rule)
+    for filename, rows in [
+        ("topics.jsonl", topic_rows),
+        ("fragments.jsonl", fragment_rows),
+        ("rules.jsonl", semantic_rules),
+        ("entities.jsonl", []),
+        ("relations.jsonl", relation_rows),
+        ("unplaced_assets.jsonl", unplaced_rows),
+    ]:
         atomic_write_text(output_dir / filename, "".join(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n" for row in rows))
     write_json(output_dir / "aliases.json", {row["uid"]: row.get("aliases") or [] for row in topic_rows})
     write_json(output_dir / "changes.json", [])
-    write_json(output_dir / "navigation.json", {"book": book, "sections": sections})
+    navigation_topics = [
+        {
+            "uid": row["uid"],
+            "storage_uid": row.get("storage_uid"),
+            "title": row.get("title"),
+            "display_number": row.get("display_number"),
+            "node_kind": row.get("node_kind"),
+            "parent_uid": row.get("semantic_parent_uid"),
+            "coverage_status": row.get("coverage_status"),
+        }
+        for row in topic_rows
+    ]
+    navigation_sections = []
+    published_topic_uids = {str(row["uid"]) for row in topic_rows}
+    for section in sections:
+        nav_section = dict(section)
+        nav_section["topic_refs"] = [
+            semantic_by_storage[storage_uid]
+            for storage_uid in section.get("topic_refs") or []
+            if semantic_by_storage.get(storage_uid) in published_topic_uids
+        ]
+        navigation_sections.append(nav_section)
+    write_json(output_dir / "navigation.json", {"book": book, "sections": navigation_sections, "topics": navigation_topics})
     for name, values in indexes.items():
         write_json(output_dir / "indexes" / f"by_{name}.json", dict(sorted(values.items())))
     package = {
@@ -1234,16 +1921,28 @@ def index_cmd(args: argparse.Namespace) -> int:
         "release": args.release,
         "generated_at": utc_now(),
         "source_book_digest": sha256_file(source_dir / "book.yaml"),
-        "counts": {"sections": len(sections), "topics": len(topics), "rules": len(rules)},
+        "counts": {
+            "sections": len(sections),
+            "topics": len(topic_rows),
+            "fragments": len(fragment_rows),
+            "rules": len(semantic_rules),
+            "relations": len(relation_rows),
+            "assets": len(required_assets),
+            "unplaced_assets": len(unplaced_rows),
+        },
         "drafts_included": False,
         "private_sources_included": False,
+        "buffer_included": False,
+        "query_contract": "facets_then_weighted_semantic_recall_then_uid_content",
     }
     write_yaml(output_dir / "package.yaml", package)
     atomic_write_text(
         output_dir / "START_HERE.md",
         "# Standard knowledge package\n\n"
-        f"Release: `{args.release}`. Read `package.yaml`, then route by audience/job/domain indexes. "
-        "Use `topics.jsonl` and `rules.jsonl`; cite UID and content_ref. Never infer a documented rule from absence.\n",
+        f"Release: `{args.release}`. Read `package.yaml`, then route by audience/job/domain/alias indexes. "
+        "Use `topics.jsonl`, `fragments.jsonl`, `relations.jsonl` and `rules.jsonl`. "
+        "Only content/gap nodes are queryable. Cite release, semantic topic UID, fragment UID and content_ref. "
+        "Never infer a documented rule from absence; Buffer, artifacts and unresolved placements are excluded from answers.\n",
     )
     print(json.dumps(package, ensure_ascii=False))
     return 0
@@ -1266,7 +1965,7 @@ def propose_rules_cmd(args: argparse.Namespace) -> int:
         if not path:
             continue
         text = path.read_text(encoding="utf-8")
-        for line_number, line in enumerate(text.splitlines(), start=1):
+        for line_number, line in enumerate(logical_markdown_lines(text), start=1):
             plain = re.sub(r"^\s*(?:[-#]+|\|)\s*", "", line).strip(" |").strip()
             if not plain:
                 continue
@@ -1311,15 +2010,104 @@ def propose_rules_cmd(args: argparse.Namespace) -> int:
     return 0
 
 
+def normalize_search_text(text: str) -> str:
+    value = unicodedata.normalize("NFKC", text).casefold().replace("ё", "е")
+    value = re.sub(r"[^\w]+", " ", value, flags=re.UNICODE)
+    return re.sub(r"\s+", " ", value).strip()
+
+
+RUSSIAN_ENDINGS = tuple(
+    sorted(
+        {
+            "иями", "ями", "ами", "ией", "иям", "ием", "иях", "ость", "ости", "остью", "ение", "ения", "ений",
+            "ого", "ему", "ому", "ими", "ыми", "его", "ая", "яя", "ое", "ее", "ие", "ые", "ой", "ий", "ый",
+            "ую", "юю", "ах", "ях", "ам", "ям", "ом", "ем", "ов", "ев", "ей", "ия", "ие", "ий", "ы", "и",
+            "а", "я", "у", "ю", "е", "о",
+        },
+        key=len,
+        reverse=True,
+    )
+)
+
+
+def search_token_variants(token: str) -> set[str]:
+    value = token.casefold().replace("ё", "е")
+    variants = {value}
+    if len(value) >= 6:
+        variants.add("^" + value[:6])
+    if re.search(r"[а-я]", value) and len(value) >= 5:
+        for ending in RUSSIAN_ENDINGS:
+            if value.endswith(ending) and len(value) - len(ending) >= 4:
+                variants.add(value[: -len(ending)])
+                break
+    return variants
+
+
 def token_set(text: str) -> set[str]:
-    return {token.lower() for token in TOKEN_RE.findall(text) if token.lower() not in STOPWORDS}
+    result: set[str] = set()
+    for token in TOKEN_RE.findall(normalize_search_text(text)):
+        if token in STOPWORDS:
+            continue
+        result.update(search_token_variants(token))
+    return result
+
+
+def concept_tokens(text: str) -> set[str]:
+    return {
+        token.casefold().replace("ё", "е")
+        for token in TOKEN_RE.findall(normalize_search_text(text))
+        if token.casefold().replace("ё", "е") not in STOPWORDS
+    }
+
+
+def matched_query_concepts(query: set[str], document_text: str) -> set[str]:
+    document = concept_tokens(document_text)
+    matched: set[str] = set()
+    for query_token in query:
+        for document_token in document:
+            if query_token == document_token or (
+                len(query_token) >= 6 and len(document_token) >= 6 and query_token[:6] == document_token[:6]
+            ):
+                matched.add(query_token)
+                break
+    return matched
+
+
+def detected_query_domains(text: str) -> set[str]:
+    query_terms = token_set(text)
+    normalized = normalize_search_text(text)
+    detected: set[str] = set()
+    for row in (load_semantic_enrichment_contract().get("domains") or {}).values():
+        domain = str(row.get("id") or "")
+        for alias in row.get("aliases") or []:
+            alias_normalized = normalize_search_text(str(alias))
+            if alias_normalized and (alias_normalized in normalized or token_set(alias_normalized) & query_terms):
+                detected.add(domain)
+                break
+    return detected
+
+
+def field_overlap_score(query_terms: set[str], value: str | list[str], weight: int) -> tuple[int, bool]:
+    text = " ".join(str(item) for item in value) if isinstance(value, list) else str(value or "")
+    overlap = query_terms & token_set(text)
+    return len(overlap) * weight, bool(overlap)
 
 
 def query_cmd(args: argparse.Namespace) -> int:
     package_dir = Path(args.package_dir).resolve()
     query_tokens = token_set(args.text)
-    rows: list[tuple[int, dict[str, Any], str]] = []
-    for line in (package_dir / "topics.jsonl").read_text(encoding="utf-8").splitlines():
+    query_concepts = concept_tokens(args.text)
+    query_domains = detected_query_domains(args.text)
+    fragments_path = package_dir / "fragments.jsonl"
+    fragments_by_topic: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    if fragments_path.is_file():
+        with fragments_path.open(encoding="utf-8") as fh:
+            for line in fh:
+                if line.strip():
+                    fragment = json.loads(line)
+                    fragments_by_topic[str(fragment.get("topic_uid"))].append(fragment)
+    rows: list[tuple[int, dict[str, Any], dict[str, Any] | None, list[str]]] = []
+    for line in (package_dir / "topics.jsonl").read_text(encoding="utf-8").split("\n"):
         if not line.strip():
             continue
         topic = json.loads(line)
@@ -1327,13 +2115,53 @@ def query_cmd(args: argparse.Namespace) -> int:
             continue
         if args.job and args.job not in (topic.get("jobs") or []):
             continue
+        if topic.get("node_kind") not in {None, "content", "gap"} or topic.get("queryable") is False:
+            continue
+        if query_domains and not query_domains.intersection(set(topic.get("domains") or [])):
+            continue
         content = (package_dir / topic["content_ref"]).read_text(encoding="utf-8")
-        haystack = " ".join([topic.get("title") or "", topic.get("summary") or "", " ".join(topic.get("aliases") or []), content])
-        tokens = token_set(haystack)
-        score = len(query_tokens & tokens) * 10
-        score += sum(5 for token in query_tokens if token in (topic.get("title") or "").lower())
-        if score:
-            rows.append((score, topic, content))
+        score = 0
+        matched_fields: list[str] = []
+        for field, weight in (("title", 14), ("aliases", 12), ("answers_questions", 11), ("summary", 6)):
+            part, matched = field_overlap_score(query_tokens, topic.get(field) or "", weight)
+            score += part
+            if matched:
+                matched_fields.append(field)
+        best_fragment: dict[str, Any] | None = None
+        best_fragment_score = 0
+        fragments = fragments_by_topic.get(str(topic["uid"])) or markdown_fragments(
+            str(topic["uid"]), str(topic.get("parent_uid") or ""), content, str(topic["content_ref"])
+        )
+        for fragment in fragments:
+            fragment_score, fragment_matched = field_overlap_score(
+                query_tokens,
+                " ".join([str(fragment.get("heading") or ""), str(fragment.get("plain_text") or fragment.get("text") or "")]),
+                4,
+            )
+            if fragment_matched and fragment_score > best_fragment_score:
+                best_fragment = fragment
+                best_fragment_score = fragment_score
+        score += best_fragment_score
+        searchable_text = " ".join(
+            [
+                str(topic.get("title") or ""),
+                " ".join(str(value) for value in topic.get("aliases") or []),
+                " ".join(str(value) for value in topic.get("answers_questions") or []),
+                str(topic.get("summary") or ""),
+                str((best_fragment or {}).get("plain_text") or (best_fragment or {}).get("text") or ""),
+                content,
+            ]
+        )
+        matched_concepts = matched_query_concepts(query_concepts, searchable_text)
+        minimum_concepts = 1 if len(query_concepts) <= 1 else 2
+        if len(matched_concepts) < minimum_concepts:
+            continue
+        matched_fields.append(f"concepts:{len(matched_concepts)}/{len(query_concepts)}")
+        if query_domains:
+            score += 20
+            matched_fields.append("domain")
+        if score >= 8:
+            rows.append((score, topic, best_fragment, matched_fields))
     rows.sort(key=lambda item: (-item[0], item[1]["uid"]))
     if not rows:
         answer = {
@@ -1347,14 +2175,38 @@ def query_cmd(args: argparse.Namespace) -> int:
         }
     else:
         selected = rows[: min(args.limit, len(rows))]
+        top_score, top_topic, top_fragment, _ = selected[0]
+        top_is_gap = top_topic.get("node_kind") == "gap" or top_topic.get("coverage_status") == "gap"
+        answer_text = ""
+        if top_fragment:
+            answer_text = str(top_fragment.get("text") or top_fragment.get("plain_text") or "")
+        elif not top_is_gap:
+            answer_text = (package_dir / top_topic["content_ref"]).read_text(encoding="utf-8")
         answer = {
-            "answer_status": "documented",
+            "answer_status": "gap" if top_is_gap else "documented",
             "release": (read_yaml(package_dir / "package.yaml") or {}).get("release", "unknown"),
-            "answer": selected[0][2][: args.max_chars].strip(),
+            "answer": (
+                "Раздел присутствует в стандарте, но не наполнен подтвержденным содержанием."
+                if top_is_gap
+                else answer_text[: args.max_chars].strip()
+            ),
             "applicability": [x for x in [args.audience, args.job] if x],
-            "citations": [{"uid": topic["uid"], "title": topic["title"], "content_ref": topic["content_ref"]} for _, topic, _ in selected],
+            "detected_domains": sorted(query_domains),
+            "citations": [
+                {
+                    "uid": topic["uid"],
+                    "legacy_uids": topic.get("legacy_uids") or ([topic.get("storage_uid")] if topic.get("storage_uid") else []),
+                    "title": topic["title"],
+                    "fragment_uid": fragment.get("uid") if fragment else None,
+                    "content_ref": topic["content_ref"],
+                    "coverage_status": topic.get("coverage_status"),
+                    "score": score,
+                    "matched_fields": matched,
+                }
+                for score, topic, fragment, matched in selected
+            ],
             "normative_levels": [],
-            "next_step": None,
+            "next_step": "Создать editorial gap candidate; не формулировать новую норму автоматически." if top_is_gap else None,
         }
     print(json.dumps(answer, ensure_ascii=False, indent=2))
     return 0
@@ -1363,7 +2215,7 @@ def query_cmd(args: argparse.Namespace) -> int:
 def audit_cmd(args: argparse.Namespace) -> int:
     package_dir = Path(args.package_dir).resolve()
     project = read_yaml(Path(args.input).resolve()) or {}
-    rules = [json.loads(line) for line in (package_dir / "rules.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+    rules = [json.loads(line) for line in (package_dir / "rules.jsonl").read_text(encoding="utf-8").split("\n") if line.strip()]
     missing = [field for field in ("requirements", "components") if field not in project]
     result = {
         "audit_status": "needs_input" if missing or not rules else "pass",
@@ -1376,6 +2228,270 @@ def audit_cmd(args: argparse.Namespace) -> int:
     }
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0 if result["audit_status"] == "pass" else 3
+
+
+def markdown_table_count(content: str) -> int:
+    count = 0
+    for line in logical_markdown_lines(content):
+        if not line.strip().startswith("|"):
+            continue
+        cells = markdown_table_cells(line)
+        if markdown_is_separator(cells):
+            count += 1
+    return count
+
+
+def migration_audit_cmd(args: argparse.Namespace) -> int:
+    """Reconcile immutable Google baseline, migrated source, builds and agent package.
+
+    This is a deterministic technical audit. It deliberately does not certify
+    D8, which remains an independent human/agent acceptance gate.
+    """
+    baseline = Path(args.baseline).resolve()
+    source_dir = Path(args.source_dir).resolve()
+    html_path = Path(args.html).resolve() if args.html else None
+    docx_path = Path(args.docx).resolve() if args.docx else None
+    package_dir = Path(args.package_dir).resolve() if args.package_dir else None
+    manifest = read_json(baseline / "baseline-manifest.json")
+    document = read_json(baseline / "document.json")
+    book, sections, topics, _ = collect_units(source_dir)
+    section_by_tab = {str(row.get("source_tab_id")): row for row in sections}
+    topic_by_uid = {str(row["uid"]): row for row in topics}
+    asset_manifest = read_yaml(source_dir / "assets" / "manifest.yaml") or {}
+    baseline_assets = {str(row.get("object_id")): row for row in manifest.get("assets") or []}
+    source_assets = {str(row.get("object_id")): row for row in asset_manifest.get("assets") or []}
+    asset_paths = {
+        uid: f"../../assets/{Path(str(row.get('path') or '')).name}"
+        for uid, row in source_assets.items()
+        if row.get("status") == "downloaded"
+    }
+    checks: list[dict[str, Any]] = []
+
+    def check(name: str, passed: bool, **details: Any) -> None:
+        checks.append({"name": name, "status": "pass" if passed else "fail", **details})
+
+    check(
+        "baseline_identity",
+        book.get("baseline_uid") == manifest.get("baseline_uid") and book.get("source_revision_id") == manifest.get("revision_id"),
+        baseline_uid=manifest.get("baseline_uid"),
+        revision_id=manifest.get("revision_id"),
+    )
+    tabs_checked = 0
+    blocks_checked = 0
+    topics_checked = 0
+    baseline_tables = 0
+    source_tables = 0
+    tab_failures: list[str] = []
+    block_failures: list[str] = []
+    legacy_failures: list[str] = []
+    topic_failures: list[str] = []
+    for tab in iter_tabs(document.get("tabs") or []):
+        props = tab_properties(tab)
+        tab_id = str(props.get("tabId") or "unknown")
+        title = str(props.get("title") or tab_id)
+        is_buffer = title.strip().casefold() == "буфер"
+        section = section_by_tab.get(tab_id)
+        target = source_dir / "staging" / "buffer" if is_buffer else source_dir / "sections" / str((section or {}).get("uid") or "missing")
+        source_tab_path = target / "source-tab.json"
+        source_tab = read_json(source_tab_path) if source_tab_path.is_file() else None
+        if source_tab != document_tab(tab):
+            tab_failures.append(tab_id)
+        tabs_checked += 1
+        expected_blocks = body_blocks((document_tab(tab).get("body") or {}))
+        actual_blocks = []
+        blocks_path = target / "blocks.jsonl"
+        if blocks_path.is_file():
+            actual_blocks = [json.loads(line) for line in blocks_path.read_text(encoding="utf-8").split("\n") if line.strip()]
+        if actual_blocks != expected_blocks:
+            block_failures.append(tab_id)
+        blocks_checked += len(expected_blocks)
+        expected_markdown = "\n\n".join(x for x in (markdown_for_block(block, asset_paths) for block in expected_blocks) if x).strip() + "\n"
+        legacy_path = target / "legacy.md"
+        actual_markdown = legacy_path.read_text(encoding="utf-8") if legacy_path.is_file() else ""
+        if actual_markdown != expected_markdown:
+            legacy_failures.append(tab_id)
+        baseline_tables += sum(1 for block in expected_blocks if block.get("type") == "table")
+        source_tables += markdown_table_count(actual_markdown)
+        if is_buffer or not section:
+            continue
+        topic_asset_paths = {key: value.replace("../../assets/", "../../../../assets/") for key, value in asset_paths.items()}
+        expected_topics = split_topics(str(section["uid"]), title, expected_blocks, topic_asset_paths)
+        if [row["uid"] for row in expected_topics] != list(section.get("topic_refs") or []):
+            topic_failures.append(str(section["uid"]) + ":refs")
+        for expected_topic in expected_topics:
+            actual_topic = topic_by_uid.get(str(expected_topic["uid"]))
+            if not actual_topic:
+                topic_failures.append(str(expected_topic["uid"]) + ":missing")
+                continue
+            content_path = source_dir / str(actual_topic.get("content_ref") or "")
+            actual_content = content_path.read_text(encoding="utf-8") if content_path.is_file() else ""
+            if actual_content != expected_topic["content"] or actual_topic.get("title") != expected_topic["title"]:
+                topic_failures.append(str(expected_topic["uid"]) + ":content")
+            topics_checked += 1
+    check("source_tabs_equal_google_baseline", not tab_failures, tabs=tabs_checked, failures=tab_failures)
+    check("block_streams_rederived_exactly", not block_failures, blocks=blocks_checked, failures=block_failures)
+    check("legacy_markdown_rederived_exactly", not legacy_failures, failures=legacy_failures)
+    check("topic_split_and_content_rederived_exactly", not topic_failures, topics=topics_checked, failures=topic_failures)
+    check(
+        "table_inventory_preserved",
+        baseline_tables == source_tables,
+        baseline_tables=baseline_tables,
+        source_tables=source_tables,
+        note="Google soft line breaks are normalized only while parsing, not rewritten in the lossless source.",
+    )
+
+    asset_failures: list[str] = []
+    for uid, baseline_row in baseline_assets.items():
+        source_row = source_assets.get(uid)
+        if not source_row or source_row.get("sha256") != baseline_row.get("sha256"):
+            asset_failures.append(uid + ":manifest")
+            continue
+        path = source_dir / str(source_row.get("path") or "")
+        if source_row.get("status") == "downloaded" and (not path.is_file() or sha256_file(path) != source_row.get("sha256")):
+            asset_failures.append(uid + ":file")
+    check(
+        "asset_inventory_and_digests",
+        not asset_failures and len(source_assets) == len(baseline_assets),
+        baseline_assets=len(baseline_assets),
+        source_assets=len(source_assets),
+        inline=sum(1 for row in source_assets.values() if row.get("placement") == "inline"),
+        positioned=sum(1 for row in source_assets.values() if row.get("placement") == "positioned"),
+        failures=asset_failures,
+    )
+
+    semantic_uids = [str(row.get("semantic_uid") or "") for row in topics]
+    node_counts: dict[str, int] = defaultdict(int)
+    semantic_failures: list[str] = []
+    for row in topics:
+        semantic_uid = str(row.get("semantic_uid") or "")
+        node_kind = str(row.get("node_kind") or "")
+        node_counts[node_kind] += 1
+        if not re.fullmatch(r"std_topic_[a-z0-9_]+", semantic_uid):
+            semantic_failures.append(str(row.get("uid")) + ":semantic_uid")
+        if not row.get("legacy_uids") or row.get("coverage_status") not in {"documented", "gap", "out_of_scope"}:
+            semantic_failures.append(str(row.get("uid")) + ":metadata")
+    check(
+        "semantic_addressing",
+        not semantic_failures and len(set(semantic_uids)) == len(semantic_uids),
+        topics=len(topics),
+        unique_semantic_uids=len(set(semantic_uids)),
+        node_kinds=dict(sorted(node_counts.items())),
+        failures=semantic_failures,
+    )
+
+    if html_path:
+        html_text = html_path.read_text(encoding="utf-8") if html_path.is_file() else ""
+        expected_published = [row for row in topics if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False]
+        topic_anchor_count = len(re.findall(r"data-topic-uid=", html_text))
+        html_table_count = len(re.findall(r"<table\b", html_text))
+        html_image_count = len(re.findall(r"<img\b", html_text))
+        missing_html_assets = [
+            src for src in re.findall(r"<img[^>]+src=['\"]([^'\"]+)", html_text)
+            if not (html_path.parent / src).is_file()
+        ]
+        check(
+            "normalized_html_structure",
+            bool(html_text)
+            and topic_anchor_count == len(expected_published)
+            and html_table_count == baseline_tables
+            and "#### " not in html_text
+            and not contains_private_use(html_text)
+            and not missing_html_assets,
+            topic_anchors=topic_anchor_count,
+            expected_topic_anchors=len(expected_published),
+            tables=html_table_count,
+            images=html_image_count,
+            missing_assets=missing_html_assets,
+        )
+
+    if docx_path:
+        docx_tables = 0
+        docx_images = 0
+        docx_bookmarks = 0
+        docx_raw_hash_markers = 0
+        docx_private_use = 0
+        docx_error = None
+        try:
+            with zipfile.ZipFile(docx_path) as archive:
+                document_xml = ET.fromstring(archive.read("word/document.xml"))
+                word_ns = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+                docx_tables = sum(1 for _ in document_xml.iter(word_ns + "tbl"))
+                docx_images = sum(1 for _ in document_xml.iter(word_ns + "drawing"))
+                docx_bookmarks = sum(1 for _ in document_xml.iter(word_ns + "bookmarkStart"))
+                text_nodes = [str(node.text or "") for node in document_xml.iter(word_ns + "t")]
+                docx_raw_hash_markers = sum("#### " in value for value in text_nodes)
+                docx_private_use = sum(contains_private_use(value) for value in text_nodes)
+        except Exception as exc:  # noqa: BLE001
+            docx_error = f"{type(exc).__name__}: {exc}"
+        published_tab_ids = {str(section.get("source_tab_id")) for section in sections}
+        expected_docx_images = sum(
+            1
+            for row in source_assets.values()
+            if row.get("status") == "downloaded" and str(row.get("tab_id")) in published_tab_ids
+        )
+        check(
+            "normalized_docx_structure",
+            docx_error is None
+            and docx_tables == baseline_tables
+            and docx_images == expected_docx_images
+            and docx_bookmarks >= len(sections) + len(
+                [row for row in topics if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False]
+            )
+            and docx_raw_hash_markers == 0
+            and docx_private_use == 0,
+            tables=docx_tables,
+            images=docx_images,
+            expected_images=expected_docx_images,
+            bookmarks=docx_bookmarks,
+            raw_hash_markers=docx_raw_hash_markers,
+            private_use_text_nodes=docx_private_use,
+            error=docx_error,
+        )
+
+    if package_dir:
+        package = read_yaml(package_dir / "package.yaml") if (package_dir / "package.yaml").is_file() else {}
+        package_topics = [json.loads(line) for line in (package_dir / "topics.jsonl").read_text(encoding="utf-8").split("\n") if line.strip()] if (package_dir / "topics.jsonl").is_file() else []
+        package_uids = [str(row.get("uid")) for row in package_topics]
+        package_failures: list[str] = []
+        for row in package_topics:
+            content_path = package_dir / str(row.get("content_ref") or "")
+            if not content_path.is_file():
+                package_failures.append(str(row.get("uid")) + ":content")
+                continue
+            for ref in re.findall(r"!\[[^]]*\]\(([^)]+)\)", content_path.read_text(encoding="utf-8")):
+                if not (content_path.parent / ref).resolve().is_file():
+                    package_failures.append(str(row.get("uid")) + ":asset")
+        expected_package_topics = sum(1 for row in topics if row.get("node_kind") not in {"artifact", "attachment"} and row.get("publish") is not False)
+        check(
+            "agent_package_integrity",
+            bool(package)
+            and len(package_topics) == expected_package_topics
+            and len(package_uids) == len(set(package_uids))
+            and package.get("buffer_included") is False
+            and not package_failures,
+            topics=len(package_topics),
+            expected_topics=expected_package_topics,
+            fragments=(package.get("counts") or {}).get("fragments"),
+            assets=(package.get("counts") or {}).get("assets"),
+            buffer_included=package.get("buffer_included"),
+            failures=package_failures,
+        )
+
+    passed = all(row["status"] == "pass" for row in checks)
+    report = {
+        "schema_version": "1.0",
+        "audit_type": "deterministic_migration_and_agent_access",
+        "generated_at": utc_now(),
+        "status": "pass_with_known_manual_gate" if passed else "fail",
+        "d8_independent_certification": "deferred_not_self_certified",
+        "baseline_uid": manifest.get("baseline_uid"),
+        "source_revision_id": manifest.get("revision_id"),
+        "checks": checks,
+    }
+    if args.output:
+        write_json(Path(args.output).resolve(), report)
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+    return 0 if passed else 2
 
 
 def inventory_cmd(args: argparse.Namespace) -> int:
@@ -1505,6 +2621,12 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--output")
     p.set_defaults(func=validate)
 
+    p = sub.add_parser("remediate-migration", help="Add stable semantic addressing and classify migrated topic nodes")
+    p.add_argument("--source-dir", default=str(DEFAULT_SOURCE_DIR))
+    p.add_argument("--contract", default=str(SEMANTIC_ENRICHMENT_CONTRACT))
+    p.add_argument("--output")
+    p.set_defaults(func=remediate_migration_cmd)
+
     p = sub.add_parser("build")
     p.add_argument("--source-dir", default=str(DEFAULT_SOURCE_DIR))
     p.add_argument("--output-dir", default=str(DEFAULT_BUILD_DIR))
@@ -1533,6 +2655,15 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--package-dir", required=True)
     p.add_argument("--input", required=True)
     p.set_defaults(func=audit_cmd)
+
+    p = sub.add_parser("audit-migration", help="Reconcile baseline, migrated source, normalized build and agent package; never self-certifies D8")
+    p.add_argument("--baseline", required=True)
+    p.add_argument("--source-dir", default=str(DEFAULT_SOURCE_DIR))
+    p.add_argument("--html")
+    p.add_argument("--docx")
+    p.add_argument("--package-dir")
+    p.add_argument("--output")
+    p.set_defaults(func=migration_audit_cmd)
 
     p = sub.add_parser("diff")
     p.add_argument("--from-manifest", required=True)

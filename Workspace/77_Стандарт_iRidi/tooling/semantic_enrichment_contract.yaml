@@ -1,0 +1,97 @@
+schema_version: "candidate-1"
+status: approved_for_remediation
+canonical: false
+change_uid: std_change_migration_semantic_addressing_20260807
+source_ref: "user approval 2026-08-07: remediate identifiers, agent access, and repeat source parity"
+domains:
+  std_ch_introduction:
+    id: introduction
+    aliases: [введение, терминология, назначение стандарта]
+  std_ch_design_policy:
+    id: design_policy
+    aliases: [общие правила проектирования, правила проектирования]
+  std_ch_requirements:
+    id: requirements
+    aliases: [техническое задание, тз, требования]
+  std_ch_architecture:
+    id: architecture
+    aliases: [архитектура, bus77, шина, протокол]
+  std_ch_lighting:
+    id: lighting
+    aliases: [освещение, свет, светильник, лампа, led, диммирование, dali]
+  std_ch_heating:
+    id: heating
+    aliases: [отопление, обогрев, радиатор, теплый пол]
+  std_ch_air_conditioning:
+    id: air_conditioning
+    aliases: [кондиционирование, кондиционер, охлаждение]
+  std_ch_ventilation:
+    id: ventilation
+    aliases: [вентиляция, вентиляционная установка, вентустановка, воздухообмен, vav, cav]
+  std_ch_humidification:
+    id: humidification
+    aliases: [увлажнение, увлажнитель, влажность]
+  std_ch_curtains:
+    id: curtains
+    aliases: [шторы, карниз, жалюзи, электропривод штор]
+  std_ch_leak_protection:
+    id: leak_protection
+    aliases: [протечки, защита от протечек, датчик протечки, перекрытие воды]
+  std_ch_wiring_devices_panels:
+    id: wiring_devices_panels
+    aliases: [электроустановочные изделия, панели, выключатели]
+  std_ch_room_patterns:
+    id: room_patterns
+    aliases: [типовое оснащение комнат, помещение, комната]
+  std_ch_engineering_process:
+    id: engineering_process
+    aliases: [проектирование, инженерный процесс]
+  std_ch_project_tool:
+    id: project_tool
+    aliases: [project tool, расчет проекта, конфигуратор]
+  std_ch_cabinets:
+    id: cabinets
+    aliases: [щиты, электрический щит, шкаф автоматики]
+  std_ch_commissioning:
+    id: commissioning
+    aliases: [пнр, пусконаладка, ввод в эксплуатацию]
+topic_overrides:
+  std_topic_532_______1_dbec585a19:
+    semantic_uid: std_topic_lighting_dimming_control
+    aliases: [диммирование, управление яркостью, регулировка яркости, triac, pwm, 0-10 в, 1-10 в, dali]
+    answers_questions:
+      - "Какие технологии управления яркостью поддерживаются?"
+      - "Как выбрать способ диммирования?"
+      - "Как управлять диммируемым освещением?"
+  std_topic_581_______1_2562eae291:
+    semantic_uid: std_topic_lighting_io_modules
+    aliases: [модули освещения, модули ввода-вывода, релейные модули, диммерные модули]
+    answers_questions:
+      - "Какие модули заложить для управления освещением?"
+      - "Как выбрать модуль для диммирования?"
+  std_topic_572______1_2fcb765ec4:
+    semantic_uid: std_topic_lighting_common_scenarios
+    aliases: [сценарии освещения, световые сцены, комфорт, ярко, мастер-выключатель]
+    answers_questions:
+      - "Какие сценарии освещения предложить заказчику?"
+      - "Как объяснить ценность световых сценариев?"
+      - "Как продавать сценарии освещения?"
+  std_topic_832_58562030f8:
+    semantic_uid: std_topic_ventilation_central_system_control
+    aliases: [управление вентиляционной установкой, централизованная вентиляция, vav, cav]
+    answers_questions:
+      - "Как управляются централизованные вентиляционные установки?"
+      - "Какие системы вентиляции подходят для интеграции?"
+  std_topic_852_____lh_can_modbus_i_can_4c11464c32:
+    semantic_uid: std_topic_ventilation_modbus_interface_modules
+    aliases: [lh-can-modbus, i-can-modbus, modbus вентиляции, интеграция вентиляционной установки]
+    answers_questions:
+      - "Какие вентиляционные установки поддерживаются?"
+      - "Как интегрировать вентиляционную установку по Modbus?"
+      - "Какой модуль заложить для управления вентиляцией?"
+  std_topic_89_____1_b9e402f610:
+    semantic_uid: std_topic_ventilation_connection_schemes
+    aliases: [схемы вентиляции, подключение minibox, подключение royal clima, подключение vakio]
+    answers_questions:
+      - "Как подключить вентиляционную установку?"
+      - "Какие схемы подключения вентиляции приведены в стандарте?"

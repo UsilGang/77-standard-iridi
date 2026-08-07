@@ -21,7 +21,7 @@ source_count: 2
 source_types: ["key_task_log"]
 source_date_min: ""
 source_date_max: ""
-review_ids: ["2026-07-15_Transcribe_Backlog_Route_Review", "2026-08-07_Lighting_Render_Contract_Pilot_Review", "2026-08-05_Lighting_Rule_Candidates_Expert_Review"]
+review_ids: ["2026-07-15_Transcribe_Backlog_Route_Review", "2026-08-07_Lighting_Render_Contract_Pilot_Review", "2026-08-07_Full_Book_Migration_And_Agent_Access_Audit", "2026-08-05_Lighting_Rule_Candidates_Expert_Review"]
 decision_ids: ["2026-08-05_Standard_As_Code_Architecture_D1_D11"]
 open_question_ids: ["std_render_contract_v1_candidate"]
 backlog_ids: ["DO-001-KKZ-SWEEP-001", "DO-001-STD-PARITY-001"]
@@ -29,7 +29,7 @@ downstream_project_ids: []
 upstream_project_ids: []
 property_profile: generic_project
 last_sync_at: 2026-08-07
-last_sync_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]"
+last_sync_ref: "[[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]"
 privacy: internal
 ---
 
@@ -41,6 +41,7 @@ privacy: internal
 
 - Проект поддерживает «Стандарт автоматизации iRidi» как продуктовый knowledge-cycle: систематизирует уже выпущенные продукты, оформляет их в книге/стандарте и регулярно обновляется при новых релизах и правках.
 - Full-book baseline уже переведен в адресуемый source layer. Контракт генерации согласуется на крупном разделе «Освещение», а полная книга одновременно собирается тем же renderer.
+- Вся книга получила стабильные semantic UID и agent package с фрагментами, связями, aliases и доменной маршрутизацией. Lossless source и Buffer физически отделены от generated package.
 
 ## Confirmed
 
@@ -50,6 +51,8 @@ privacy: internal
 - Пилот RC1 собран: 1 раздел, 64 темы, 37 таблиц и 107 изображений; полное превью включает 17 разделов и 276 тем.
 - Browser feedback RC1 применен: deep Markdown headings нормализованы в `Heading 3`, HTML получил читаемую колонку и адаптивные боковые поля.
 - Table feedback RC1 применен: таблица видов LED-лент восстановлена как пять строк данных без ложной шапки, с двумя фиксированными колонками `60/40`; правило заголовков и геометрии теперь машиночитаемо и одинаково для HTML/DOCX.
+- Повторная full-book сверка PASS: 18 вкладок, 6 758 блоков, 276 topic content, 146 таблиц и 471 source asset совпадают с baseline.
+- Agent package: 261 самостоятельный узел, 4 947 фрагментов, 267 связей, 441 изображение; Buffer не включен.
 
 ## Assumptions
 
@@ -63,7 +66,7 @@ privacy: internal
 
 ## Next Do
 
-- Владельцу пройти одну точку решения: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]]. После approve — рефакторинг «Освещения» по утвержденному шаблону с объяснимыми delta.
+- Владельцу пройти одну точку решения: [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Lighting_Render_Contract_Pilot_Review]], используя evidence из [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]]. После approve — рефакторинг «Освещения» по утвержденному шаблону; D8 не закрывать без независимой проверки.
 
 ## Review Queue
 

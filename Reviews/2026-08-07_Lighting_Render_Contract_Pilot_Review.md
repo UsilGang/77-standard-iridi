@@ -22,7 +22,7 @@ feedback_refs:
 
 # Согласование контракта книги: пилот «Освещение»
 
-Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Render_Contract_Pilot_Implementation_Report_2026-08-07]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
+Связано с [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_As_Code_Architecture_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Content_Refactoring_And_Template_Model_v1]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Machine_Readable/standard_render_contract_candidate_v1.yaml]], [[01_Projects/001_77_Standard_iRidi/Artifacts/Documentation/Standard_Render_Contract_Pilot_Implementation_Report_2026-08-07]], [[01_Projects/001_77_Standard_iRidi/Reviews/2026-08-07_Full_Book_Migration_And_Agent_Access_Audit]] и [[01_Projects/001_77_Standard_iRidi/Backlog/DO-001-STD-PARITY-001_Independent_Reconstruction_Certification]].
 
 ## Что открыть и в каком порядке
 
@@ -65,15 +65,16 @@ feedback_refs:
 | Проверка | «Освещение» | Вся книга |
 | --- | ---: | ---: |
 | Разделы | 1 | 17 |
-| Адресуемые темы | 64 | 276 |
-| HTML-таблицы | 37 | 150 |
-| HTML-изображения | 107 | 437 |
+| Source topics | 64 | 276 |
+| Public topic anchors | 62 | 261 |
+| HTML-таблицы | 37 | 146 |
+| HTML-изображения | 107 | 441 |
 | Потерянные ссылки на изображения | 0 | 0 |
-| DOCX-таблицы | 37 | 150 |
-| DOCX inline images | 107 | 434 |
+| DOCX-таблицы | 37 | 146 |
+| DOCX images | 107 | 441 |
 | Целостность DOCX ZIP | PASS | PASS |
 
-Текущие SHA-256 после обратной связи: для «Освещения» DOCX `806054f8...0db3d`, HTML `1439e15b...8227`; для всей книги DOCX `67f8b6ac...cbf7`, HTML `2589795d...8fa5`. Изменения объяснимы: deep headings нормализованы, HTML-колонка получила читаемые поля, а таблицы получили явную семантику заголовков и фиксированную геометрию.
+Текущие SHA-256 после повторного full-book audit: для «Освещения» DOCX `6094c49f...14229`, HTML `eebcf903...f39ba`; для всей книги DOCX `1b4d177b...bec91`, HTML `f901078e...f75e6`. Изменения объяснимы: deep headings нормализованы, HTML-колонка получила читаемые поля, таблицы — явную семантику и геометрию, а все публикуемые узлы — machine anchors.
 
 Целевая таблица видов LED-лент сверена с Google baseline: пять строк данных, без строки заголовка, две эффективные колонки в пропорции исходных ширин `243:162`, то есть `60:40`; третья пустая Markdown-колонка признана артефактом потерянного `colspan`. В HTML проверены `table-headerless`, отсутствие `thead`, пять строк по две `td`, прозрачный фон первой строки и отсутствие горизонтального переполнения. В DOCX проверены fixed grid `5443:3629` DXA, пять строк и две колонки.
 
